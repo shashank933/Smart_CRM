@@ -1,0 +1,29 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+server/data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Desktop.ini
+
+# Temp
+*.tmp
+.cache/
