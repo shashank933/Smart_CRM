@@ -1,0 +1,17 @@
+{
+  "name": "smart-crm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered CRM with Claymorphism UI",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && node src/index.js",
+    "dev:client": "cd client && npx vite --port 5173",
+    "build": "cd client && npx vite build",
+    "start": "cd server && node src/index.js",
+    "setup": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

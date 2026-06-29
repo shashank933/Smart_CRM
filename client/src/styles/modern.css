@@ -1,0 +1,523 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ==================== CARD ==================== */
+
+.clay-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.clay-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-1px);
+  border-color: var(--card-border-hover);
+}
+
+.clay-card-sm {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow-sm);
+  transition: box-shadow 0.15s ease;
+}
+
+.clay-card-sm:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ==================== INPUT ==================== */
+
+.clay-input {
+  background: var(--bg-card);
+  border: var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  font-family: var(--font-family);
+}
+
+.clay-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg), inset 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.clay-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ==================== BUTTON ==================== */
+
+.clay-btn {
+  background: var(--bg-card);
+  border: var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: var(--btn-shadow);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-family);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.clay-btn:hover {
+  box-shadow: var(--btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.clay-btn:active {
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(0);
+}
+
+.clay-btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: var(--btn-shadow);
+}
+
+.clay-btn-primary:hover {
+  box-shadow: var(--btn-shadow-hover), 0 0 0 1px var(--accent-light);
+  color: #ffffff;
+}
+
+.clay-btn-primary:active {
+  box-shadow: var(--btn-shadow-active);
+}
+
+.clay-btn-success {
+  background: var(--success);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.clay-btn-success:hover {
+  background: var(--success-light);
+}
+
+.clay-btn-danger {
+  background: var(--danger);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.clay-btn-danger:hover {
+  background: var(--danger-light);
+}
+
+.clay-btn-ghost {
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.clay-btn-ghost:hover {
+  background: var(--bg-glass);
+}
+
+.clay-btn-sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.clay-btn-lg {
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: var(--radius);
+}
+
+/* ==================== BADGE ==================== */
+
+.clay-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  border: 1px solid transparent;
+}
+
+.clay-badge-success { background: var(--success-bg); color: var(--success-text); border-color: rgba(16, 185, 129, 0.15); }
+.clay-badge-warning { background: var(--warning-bg); color: var(--warning-text); border-color: rgba(245, 158, 11, 0.15); }
+.clay-badge-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-color: rgba(239, 68, 68, 0.15); }
+.clay-badge-info    { background: var(--info-bg);    color: var(--info-text);    border-color: rgba(59, 130, 246, 0.15); }
+.clay-badge-accent  { background: var(--accent-bg);  color: var(--accent);       border-color: rgba(95, 111, 255, 0.15); }
+
+/* ==================== TAG ==================== */
+
+.clay-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  border: 1px solid var(--divider-color);
+}
+
+/* ==================== DIVIDER ==================== */
+
+.clay-divider {
+  height: 1px;
+  background: var(--divider-color);
+  margin: 16px 0;
+  border: none;
+}
+
+/* ==================== MODAL ==================== */
+
+.clay-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay-bg);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.clay-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--modal-shadow);
+  border: var(--card-border);
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.2s ease;
+}
+
+.clay-modal-header {
+  padding: 24px 28px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clay-modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.clay-modal-body {
+  padding: 20px 28px;
+}
+
+.clay-modal-footer {
+  padding: 0 28px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ==================== TABLE ==================== */
+
+.clay-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.clay-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--table-border);
+}
+
+.clay-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--table-border);
+  color: var(--text-primary);
+  transition: background 0.15s ease;
+}
+
+.clay-table tr:hover td {
+  background: var(--table-hover-bg);
+}
+
+/* ==================== AVATAR ==================== */
+
+.clay-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+}
+
+.clay-avatar-sm {
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+}
+
+.clay-avatar-lg {
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+  border-radius: var(--radius);
+}
+
+/* ==================== STAT CARD ==================== */
+
+.clay-stat-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.clay-stat-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.clay-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.clay-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.clay-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-glass);
+  border: 1px solid var(--divider-color);
+}
+
+/* ==================== GLASS ==================== */
+
+.clay-glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: var(--card-border);
+  border-radius: var(--radius);
+}
+
+/* ==================== TABS ==================== */
+
+.clay-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: transparent;
+  border-radius: var(--radius);
+}
+
+.clay-tab {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family);
+}
+
+.clay-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass);
+}
+
+.clay-tab.active {
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* ==================== PROGRESS ==================== */
+
+.clay-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.clay-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* ==================== SKELETON ==================== */
+
+.clay-skeleton {
+  background: linear-gradient(90deg, var(--bg-glass) 25%, var(--bg-secondary) 50%, var(--bg-glass) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ==================== TOOLTIP ==================== */
+
+.clay-tooltip {
+  background: var(--bg-card);
+  box-shadow: var(--card-shadow-hover);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: var(--card-border);
+  color: var(--text-primary);
+}
+
+/* ==================== FORM ==================== */
+
+.clay-form-group {
+  margin-bottom: 20px;
+}
+
+.clay-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.clay-form-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+/* ==================== EMPTY STATE ==================== */
+
+.clay-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.clay-empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.clay-empty-state h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+}
