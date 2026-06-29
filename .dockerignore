@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.log
+*.db
+*.sqlite
+server/data/
+.git/
+.vscode/
+.idea/
+*.md
