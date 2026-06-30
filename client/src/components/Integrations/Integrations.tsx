@@ -172,13 +172,13 @@ export default function Integrations() {
     heroTitle: { fontSize: 'clamp(36px, 6vw, 66px)', lineHeight: 0.92, letterSpacing: '-0.07em', fontWeight: 900, margin: '0 0 14px' },
     heroText: { fontSize: '16px', lineHeight: 1.7, color: 'rgba(167,243,208,0.88)', maxWidth: '680px', margin: 0 },
     heroStats: { display: 'grid' as const, gridTemplateColumns: 'repeat(3, minmax(116px, 1fr))', gap: '12px', minWidth: '420px' },
-    heroStat: { padding: '15px', borderRadius: '20px', background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)' },
+    heroStat: { padding: '15px', borderRadius: '20px', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(2px)' },
     grid: { display: 'grid' as const, gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '18px' },
     card: {
       position: 'relative' as const,
       overflow: 'hidden' as const,
       background: 'var(--bg-card)', borderRadius: '28px', padding: '24px',
-      boxShadow: 'var(--card-shadow)', border: 'var(--card-border)', backdropFilter: 'blur(22px)',
+      boxShadow: 'var(--card-shadow)', border: 'var(--card-border)', backdropFilter: 'blur(4px)',
       transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease'
     },
     cardInner: { display: 'flex' as const, gap: '16px', alignItems: 'flex-start' as const, position: 'relative' as const, zIndex: 1 },
@@ -192,7 +192,7 @@ export default function Integrations() {
       position: 'relative' as const,
       zIndex: 1,
       marginTop: '18px', padding: '20px', background: 'var(--bg-glass)', borderRadius: '22px',
-      border: '1px solid var(--divider-color)', animation: 'slideUp 0.25s ease', backdropFilter: 'blur(18px)'
+      border: '1px solid var(--divider-color)', animation: 'slideUp 0.25s ease', backdropFilter: 'blur(4px)'
     },
     webhookBox: {
       display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px',

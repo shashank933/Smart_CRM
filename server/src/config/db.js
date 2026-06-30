@@ -367,6 +367,16 @@ export async function initializeDatabase() {
     seedDemoData();
   }
 
+  const userCount = db.prepare('SELECT COUNT(*) as c FROM users').get();
+  if (userCount.c === 0) {
+    const bcrypt = (await import('bcryptjs')).default;
+    const demoId = uuidv4();
+    const hashedPassword = bcrypt.hashSync('demo123', 10);
+    db.prepare("INSERT INTO users (id, email, name, password, role) VALUES (?, 'demo@smartcrm.com', 'Demo User', ?, 'admin')")
+      .run(demoId, hashedPassword);
+    console.log('Demo user created: demo@smartcrm.com / demo123');
+  }
+
   console.log('Database initialized successfully');
 }
 

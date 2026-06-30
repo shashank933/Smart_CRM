@@ -18,7 +18,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(1px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         animation: 'fadeIn 0.15s ease',
       }}

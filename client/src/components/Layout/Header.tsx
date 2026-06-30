@@ -470,11 +470,15 @@ export default function Header() {
           </button>
 
           {notifOpen && (
-            <div className="app-dropdown app-notification-panel">
-              <div className="app-dropdown-header" style={{ justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '14px', fontWeight: 950 }}>Notifications</div>
-                <span className="clay-badge clay-badge-accent">3 new</span>
-              </div>
+            <>
+              <div className="app-notification-overlay" onClick={() => setNotifOpen(false)} />
+              <div className="app-dropdown app-notification-panel">
+                <div className="app-dropdown-header" style={{ justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 950 }}>Notifications</div>
+                  <button className="clay-btn clay-btn-sm clay-btn-ghost" onClick={() => setNotifOpen(false)}>
+                    <X size={16} />
+                  </button>
+                </div>
 
               <div className="app-notification-item" onClick={() => { setNotifOpen(false); navigate('/guide'); }}>
                 <span className="app-search-result-icon">
@@ -506,6 +510,7 @@ export default function Header() {
                 </span>
               </div>
             </div>
+          </>
           )}
         </div>
 

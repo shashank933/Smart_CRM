@@ -16,7 +16,7 @@ const cardStyle = {
   border: 'var(--card-border)',
   borderRadius: 'var(--radius-xl)',
   boxShadow: 'var(--card-shadow)',
-  backdropFilter: 'blur(22px)',
+  backdropFilter: 'blur(4px)',
 };
 
 export default function Dashboard() {
@@ -77,11 +77,11 @@ export default function Dashboard() {
             <h2 style={{ fontSize: 'clamp(32px, 5vw, 56px)', lineHeight: 0.96, letterSpacing: '-0.06em', margin: 0, fontWeight: 900 }}>Pipeline health and revenue signals.</h2>
           </div>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
+            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(2px)' }}>
               <div style={{ fontSize: '11px', color: '#cccccc', fontWeight: 800 }}>Won Revenue</div>
               <div style={{ fontSize: '22px', fontWeight: 900 }}>{formatCurrency(stats.totalRevenue)}</div>
             </div>
-            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
+            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(2px)' }}>
               <div style={{ fontSize: '11px', color: '#cccccc', fontWeight: 800 }}>Win Rate</div>
               <div style={{ fontSize: '22px', fontWeight: 900 }}>{stats.winRate}%</div>
             </div>

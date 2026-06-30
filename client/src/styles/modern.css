@@ -521,7 +521,7 @@ button {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(0px);
   z-index: 1999;
   animation: fadeIn 0.15s ease;
 }
@@ -724,6 +724,7 @@ button {
   top: calc(100% + 8px);
   right: 0;
   width: 260px;
+  max-width: calc(100vw - 32px);
   background: var(--bg-card);
   border: var(--card-border);
   border-radius: 12px;
@@ -761,6 +762,35 @@ button {
 
 .app-notification-panel {
   width: 390px;
+  max-width: calc(100vw - 32px);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.app-notification-overlay {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .app-notification-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    right: auto;
+    z-index: 2000;
+    max-height: 80vh;
+  }
+
+  .app-notification-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--modal-overlay-bg);
+    backdrop-filter: blur(1px);
+    z-index: 1999;
+    animation: fadeIn 0.15s ease;
+  }
 }
 
 .app-notification-item {
@@ -1024,7 +1054,7 @@ select.clay-input {
   position: fixed;
   inset: 0;
   background: var(--modal-overlay-bg);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1038,7 +1068,7 @@ select.clay-input {
   border-radius: var(--radius-xl);
   box-shadow: var(--modal-shadow);
   border: var(--card-border);
-  backdrop-filter: blur(28px);
+  backdrop-filter: blur(6px);
   max-width: 600px;
   width: 92vw;
   max-height: 86vh;
@@ -1170,7 +1200,7 @@ select.clay-input {
 
 .clay-glass {
   background: var(--bg-glass);
-  backdrop-filter: blur(26px);
+  backdrop-filter: blur(6px);
   border: var(--card-border);
   border-radius: var(--radius-lg);
 }
@@ -1393,6 +1423,11 @@ select.clay-input {
     gap: 12px;
   }
 
+  .app-header-actions {
+    justify-self: stretch;
+    justify-content: flex-end;
+  }
+
   .app-header-search {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -1563,7 +1598,8 @@ select.clay-input {
 
   .app-header-actions {
     justify-self: stretch;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .app-user-button span:not(.app-user-avatar) {
@@ -1572,12 +1608,6 @@ select.clay-input {
 
   .app-user-button {
     padding-right: 5px;
-  }
-
-  .app-notification-panel,
-  .app-dropdown {
-    width: calc(100vw - 28px);
-    right: -4px;
   }
 
   .clay-modal-footer {
@@ -1596,6 +1626,10 @@ select.clay-input {
 
   .clay-mobile-card-row .value {
     text-align: left;
+  }
+
+  .mobile-nav-dropdown {
+    width: 100vw;
   }
 }
 

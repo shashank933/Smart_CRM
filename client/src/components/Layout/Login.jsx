@@ -735,15 +735,11 @@ export default function Login() {
 
         <section className="login-panel" style={styles.formPanel}>
           <div className="login-panel-top" style={styles.panelTop}>
-            <div>
-              <h2 style={styles.title}>
-                {isRegister ? 'Create workspace' : 'Login to Dashboard'}
-              </h2>
-              <p style={styles.subtitle}>
-                {isRegister ? 'Start tracking every customer touchpoint today.' : 'Welcome back. Your CRM is already moving.'}
+            <div style={{ flex: 1 }}>
+              <p style={{ ...styles.subtitle, fontSize: '18px', color: '#09090b', fontWeight: 600 }}>
+                {isRegister ? 'Start tracking every customer touchpoint today.' : 'Welcome back. Sign in to your workspace.'}
               </p>
             </div>
-            <div style={styles.demoBadge}>Demo ready</div>
           </div>
 
           {error && <div style={styles.error}>{error}</div>}
@@ -822,7 +818,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Sign In'}
+              {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Login to Dashboard'}
               <ArrowRight size={18} />
             </button>
           </form>
