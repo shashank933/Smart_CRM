@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api';
-import { Link2, Mail, MessageCircle, Rss, Check, X, RefreshCw, Power, Plug, Copy, ExternalLink, Eye, EyeOff, ArrowRight, Trash2, Users, MessageSquare, Building2, Handshake } from 'lucide-react';
+import { Link2, Mail, MessageCircle, Rss, Check, X, RefreshCw, Power, Plug, Copy, Eye, EyeOff, ArrowRight, Users, MessageSquare, Building2, Handshake, ShieldCheck, Workflow, Radio, Activity, Sparkles } from 'lucide-react';
 import ConfirmDialog from '../ui/ConfirmDialog';
 
 interface SyncSuggestion {
@@ -57,6 +57,11 @@ const statusBadge = (status: string) => {
   if (status === 'connected') return <span className="clay-badge clay-badge-success">Connected</span>;
   return <span className="clay-badge" style={{ background: 'var(--bg-glass)', color: 'var(--text-muted)' }}>Disconnected</span>;
 };
+
+const getProviderAccent = (p: ProviderInfo) => ({
+  color: p.color || 'var(--accent)',
+  bg: p.bg || 'var(--accent-bg)',
+});
 
 export default function Integrations() {
   const navigate = useNavigate();
@@ -148,70 +153,177 @@ export default function Integrations() {
     setTimeout(() => setCopied(null), 2000);
   };
 
+  const connectedCount = providers.filter(p => p.connection?.status === 'connected').length;
+  const webhookCount = providers.filter(p => p.webhookSupported).length;
+
   const s = {
-    container: { maxWidth: '900px' as const },
-    header: { display: 'flex' as const, justifyContent: 'space-between' as const, alignItems: 'center' as const, marginBottom: '24px' as const },
-    grid: { display: 'flex' as const, flexDirection: 'column' as const, gap: '16px' as const },
-    card: {
-      background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', padding: '24px',
-      boxShadow: 'var(--card-shadow)', border: 'var(--card-border)',
-      transition: 'all 0.3s ease'
+    container: { maxWidth: '1320px' as const, margin: '0 auto' as const, display: 'flex' as const, flexDirection: 'column' as const, gap: '24px' as const },
+    hero: {
+      position: 'relative' as const,
+      overflow: 'hidden' as const,
+      borderRadius: '32px',
+      padding: '34px',
+      background: 'linear-gradient(135deg, rgba(79,70,229,0.95), rgba(124,58,237,0.9) 54%, rgba(6,182,212,0.78))',
+      border: '1px solid rgba(255,255,255,0.18)',
+      boxShadow: 'var(--card-shadow-hover)',
+      color: '#fff',
     },
-    cardInner: { display: 'flex' as const, gap: '16px', alignItems: 'flex-start' as const },
+    heroGrid: { position: 'relative' as const, zIndex: 1, display: 'grid' as const, gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '28px', alignItems: 'end' as const },
+    heroTitle: { fontSize: 'clamp(36px, 6vw, 66px)', lineHeight: 0.92, letterSpacing: '-0.07em', fontWeight: 900, margin: '0 0 14px' },
+    heroText: { fontSize: '16px', lineHeight: 1.7, color: 'rgba(224,231,255,0.88)', maxWidth: '680px', margin: 0 },
+    heroStats: { display: 'grid' as const, gridTemplateColumns: 'repeat(3, minmax(116px, 1fr))', gap: '12px', minWidth: '420px' },
+    heroStat: { padding: '15px', borderRadius: '20px', background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)' },
+    grid: { display: 'grid' as const, gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '18px' },
+    card: {
+      position: 'relative' as const,
+      overflow: 'hidden' as const,
+      background: 'var(--bg-card)', borderRadius: '28px', padding: '24px',
+      boxShadow: 'var(--card-shadow)', border: 'var(--card-border)', backdropFilter: 'blur(22px)',
+      transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease'
+    },
+    cardInner: { display: 'flex' as const, gap: '16px', alignItems: 'flex-start' as const, position: 'relative' as const, zIndex: 1 },
     iconBox: (color: string, bg: string) => ({
-      width: '56px', height: '56px', borderRadius: 'var(--radius)',
+      width: '60px', height: '60px', borderRadius: '20px',
       background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      flexShrink: 0, boxShadow: 'var(--card-shadow-sm)'
+      flexShrink: 0, boxShadow: 'var(--card-shadow-sm)', border: '1px solid color-mix(in srgb, currentColor 12%, transparent)'
     }),
-    actions: { display: 'flex' as const, gap: '8px', flexWrap: 'wrap' as const, marginTop: '14px' as const },
+    actions: { display: 'flex' as const, gap: '9px', flexWrap: 'wrap' as const, marginTop: '18px' as const },
     configPanel: {
-      marginTop: '16px', padding: '18px', background: 'var(--bg-glass)', borderRadius: 'var(--radius)',
-      animation: 'slideUp 0.25s ease'
+      position: 'relative' as const,
+      zIndex: 1,
+      marginTop: '18px', padding: '20px', background: 'var(--bg-glass)', borderRadius: '22px',
+      border: '1px solid var(--divider-color)', animation: 'slideUp 0.25s ease', backdropFilter: 'blur(18px)'
     },
     webhookBox: {
       display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px',
-      background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)',
-      fontFamily: 'monospace', fontSize: '11px', boxShadow: 'var(--card-shadow-inset)',
+      background: 'var(--bg-glass)', borderRadius: '16px', border: '1px solid var(--divider-color)',
+      fontFamily: 'monospace', fontSize: '11px', boxShadow: 'var(--card-shadow-sm)',
       marginTop: '8px', wordBreak: 'break-all' as const
     }
   };
 
   return (
     <div style={s.container}>
-      <div style={s.header}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700 }}>Integrations</h1>
+      <style>{`
+        .integration-card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--card-shadow-hover);
+          border-color: var(--card-border-hover);
+        }
+
+        .integration-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 86% 0%, var(--provider-glow), transparent 42%);
+          opacity: 0.55;
+          pointer-events: none;
+        }
+
+        .integration-spin {
+          animation: spin 0.8s linear infinite;
+        }
+
+        @media (max-width: 980px) {
+          .integrations-hero-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .integrations-hero-stats {
+            min-width: 0 !important;
+          }
+        }
+
+        @media (max-width: 620px) {
+          .integrations-hero-stats {
+            grid-template-columns: 1fr !important;
+          }
+
+          .integration-card-inner {
+            flex-direction: column;
+          }
+        }
+      `}</style>
+
+      <section style={s.hero}>
+        <div className="integrations-hero-grid" style={s.heroGrid}>
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', color: '#c7d2fe', fontSize: '12px', fontWeight: 900, marginBottom: '18px' }}>
+              <Sparkles size={14} /> Integration Hub
+            </div>
+            <h1 style={s.heroTitle}>Connect every customer signal.</h1>
+            <p style={s.heroText}>
+              Bring email, messaging, feeds, webhooks and external business systems into SmartCRM so contacts, deals, conversations and support work stay synchronized.
+            </p>
+          </div>
+          <div className="integrations-hero-stats" style={s.heroStats}>
+            <div style={s.heroStat}>
+              <Activity size={18} color="#a5f3fc" />
+              <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{providers.length}</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Available providers</div>
+            </div>
+            <div style={s.heroStat}>
+              <ShieldCheck size={18} color="#86efac" />
+              <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{connectedCount}</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Connected</div>
+            </div>
+            <div style={s.heroStat}>
+              <Radio size={18} color="#fef08a" />
+              <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{webhookCount}</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Webhook-ready</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ position: 'absolute', right: '-90px', top: '-90px', width: '310px', height: '310px', borderRadius: '999px', background: 'rgba(255,255,255,0.12)' }} />
+        <div style={{ position: 'absolute', right: '22%', bottom: '-130px', width: '260px', height: '260px', borderRadius: '999px', background: 'rgba(34,211,238,0.18)' }} />
+      </section>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+        <div>
+          <h2 style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '-0.04em', margin: 0 }}>Provider marketplace</h2>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '6px' }}>Configure secure sync channels and trigger data actions from connected systems.</p>
+        </div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '999px', background: 'var(--bg-glass)', border: 'var(--card-border)', boxShadow: 'var(--card-shadow-sm)', color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 800 }}>
+          <Workflow size={15} color="var(--accent)" /> {connectedCount} active workflows
+        </div>
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {[1,2,3].map(i => <div key={i} className="clay-skeleton" style={{ height: '120px', borderRadius: 'var(--radius-lg)' }} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '18px' }}>
+          {[1,2,3,4].map(i => <div key={i} className="clay-skeleton" style={{ height: '260px', borderRadius: '28px' }} />)}
         </div>
       ) : (
         <div style={s.grid}>
           {providers.map(p => {
             const IconC = iconMap[p.icon] || Link2;
             const connected = p.connection?.status === 'connected';
+            const accent = getProviderAccent(p);
             return (
-              <div key={p.id} style={s.card}>
-                <div style={s.cardInner}>
-                  <div style={s.iconBox(p.color, p.bg)}>
-                    <IconC size={26} color={p.color} />
+              <div key={p.id} className="integration-card" style={{ ...s.card, '--provider-glow': `${accent.color}24` } as React.CSSProperties}>
+                <div className="integration-card-inner" style={s.cardInner}>
+                  <div style={s.iconBox(accent.color, accent.bg)}>
+                    <IconC size={28} color={accent.color} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: 700 }}>{p.name}</h3>
-                      {statusBadge(p.connection?.status || 'disconnected')}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
+                      <div>
+                        <h3 style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.04em', margin: 0 }}>{p.name}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                          {statusBadge(p.connection?.status || 'disconnected')}
+                          {p.webhookSupported && <span className="clay-badge clay-badge-info">Webhook</span>}
+                        </div>
+                      </div>
                     </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '4px' }}>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '10px' }}>
                       {p.description}
                     </p>
                     {connected && p.connection?.last_sync && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Last sync: {new Date(p.connection.last_sync).toLocaleString()}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 700 }}><RefreshCw size={12} /> Last sync: {new Date(p.connection.last_sync).toLocaleString()}</span>
                     )}
 
                     {/* Sync result display */}
                     {syncResult[p.id] && !syncResult[p.id].prompts && (
-                      <div style={{ marginTop: '8px', padding: '8px 12px', background: '#e0fff5', borderRadius: 'var(--radius-sm)', fontSize: '12px', color: '#006c50' }}>
+                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--success-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--success-text)', border: '1px solid rgba(16,185,129,0.18)', fontWeight: 700 }}>
                         <Check size={12} /> {syncResult[p.id].message}
                         {syncResult[p.id].synced && (
                           <span style={{ marginLeft: '8px', fontSize: '11px', opacity: 0.8 }}>
@@ -223,7 +335,7 @@ export default function Integrations() {
 
                     {/* Action prompts after sync */}
                     {syncResult[p.id]?.prompts?.type === 'action_prompt' && (
-                      <div style={{ marginTop: '12px', padding: '16px 18px', background: 'linear-gradient(135deg, #f0e8ff, #faf5ff)', borderRadius: 'var(--radius)', border: '1px solid rgba(108, 92, 231, 0.15)', boxShadow: 'var(--clay-shadow-sm)' }}>
+                      <div style={{ marginTop: '14px', padding: '18px', background: 'linear-gradient(135deg, var(--accent-bg), var(--bg-glass))', borderRadius: '20px', border: '1px solid rgba(108, 92, 231, 0.15)', boxShadow: 'var(--card-shadow-sm)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <Check size={14} color="var(--accent)" />
                           <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--accent-dark)' }}>{syncResult[p.id].message}</span>
@@ -242,14 +354,14 @@ export default function Integrations() {
                                 key={s.action}
                                 onClick={() => { setSyncResult(prev => { const next = { ...prev }; delete next[p.id]; return next; }); navigate(s.route); }}
                                 style={{
-                                  display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px',
-                                  background: s.bg, border: 'none', borderRadius: 'var(--radius-sm)',
+                                  display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 14px',
+                                  background: s.bg, border: '1px solid var(--divider-color)', borderRadius: '16px',
                                   cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-                                  transition: 'all 0.2s ease', boxShadow: 'var(--clay-shadow-sm)',
+                                  transition: 'all 0.2s ease', boxShadow: 'var(--card-shadow-sm)',
                                   color: 'var(--text-primary)'
                                 }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--clay-shadow-hover)'; }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(0)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--clay-shadow-sm)'; }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--card-shadow-hover)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(0)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--card-shadow-sm)'; }}
                               >
                                 <div style={{
                                   width: '36px', height: '36px', borderRadius: 'var(--radius-sm)',
@@ -282,7 +394,7 @@ export default function Integrations() {
 
                     {/* Simple info prompt for other providers */}
                     {syncResult[p.id]?.prompts?.type === 'info' && (
-                      <div style={{ marginTop: '8px', padding: '8px 12px', background: '#e0f5fe', borderRadius: 'var(--radius-sm)', fontSize: '12px', color: '#004a7a' }}>
+                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--info-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--info-text)', border: '1px solid rgba(14,165,233,0.18)', fontWeight: 700 }}>
                         <Check size={12} /> {syncResult[p.id].prompts.message}
                       </div>
                     )}
@@ -291,7 +403,7 @@ export default function Integrations() {
                       {connected ? (
                         <>
                           <button className="clay-btn clay-btn-sm clay-btn-primary" onClick={() => handleSync(p.id)} disabled={syncing === p.id}>
-                            <RefreshCw size={13} className={syncing === p.id ? 'clay-skeleton' : ''} /> {syncing === p.id ? 'Syncing...' : 'Sync Now'}
+                            <RefreshCw size={13} className={syncing === p.id ? 'integration-spin' : ''} /> {syncing === p.id ? 'Syncing...' : 'Sync Now'}
                           </button>
                           <button className="clay-btn clay-btn-sm" onClick={() => handleTest(p.id)}>
                             <Plug size={13} /> Test
@@ -323,7 +435,7 @@ export default function Integrations() {
                 {/* Configuration panel */}
                 {configuring === p.id && (
                   <div style={s.configPanel}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px' }}>
+                    <h4 style={{ fontSize: '16px', fontWeight: 900, marginBottom: '14px', letterSpacing: '-0.03em' }}>
                       {connected ? 'Update Configuration' : `Connect ${p.name}`}
                     </h4>
                     {p.fields.map(f => (
@@ -355,8 +467,8 @@ export default function Integrations() {
 
                 {/* Webhook display */}
                 {connected && p.connection?.webhook_url && (
-                  <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--divider-color)' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  <div style={{ position: 'relative', zIndex: 1, marginTop: '18px', paddingTop: '18px', borderTop: '1px solid var(--divider-color)' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                       <Link2 size={11} /> Webhook URL
                       {p.webhookDescription && <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: '6px' }}>{p.webhookDescription}</span>}
                     </span>

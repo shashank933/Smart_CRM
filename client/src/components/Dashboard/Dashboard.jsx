@@ -14,7 +14,9 @@ function formatCurrency(n) {
 const cardStyle = {
   background: 'var(--bg-card)',
   border: 'var(--card-border)',
-  borderRadius: '12px',
+  borderRadius: 'var(--radius-xl)',
+  boxShadow: 'var(--card-shadow)',
+  backdropFilter: 'blur(22px)',
 };
 
 export default function Dashboard() {
@@ -34,7 +36,7 @@ export default function Dashboard() {
 
   if (initialLoading) {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
+      <div className="page-surface" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         {[...Array(10)].map((_, i) => (
           <div key={i} className="clay-skeleton" style={{ height: '120px', borderRadius: '12px' }} />
         ))}
@@ -67,9 +69,29 @@ export default function Dashboard() {
   })).reverse();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
-        <div style={{ ...cardStyle, padding: '20px' }}>
+    <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ ...cardStyle, padding: '30px', background: 'linear-gradient(135deg, rgba(79,70,229,0.94), rgba(124,58,237,0.9) 54%, rgba(6,182,212,0.82))', color: '#fff', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', gap: '24px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#c7d2fe', marginBottom: '10px' }}>Analytics overview</div>
+            <h2 style={{ fontSize: 'clamp(32px, 5vw, 56px)', lineHeight: 0.96, letterSpacing: '-0.06em', margin: 0, fontWeight: 900 }}>Pipeline health and revenue signals.</h2>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
+              <div style={{ fontSize: '11px', color: '#c7d2fe', fontWeight: 800 }}>Won Revenue</div>
+              <div style={{ fontSize: '22px', fontWeight: 900 }}>{formatCurrency(stats.totalRevenue)}</div>
+            </div>
+            <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
+              <div style={{ fontSize: '11px', color: '#c7d2fe', fontWeight: 800 }}>Win Rate</div>
+              <div style={{ fontSize: '22px', fontWeight: 900 }}>{stats.winRate}%</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ position: 'absolute', width: '260px', height: '260px', right: '-70px', top: '-80px', borderRadius: '50%', background: 'rgba(255,255,255,0.12)' }} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '16px' }}>
+        <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalContacts}</span>
             <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: '#818cf8' }}><Users size={16} /></div>
@@ -82,7 +104,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ ...cardStyle, padding: '20px' }}>
+        <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalCompanies}</span>
             <div style={{ padding: '8px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', color: '#34d399' }}><Building2 size={16} /></div>
@@ -95,7 +117,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ ...cardStyle, padding: '20px' }}>
+        <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.openDeals}</span>
             <div style={{ padding: '8px', background: 'rgba(245,158,11,0.1)', borderRadius: '8px', color: '#fbbf24' }}><Handshake size={16} /></div>
@@ -108,7 +130,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ ...cardStyle, padding: '20px' }}>
+        <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '22px', fontWeight: 800, color: '#818cf8', lineHeight: 1 }}>{formatCurrency(stats.pipelineValue)}</span>
             <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: '#818cf8' }}><DollarSign size={16} /></div>
@@ -119,7 +141,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ ...cardStyle, padding: '20px' }}>
+        <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.winRate}%</span>
             <div style={{ padding: '8px', background: 'rgba(168,85,247,0.1)', borderRadius: '8px', color: '#c084fc' }}><TrendingUp size={16} /></div>
@@ -131,7 +153,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Revenue Won</p>
@@ -162,9 +184,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(320px, 1fr)', gap: '16px' }}>
         <div style={{ ...cardStyle, padding: '24px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>Revenue Trends</h3>
+          <h3 style={{ fontSize: '16px', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '16px' }}>Revenue Trends</h3>
           {revenueData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={revenueData}>
@@ -185,7 +207,7 @@ export default function Dashboard() {
         </div>
 
         <div style={{ ...cardStyle, padding: '24px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>Deal Pipeline</h3>
+          <h3 style={{ fontSize: '16px', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '16px' }}>Deal Pipeline</h3>
           {dealStageData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -214,7 +236,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '16px' }}>
         <div style={{ ...cardStyle, padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Recent Deals</h3>

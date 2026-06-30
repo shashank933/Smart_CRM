@@ -1,109 +1,139 @@
-import { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/store';
-import { LayoutDashboard, Users, Building2, Handshake, FileText, MessageSquare, Key, Ticket, Home, Calendar, Link2, GitBranch, Palette } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  Handshake,
+  FileText,
+  MessageSquare,
+  Key,
+  Ticket,
+  Home,
+  Calendar,
+  Link2,
+  GitBranch,
+  Brain,
+  Sparkles,
+  Sun,
+  Moon,
+  Orbit,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 
 const navItems = [
-  { path: '/', icon: Home, label: 'Home', desc: 'Overview and quick actions', exact: true },
-  { path: '/dashboard', icon: LayoutDashboard, label: 'Analytics', desc: 'Revenue, deals, and metrics' },
-  { path: '/calendar', icon: Calendar, label: 'Calendar', desc: 'Meetings and scheduled tasks' },
-  { path: '/contacts', icon: Users, label: 'Contacts', desc: 'Manage people and relationships' },
-  { path: '/companies', icon: Building2, label: 'Companies', desc: 'Organizations and accounts' },
-  { path: '/deals', icon: Handshake, label: 'Deals', desc: 'Pipeline and opportunities' },
+  { path: '/', icon: Home, label: 'Home', desc: 'Workspace overview', exact: true },
+  { path: '/dashboard', icon: LayoutDashboard, label: 'Analytics', desc: 'Revenue and metrics' },
+  { path: '/calendar', icon: Calendar, label: 'Calendar', desc: 'Meetings and tasks' },
+  { path: '/contacts', icon: Users, label: 'Contacts', desc: 'People and relationships' },
+  { path: '/companies', icon: Building2, label: 'Companies', desc: 'Organizations' },
+  { path: '/deals', icon: Handshake, label: 'Deals', desc: 'Sales pipeline' },
   { path: '/invoices', icon: FileText, label: 'Invoices', desc: 'Billing and payments' },
-  { path: '/tickets', icon: Ticket, label: 'Tickets', desc: 'Support and issue tracking' },
-  { path: '/conversations', icon: MessageSquare, label: 'Conversations', desc: 'Messages and email threads' },
-  { path: '/integrations', icon: Link2, label: 'Integrations', desc: 'Connect external services' },
-  { path: '/workflows', icon: GitBranch, label: 'Workflows', desc: 'Automate your processes' },
-  { path: '/apps', icon: Key, label: 'API Tokens', desc: 'Manage API access keys' },
+  { path: '/tickets', icon: Ticket, label: 'Tickets', desc: 'Customer support' },
+  { path: '/conversations', icon: MessageSquare, label: 'Conversations', desc: 'Inbox and threads' },
+  { path: '/integrations', icon: Link2, label: 'Integrations', desc: 'Connected tools' },
+  { path: '/workflows', icon: GitBranch, label: 'Workflows', desc: 'Automation builder' },
+  { path: '/ai-assistant', icon: Brain, label: 'AI Assistant', desc: 'Insights and generation' },
+  { path: '/apps', icon: Key, label: 'API Tokens', desc: 'External access' },
 ];
 
-function NavItem({ item, isActive }) {
-  const [hovered, setHovered] = useState(false);
-  const [tooltipStyle, setTooltipStyle] = useState({});
-  const linkRef = useRef(null);
+const themeItems = [
+  { key: 'light', icon: Sun, label: 'Light' },
+  { key: 'dark', icon: Moon, label: 'Dark' },
+  { key: 'midnight', icon: Orbit, label: 'Midnight' },
+];
 
-  useEffect(() => {
-    if (hovered && linkRef.current) {
-      const rect = linkRef.current.getBoundingClientRect();
-      setTooltipStyle({
-        position: 'fixed',
-        left: rect.right + 12,
-        top: rect.top + rect.height / 2,
-        transform: 'translateY(-50%)',
-        zIndex: 1000,
-      });
-    }
-  }, [hovered]);
+function TooltipPortal({ targetRef, show, children }) {
+  if (!show || !targetRef.current) return null;
+  const rect = targetRef.current.getBoundingClientRect();
+  return ReactDOM.createPortal(
+    <span className="app-nav-tooltip" style={{ position: 'fixed', top: rect.top + rect.height / 2, left: rect.right + 12, transform: 'translateY(-50%)' }}>
+      {children}
+    </span>,
+    document.body
+  );
+}
+
+function NavItem({ item, active }) {
+  const Icon = item.icon;
+  const linkRef = React.useRef(null);
+  const [hovered, setHovered] = React.useState(false);
 
   return (
-    <div style={{ position: 'relative' }}>
-      <NavLink
-        ref={linkRef}
-        to={item.path}
-        end={item.exact}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '8px',
-          borderRadius: '6px',
-          textDecoration: 'none',
-          color: isActive ? 'var(--accent)' : 'var(--sidebar-text-secondary)',
-          background: isActive
-            ? 'var(--accent-bg)'
-            : hovered
-              ? 'var(--sidebar-nav-hover-bg)'
-              : 'transparent',
-          transition: 'background 0.15s ease, color 0.15s ease',
-        }}
-      >
-        <item.icon size={18} style={{ flexShrink: 0 }} />
-      </NavLink>
-      {hovered && (
-        <div style={{
-          ...tooltipStyle,
-          background: 'var(--bg-card)',
-          border: 'var(--card-border)',
-          borderRadius: '8px',
-          boxShadow: 'var(--card-shadow-hover)',
-          padding: '10px 14px',
-          pointerEvents: 'none',
-          animation: 'fadeIn 0.12s ease',
-          whiteSpace: 'nowrap',
-        }}>
-          <div style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)' }}>{item.label}</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px' }}>{item.desc}</div>
-        </div>
-      )}
-    </div>
+    <NavLink
+      ref={linkRef}
+      to={item.path}
+      end={item.exact}
+      className={`app-nav-link${active ? ' active' : ''}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span className="app-nav-icon">
+        <Icon size={20} />
+      </span>
+      <span className="app-nav-text">
+        <span className="app-nav-label">{item.label}</span>
+        <span className="app-nav-desc">{item.desc}</span>
+      </span>
+      <TooltipPortal targetRef={linkRef} show={hovered}>
+        <span className="app-nav-tooltip-label">{item.label}</span>
+        <span className="app-nav-tooltip-desc">{item.desc}</span>
+      </TooltipPortal>
+    </NavLink>
+  );
+}
+
+function ToggleBtn({ collapsed, onToggle }) {
+  const btnRef = React.useRef(null);
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <button
+      ref={btnRef}
+      className="app-sidebar-toggle"
+      onClick={onToggle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      <TooltipPortal targetRef={btnRef} show={hovered}>
+        <span className="app-nav-tooltip-label">{collapsed ? 'Expand sidebar' : 'Collapse sidebar'}</span>
+      </TooltipPortal>
+    </button>
+  );
+}
+
+function ThemeButton({ item, active, onClick }) {
+  const Icon = item.icon;
+  const btnRef = React.useRef(null);
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <button
+      ref={btnRef}
+      className={`app-theme-button${active ? ' active' : ''}`}
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <Icon size={16} />
+      <TooltipPortal targetRef={btnRef} show={hovered}>
+        <span className="app-nav-tooltip-label">{item.label} theme</span>
+      </TooltipPortal>
+    </button>
   );
 }
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const theme = useStore(s => s.theme);
   const setTheme = useStore(s => s.setTheme);
-  const [themeOpen, setThemeOpen] = useState(false);
-  const themeRef = useRef(null);
-
-  const themes = [
-    { key: 'light', label: 'Light', color: '#5f6fff', bg: '#fafafa' },
-    { key: 'dark', label: 'Dark', color: '#818cf8', bg: '#1a1a1a' },
-    { key: 'midnight', label: 'Midnight', color: '#6c7bff', bg: '#000212' }
-  ];
-
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (themeRef.current && !themeRef.current.contains(e.target)) {
-        setThemeOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  const collapsed = useStore(s => s.sidebarCollapsed);
+  const toggleSidebar = useStore(s => s.toggleSidebar);
 
   const isActive = (item) => {
     if (item.exact) return location.pathname === '/';
@@ -111,111 +141,46 @@ export default function Sidebar() {
   };
 
   return (
-    <aside style={{
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
-      width: '64px',
-      flexShrink: 0,
-      background: 'var(--sidebar-bg)',
-      borderRight: '1px solid var(--sidebar-divider)',
-      zIndex: 100,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <div style={{
-        padding: '16px 0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '64px',
-      }}>
-        <div style={{
-          width: '28px', height: '28px', borderRadius: '8px',
-          background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontWeight: 900, fontSize: '14px', color: '#fff',
-        }}>S</div>
+    <aside className={`app-sidebar${collapsed ? ' collapsed' : ''}`}>
+      <div className="app-sidebar-brand">
+        <div className="app-sidebar-logo">
+          <Brain size={24} />
+        </div>
+        <div className="app-sidebar-brand-copy">
+          <div className="app-sidebar-brand-title">SmartCRM</div>
+          <div className="app-sidebar-brand-subtitle">Command workspace</div>
+        </div>
       </div>
 
-      <nav style={{
-        flex: 1,
-        padding: '8px 8px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2px',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        alignItems: 'center',
-      }}>
-        {navItems.map(item => (
-          <NavItem
-            key={item.path}
-            item={item}
-            isActive={isActive(item)}
-          />
-        ))}
+      <ToggleBtn collapsed={collapsed} onToggle={toggleSidebar} />
 
-        <div ref={themeRef} style={{ position: 'relative', marginTop: 'auto' }}>
-          <button
-            onClick={() => setThemeOpen(!themeOpen)}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '8px', borderRadius: '6px',
-              border: 'none', background: themeOpen ? 'var(--sidebar-nav-hover-bg)' : 'transparent',
-              color: 'var(--sidebar-text-secondary)', cursor: 'pointer',
-              transition: 'background 0.15s ease, color 0.15s ease',
-              width: '100%',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--sidebar-nav-hover-bg)'; }}
-            onMouseLeave={e => { if (!themeOpen) e.currentTarget.style.background = 'transparent'; }}
-          >
-            <Palette size={18} />
-          </button>
-          {themeOpen && (
-            <div style={{
-              position: 'fixed',
-              left: '80px',
-              bottom: '24px',
-              width: '160px',
-              background: 'var(--bg-card)',
-              borderRadius: '8px',
-              boxShadow: 'var(--card-shadow-hover)',
-              border: 'var(--card-border)',
-              zIndex: 1000,
-              overflow: 'hidden',
-              padding: '4px',
-              animation: 'fadeIn 0.12s ease',
-            }}>
-              {themes.map(t => (
-                <button
-                  key={t.key}
-                  onClick={() => { setTheme(t.key); setThemeOpen(false); }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    width: '100%', padding: '10px 12px',
-                    border: 'none', cursor: 'pointer',
-                    background: theme === t.key ? 'var(--bg-glass)' : 'transparent',
-                    fontFamily: 'inherit', fontSize: '13px',
-                    color: 'var(--text-primary)', textAlign: 'left',
-                    borderRadius: '6px', fontWeight: theme === t.key ? 600 : 400,
-                    transition: 'background 0.15s ease',
-                  }}
-                  onMouseEnter={e => { if (theme !== t.key) e.currentTarget.style.background = 'var(--bg-glass)'; }}
-                  onMouseLeave={e => { if (theme !== t.key) e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <span style={{
-                    width: '18px', height: '18px', borderRadius: '4px',
-                    background: `linear-gradient(135deg, ${t.color}, ${t.bg})`,
-                    flexShrink: 0,
-                    border: theme === t.key ? '2px solid var(--accent)' : '1px solid var(--divider-color)',
-                  }} />
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+      <nav className="app-sidebar-nav">
+        <div className="app-sidebar-section-label">Workspace</div>
+        {navItems.map(item => (
+          <NavItem key={item.path} item={item} active={isActive(item)} />
+        ))}
       </nav>
+
+      <div className="app-sidebar-footer">
+        <div className="app-sidebar-ai">
+          <div className="app-sidebar-ai-title">
+            <Sparkles size={16} color="var(--accent)" />
+            <span>AI co-pilot</span>
+          </div>
+          <div className="app-sidebar-ai-copy">
+            Generate replies, analyze deals, and surface next actions from your CRM data.
+          </div>
+          <button className="clay-btn clay-btn-primary clay-btn-sm" onClick={() => navigate('/ai-assistant')} style={{ width: '100%', justifyContent: 'center' }}>
+            Open Assistant
+          </button>
+        </div>
+
+        <div className="app-theme-row">
+          {themeItems.map(item => (
+            <ThemeButton key={item.key} item={item} active={theme === item.key} onClick={() => setTheme(item.key)} />
+          ))}
+        </div>
+      </div>
     </aside>
   );
 }

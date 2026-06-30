@@ -5,10 +5,10 @@
   "description": "AI-powered CRM with Claymorphism UI",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "cd server && node src/index.js",
+    "dev:server": "cd server && npx tsx src/index.ts",
     "dev:client": "cd client && npx vite --port 5173",
     "build": "cd client && npx vite build",
-    "start": "cd server && node src/index.js",
+    "start": "cd server && npx tsx src/index.ts",
     "setup": "npm install && cd server && npm install && cd ../client && npm install"
   },
   "devDependencies": {

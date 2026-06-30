@@ -5,7 +5,7 @@ export const useStore = create((set, get) => ({
   user: JSON.parse(localStorage.getItem('user') || 'null'),
   isAuthenticated: !!localStorage.getItem('token'),
   theme: localStorage.getItem('crm-theme') || 'midnight',
-  sidebarCollapsed: false,
+  sidebarCollapsed: true,
   stats: null,
   contacts: [],
   companies: [],

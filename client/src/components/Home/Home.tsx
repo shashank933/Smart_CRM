@@ -182,20 +182,20 @@ export default function Home() {
   /* ==================== RENDER ==================== */
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+    <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
       {/* ── Hero Banner ── */}
       <div style={{
-        background: 'linear-gradient(135deg, #312e81 0%, #6b21a8 50%, #1e1b4b 100%)',
-        border: '1px solid rgba(99,102,241,0.2)',
-        borderRadius: '16px', padding: '32px', marginBottom: '24px',
+        background: 'linear-gradient(135deg, rgba(49,46,129,0.94) 0%, rgba(107,33,168,0.9) 50%, rgba(8,145,178,0.82) 100%)',
+        border: '1px solid rgba(255,255,255,0.18)',
+        borderRadius: '32px', padding: '38px',
         position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: '30px', fontWeight: 700, color: '#f5f3ff', margin: '0 0 4px' }}>
+          <h1 style={{ fontSize: 'clamp(34px, 5vw, 58px)', fontWeight: 900, color: '#f5f3ff', margin: '0 0 8px', letterSpacing: '-0.06em', lineHeight: 0.95 }}>
             {getGreeting()}, {firstName}
           </h1>
-          <p style={{ fontSize: '15px', color: 'rgba(224,231,255,0.75)', margin: '0 0 16px' }}>
-            Here's what's happening today.
+          <p style={{ fontSize: '17px', color: 'rgba(224,231,255,0.82)', margin: '0 0 22px', maxWidth: '620px', lineHeight: 1.6 }}>
+            Your revenue, customer conversations, support work, and next actions are synced into one live workspace.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <div style={timeBadge}>
@@ -211,11 +211,16 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div style={{
-          position: 'absolute', right: '-40px', top: '-60px',
-          width: '280px', height: '280px', borderRadius: '50%',
-          background: 'rgba(139,92,246,0.12)', pointerEvents: 'none'
-        }} />
+        <div style={{ position: 'absolute', right: '34px', top: '28px', width: '260px', padding: '18px', borderRadius: '24px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)', transform: 'rotate(4deg)' }}>
+          <div style={{ fontSize: '12px', color: '#c7d2fe', fontWeight: 800, marginBottom: '10px' }}>Pipeline momentum</div>
+          <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.18)', overflow: 'hidden', marginBottom: '12px' }}>
+            <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, #34d399, #22d3ee)', borderRadius: '999px' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontWeight: 900 }}>
+            <span>{formatCurrency(stats?.pipelineValue || 0)}</span>
+            <span>72%</span>
+          </div>
+        </div>
         <div style={{
           position: 'absolute', right: '140px', bottom: '-50px',
           width: '160px', height: '160px', borderRadius: '50%',
@@ -230,14 +235,13 @@ export default function Home() {
 
       {/* ── Stat Cards ── */}
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '16px', marginBottom: '28px'
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '16px'
       }}>
         {statCards.map(s => (
           <div key={s.label} className="clay-stat-card" style={{
-            background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
-            padding: '24px', boxShadow: 'var(--card-shadow)',
-            border: 'var(--card-border)', transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+            borderRadius: 'var(--radius-xl)',
+            padding: '24px',
             cursor: 'default'
           }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -273,13 +277,13 @@ export default function Home() {
       </div>
 
       {/* ── Quick Actions ── */}
-      <div style={{ marginBottom: '28px' }}>
+      <div>
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           marginBottom: '14px'
         }}>
           <h2 style={{
-            fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)',
+              fontSize: '18px', fontWeight: 900, color: 'var(--text-primary)',
             margin: 0, display: 'flex', alignItems: 'center', gap: '8px'
           }}>
             <Zap size={18} /> Quick Actions
@@ -294,15 +298,15 @@ export default function Home() {
           </button>
         </div>
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px'
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px'
         }}>
           {shortcuts.map(sc => (
             <button
               key={sc.label}
               onClick={() => navigate(sc.path)}
               style={{
-                background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
-                padding: '18px 12px', border: 'var(--card-border)',
+                background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)',
+                padding: '20px 14px', border: 'var(--card-border)',
                 boxShadow: 'var(--card-shadow)', cursor: 'pointer',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 gap: '10px', transition: 'all 0.15s ease',
@@ -342,12 +346,12 @@ export default function Home() {
 
       {/* ── Meetings & Tasks ── */}
       <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px'
       }}>
         {/* Today's Meetings */}
         <div style={{
-          background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
-          padding: '20px 24px', boxShadow: 'var(--card-shadow)',
+          background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)',
+          padding: '24px', boxShadow: 'var(--card-shadow)',
           border: 'var(--card-border)'
         }}>
           <h3 style={{
@@ -410,8 +414,8 @@ export default function Home() {
 
         {/* Pending Tasks */}
         <div style={{
-          background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
-          padding: '20px 24px', boxShadow: 'var(--card-shadow)',
+          background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)',
+          padding: '24px', boxShadow: 'var(--card-shadow)',
           border: 'var(--card-border)'
         }}>
           <h3 style={{

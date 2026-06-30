@@ -15,12 +15,15 @@ RUN npm ci
 
 COPY server/ ./
 
-COPY --from=client-builder /app/client/dist ./client/dist
+COPY --from=client-builder /app/client/dist /client/dist
 
 ENV NODE_ENV=production
 ENV PORT=3001
 
 EXPOSE 3001
 
-CMD ["npx", "tsx", "src/index.ts"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
 
