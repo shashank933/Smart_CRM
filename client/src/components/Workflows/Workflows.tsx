@@ -151,7 +151,7 @@ export default function Workflows() {
 
   const s = {
     container: { maxWidth: '900px' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' },
     title: { fontSize: '22px', fontWeight: 700 },
     grid: { display: 'flex', flexDirection: 'column', gap: '12px' },
     card: {

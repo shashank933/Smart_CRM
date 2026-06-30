@@ -51,15 +51,15 @@ export default function ContactDetail() {
         <ArrowLeft size={16} /> Back to Contacts
       </button>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px' }}>
+      <div className="clay-split-view">
         <div>
-          <div className="clay-card" style={{ padding: '28px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+          <div className="clay-card" style={{ padding: 'clamp(18px, 3vw, 28px)', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
               <div className="clay-avatar clay-avatar-lg" style={{ background: 'var(--accent-gradient)', flexShrink: 0 }}>
                 {initials}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
                     <h2 style={{ fontSize: '24px', fontWeight: 700 }}>{contact.first_name} {contact.last_name}</h2>
                     <p style={{ color: 'var(--text-muted)', marginTop: '4px' }}>{contact.title || 'No title'} {contact.department ? `· ${contact.department}` : ''}</p>

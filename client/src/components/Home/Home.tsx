@@ -187,14 +187,14 @@ export default function Home() {
       <div style={{
         background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%)',
         border: '1px solid rgba(255,255,255,0.18)',
-        borderRadius: '32px', padding: '38px',
+        borderRadius: '32px', padding: 'clamp(20px, 4vw, 38px)',
         position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: 'clamp(34px, 5vw, 58px)', fontWeight: 900, color: '#f5f5f5', margin: '0 0 8px', letterSpacing: '-0.06em', lineHeight: 0.95 }}>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 58px)', fontWeight: 900, color: '#f5f5f5', margin: '0 0 8px', letterSpacing: '-0.06em', lineHeight: 0.95 }}>
             {getGreeting()}, {firstName}
           </h1>
-          <p style={{ fontSize: '17px', color: 'rgba(200,200,200,0.82)', margin: '0 0 22px', maxWidth: '620px', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 'clamp(14px, 1.5vw, 17px)', color: 'rgba(200,200,200,0.82)', margin: '0 0 22px', maxWidth: '620px', lineHeight: 1.6 }}>
             Your revenue, customer conversations, support work, and next actions are synced into one live workspace.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
@@ -211,7 +211,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', right: '34px', top: '28px', width: '260px', padding: '18px', borderRadius: '24px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)', transform: 'rotate(4deg)' }}>
+        <div className="clay-hero-decor" style={{ position: 'absolute', right: '34px', top: '28px', width: '260px', padding: '18px', borderRadius: '24px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)', transform: 'rotate(4deg)' }}>
           <div style={{ fontSize: '12px', color: '#cccccc', fontWeight: 800, marginBottom: '10px' }}>Pipeline momentum</div>
           <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.18)', overflow: 'hidden', marginBottom: '12px' }}>
             <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, #6366f1, #818cf8)', borderRadius: '999px' }} />
@@ -221,12 +221,12 @@ export default function Home() {
             <span>72%</span>
           </div>
         </div>
-        <div style={{
+        <div className="clay-hero-decor" style={{
           position: 'absolute', right: '140px', bottom: '-50px',
           width: '160px', height: '160px', borderRadius: '50%',
           background: 'rgba(99,102,241,0.12)', pointerEvents: 'none'
         }} />
-        <div style={{
+        <div className="clay-hero-decor" style={{
           position: 'absolute', right: '250px', top: '-20px',
           width: '80px', height: '80px', borderRadius: '50%',
           background: 'rgba(52,211,153,0.1)', pointerEvents: 'none'
@@ -235,7 +235,7 @@ export default function Home() {
 
       {/* ── Stat Cards ── */}
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
         gap: '16px'
       }}>
         {statCards.map(s => (
@@ -346,7 +346,7 @@ export default function Home() {
 
       {/* ── Meetings & Tasks ── */}
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px'
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px'
       }}>
         {/* Today's Meetings */}
         <div style={{

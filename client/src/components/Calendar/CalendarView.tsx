@@ -118,12 +118,12 @@ export default function CalendarView() {
   };
 
   const s = {
-    container: { display: 'flex' as const, gap: '20px', maxWidth: '1200px' as const, alignItems: 'flex-start' as const },
+    container: { display: 'flex' as const, gap: '20px', maxWidth: '1200px' as const, alignItems: 'flex-start' as const, flexWrap: 'wrap' as const },
     header: { display: 'flex' as const, justifyContent: 'space-between' as const, alignItems: 'center' as const, marginBottom: '16px' as const },
     monthTitle: { fontSize: '20px', fontWeight: 700 },
     navBtn: { background: 'var(--bg-card)', border: 'var(--card-border)', borderRadius: 'var(--radius-sm)', width: '34px', height: '34px', display: 'flex' as const, alignItems: 'center' as const, justifyContent: 'center' as const, cursor: 'pointer', color: 'var(--text-primary)' },
-    calendarWrap: { flex: '1 1 0', minWidth: 0 },
-    sidePanel: { width: '300px', flexShrink: 0, display: 'flex' as const, flexDirection: 'column' as const, gap: '16px' as const },
+    calendarWrap: { flex: '1 1 280px', minWidth: 0 },
+    sidePanel: { width: '300px', flexShrink: 0, display: 'flex' as const, flexDirection: 'column' as const, gap: '16px' as const, flex: '1 1 280px', minWidth: '260px' },
     calendarGrid: {
       display: 'grid' as const, gridTemplateColumns: 'repeat(7, 1fr)',
       gap: '1px', background: 'rgba(0,0,0,0.04)', borderRadius: 'var(--radius-lg)',
@@ -212,7 +212,7 @@ export default function CalendarView() {
   }
 
   return (
-    <div style={s.container}>
+    <div className="clay-calendar-container" style={s.container}>
       <div style={s.calendarWrap}>
         <div style={s.header}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

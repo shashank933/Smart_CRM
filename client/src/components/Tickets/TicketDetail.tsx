@@ -126,11 +126,11 @@ export default function TicketDetail() {
   }
 
   const s = {
-    layout: { display: 'grid' as const, gridTemplateColumns: '1fr 340px', gap: '20px' as const },
+    layout: { display: 'grid' as const, gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '20px' as const },
     main: { display: 'flex' as const, flexDirection: 'column' as const, gap: '16px' as const },
-    card: { background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', padding: '24px', boxShadow: 'var(--clay-shadow)', border: '1px solid rgba(255,255,255,0.6)' },
+    card: { background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', padding: 'clamp(16px, 3vw, 24px)', boxShadow: 'var(--clay-shadow)', border: '1px solid rgba(255,255,255,0.6)' },
     comment: { display: 'flex' as const, gap: '12px' as const, padding: '14px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' },
-    inputRow: { display: 'flex' as const, gap: '8px' as const, marginTop: '12px' as const }
+    inputRow: { display: 'flex' as const, gap: '8px' as const, marginTop: '12px' as const, flexWrap: 'wrap' as const }
   };
 
   return (
@@ -139,14 +139,14 @@ export default function TicketDetail() {
         <ArrowLeft size={16} /> Back to Tickets
       </button>
 
-      <div style={s.layout}>
+      <div className="clay-split-view compact">
         {/* Main column */}
         <div style={s.main}>
           {/* Header card */}
           <div style={s.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
                   <h2 style={{ fontSize: '20px', fontWeight: 700 }}>{ticket.subject}</h2>
                   <span className={`clay-badge ${PRIO_COLORS[ticket.priority]}`}>{ticket.priority}</span>
                   <span className="clay-badge clay-badge-accent">{STATUS_LABELS[ticket.status]}</span>

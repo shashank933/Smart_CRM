@@ -181,7 +181,7 @@ export default function Contacts() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '4px' }}>Contacts</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Manage your contacts and relationships</p>
@@ -226,38 +226,10 @@ export default function Contacts() {
       </div>
 
       {loading ? (
-        <div className="clay-card" style={{ padding: '0', overflow: 'hidden' }}>
-          <table className="clay-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Company</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th style={{ width: '60px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(8)].map((_, i) => (
-                <tr key={i}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="clay-skeleton" style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }} />
-                      <div className="clay-skeleton" style={{ width: '100px', height: '14px' }} />
-                    </div>
-                  </td>
-                  <td><div className="clay-skeleton" style={{ width: '160px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '110px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '100px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '64px', height: '22px', borderRadius: 'var(--radius-full)' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '80px', height: '14px' }} /></td>
-                  <td></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="clay-card" style={{ padding: '24px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="clay-skeleton" style={{ height: '48px', borderRadius: '8px' }} />
+          ))}
         </div>
       ) : contacts.length === 0 ? (
         <div className="clay-empty-state" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--clay-shadow)', border: '1px solid rgba(255,255,255,0.6)' }}>
@@ -276,119 +248,176 @@ export default function Contacts() {
         </div>
       ) : (
         <div className="clay-card" style={{ padding: '0', overflow: 'hidden' }}>
-          <table className="clay-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Company</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th style={{ width: '60px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {contacts.map(contact => (
-                <tr key={contact.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/contacts/${contact.id}`)}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="clay-avatar" style={{ background: getAvatarColor(`${contact.first_name}${contact.last_name}`) }}>
-                        {getInitials(contact.first_name, contact.last_name)}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '14px' }}>
-                          {contact.first_name} {contact.last_name}
+          <div className="clay-table-desktop">
+            <table className="clay-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Company</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th style={{ width: '60px' }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {contacts.map(contact => (
+                  <tr key={contact.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/contacts/${contact.id}`)}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="clay-avatar" style={{ background: getAvatarColor(`${contact.first_name}${contact.last_name}`) }}>
+                          {getInitials(contact.first_name, contact.last_name)}
                         </div>
-                        {contact.title && (
-                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{contact.title}</div>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: '14px' }}>
+                            {contact.first_name} {contact.last_name}
+                          </div>
+                          {contact.title && (
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{contact.title}</div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {contact.email && (
+                        <a
+                          href={`mailto:${contact.email}`}
+                          onClick={e => e.stopPropagation()}
+                          style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}
+                        >
+                          {contact.email}
+                        </a>
+                      )}
+                    </td>
+                    <td style={{ fontSize: '14px' }}>
+                      {contact.phone || contact.mobile || ''}
+                    </td>
+                    <td>
+                      {contact.company_name && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+                          <Building2 size={14} style={{ color: 'var(--text-muted)' }} />
+                          {contact.company_name}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`clay-badge ${(STATUS_MAP[contact.status] || STATUS_MAP.active).className}`}>
+                        {(STATUS_MAP[contact.status] || STATUS_MAP.active).label}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                      {formatDate(contact.created_at)}
+                    </td>
+                    <td>
+                      <div style={{ position: 'relative' }}>
+                        <button
+                          className="clay-btn clay-btn-sm clay-btn-ghost"
+                          onClick={e => { e.stopPropagation(); toggleActions(contact.id); }}
+                          style={{ padding: '4px 6px' }}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                        {actionOpen === contact.id && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              right: '0',
+                              top: '36px',
+                              background: 'var(--bg-card)',
+                              borderRadius: 'var(--radius-sm)',
+                              boxShadow: 'var(--clay-shadow)',
+                              border: '1px solid rgba(255,255,255,0.6)',
+                              zIndex: 50,
+                              minWidth: '140px',
+                              overflow: 'hidden',
+                            }}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            <button
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
+                                border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
+                                color: 'var(--text-primary)', fontFamily: 'inherit',
+                              }}
+                              onClick={() => openEditModal(contact)}
+                            >
+                              <Edit size={14} /> Edit
+                            </button>
+                            <button
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
+                                border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
+                                color: 'var(--danger)', fontFamily: 'inherit',
+                              }}
+                              onClick={() => { setDeleteConfirm(contact.id); setActionOpen(null); }}
+                            >
+                              <Trash2 size={14} /> Delete
+                            </button>
+                          </div>
                         )}
                       </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="clay-table-mobile" style={{ flexDirection: 'column' }}>
+            {contacts.map(contact => (
+              <div key={contact.id} className="clay-mobile-card" onClick={() => navigate(`/contacts/${contact.id}`)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <div className="clay-avatar" style={{ background: getAvatarColor(`${contact.first_name}${contact.last_name}`), width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 950, fontSize: '14px', color: 'white', flexShrink: 0 }}>
+                    {getInitials(contact.first_name, contact.last_name)}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '14px' }}>
+                      {contact.first_name} {contact.last_name}
                     </div>
-                  </td>
-                  <td>
-                    {contact.email && (
-                      <a
-                        href={`mailto:${contact.email}`}
-                        onClick={e => e.stopPropagation()}
-                        style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}
-                      >
-                        {contact.email}
-                      </a>
+                    {contact.title && (
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{contact.title}</div>
                     )}
-                  </td>
-                  <td style={{ fontSize: '14px' }}>
-                    {contact.phone || contact.mobile || ''}
-                  </td>
-                  <td>
-                    {contact.company_name && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
-                        <Building2 size={14} style={{ color: 'var(--text-muted)' }} />
-                        {contact.company_name}
-                      </div>
-                    )}
-                  </td>
-                  <td>
+                  </div>
+                </div>
+                <div className="clay-mobile-card-row">
+                  <span className="label">Email</span>
+                  <span className="value">{contact.email || '—'}</span>
+                </div>
+                {contact.phone && (
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Phone</span>
+                    <span className="value">{contact.phone}</span>
+                  </div>
+                )}
+                {contact.company_name && (
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Company</span>
+                    <span className="value">{contact.company_name}</span>
+                  </div>
+                )}
+                <div className="clay-mobile-card-row">
+                  <span className="label">Status</span>
+                  <span className="value">
                     <span className={`clay-badge ${(STATUS_MAP[contact.status] || STATUS_MAP.active).className}`}>
                       {(STATUS_MAP[contact.status] || STATUS_MAP.active).label}
                     </span>
-                  </td>
-                  <td style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                    {formatDate(contact.created_at)}
-                  </td>
-                  <td>
-                    <div style={{ position: 'relative' }}>
-                      <button
-                        className="clay-btn clay-btn-sm clay-btn-ghost"
-                        onClick={e => { e.stopPropagation(); toggleActions(contact.id); }}
-                        style={{ padding: '4px 6px' }}
-                      >
-                        <MoreVertical size={16} />
-                      </button>
-                      {actionOpen === contact.id && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            right: '0',
-                            top: '36px',
-                            background: 'var(--bg-card)',
-                            borderRadius: 'var(--radius-sm)',
-                            boxShadow: 'var(--clay-shadow)',
-                            border: '1px solid rgba(255,255,255,0.6)',
-                            zIndex: 50,
-                            minWidth: '140px',
-                            overflow: 'hidden',
-                          }}
-                          onClick={e => e.stopPropagation()}
-                        >
-                          <button
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
-                              border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
-                              color: 'var(--text-primary)', fontFamily: 'inherit',
-                            }}
-                            onClick={() => openEditModal(contact)}
-                          >
-                            <Edit size={14} /> Edit
-                          </button>
-                          <button
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
-                              border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
-                              color: 'var(--danger)', fontFamily: 'inherit',
-                            }}
-                            onClick={() => { setDeleteConfirm(contact.id); setActionOpen(null); }}
-                          >
-                            <Trash2 size={14} /> Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                </div>
+                <div className="clay-mobile-card-row">
+                  <span className="label">Created</span>
+                  <span className="value">{formatDate(contact.created_at)}</span>
+                </div>
+                <div className="clay-mobile-card-actions">
+                  <button className="clay-btn clay-btn-sm" onClick={(e) => { e.stopPropagation(); openEditModal(contact); }}>
+                    <Edit size={14} /> Edit
+                  </button>
+                  <button className="clay-btn clay-btn-sm" style={{ color: 'var(--danger)' }} onClick={(e) => { e.stopPropagation(); setDeleteConfirm(contact.id); }}>
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -432,7 +461,7 @@ export default function Contacts() {
                       {formError}
                   </div>
                 )}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="clay-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div className="clay-form-group">
                     <label className="clay-form-label">First Name *</label>
                     <input className="clay-input" name="first_name" value={form.first_name} onChange={handleFormChange} required />

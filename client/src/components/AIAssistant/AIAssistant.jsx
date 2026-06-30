@@ -274,7 +274,7 @@ export default function AIAssistant() {
 
       {/* Tab 1: Chat */}
       {activeTab === 'chat' && (
-        <div style={{ display: 'flex', gap: '20px', height: 'calc(100vh - 260px)', minHeight: '500px' }}>
+        <div className="clay-ai-chat-layout" style={{ display: 'flex', gap: '20px', height: 'calc(100vh - 260px)', minHeight: '500px', flexWrap: 'wrap' }}>
           <div className="clay-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}>
             <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <MessageSquare size={18} style={{ color: 'var(--accent)' }} />
@@ -383,7 +383,7 @@ export default function AIAssistant() {
             </form>
           </div>
 
-          <div className="clay-card" style={{ width: '250px', padding: '20px', flexShrink: 0 }}>
+          <div className="clay-card clay-ai-context-panel" style={{ width: '250px', padding: '20px', flexShrink: 0, flex: '1 1 220px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Zap size={16} style={{ color: 'var(--accent)' }} />
               Add Context

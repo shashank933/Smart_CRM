@@ -51,7 +51,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{message}</p>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexWrap: 'wrap' }}>
           {cancelLabel && (
             <button
               onClick={onCancel}

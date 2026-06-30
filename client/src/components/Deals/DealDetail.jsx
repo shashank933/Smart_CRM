@@ -73,12 +73,12 @@ export default function DealDetail() {
       <div>
         <div className="clay-skeleton" style={{ width: '130px', height: '36px', borderRadius: 'var(--radius-sm)', marginBottom: '20px' }} />
         <div className="clay-skeleton" style={{ height: '180px', borderRadius: 'var(--radius-lg)', marginBottom: '20px' }} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           <div className="clay-skeleton" style={{ height: '110px', borderRadius: 'var(--radius-lg)' }} />
           <div className="clay-skeleton" style={{ height: '110px', borderRadius: 'var(--radius-lg)' }} />
           <div className="clay-skeleton" style={{ height: '110px', borderRadius: 'var(--radius-lg)' }} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px' }}>
+        <div className="clay-split-view">
           <div className="clay-skeleton" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />
           <div className="clay-skeleton" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />
         </div>
@@ -118,7 +118,7 @@ export default function DealDetail() {
         <ArrowLeft size={16} /> Back to Deals
       </button>
 
-      <div className="clay-card" style={{ padding: '28px', marginBottom: '24px' }}>
+      <div className="clay-card" style={{ padding: 'clamp(18px, 3vw, 28px)', marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '8px' }}>
@@ -178,7 +178,7 @@ export default function DealDetail() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', marginBottom: '24px' }}>
+      <div className="clay-split-view" style={{ marginBottom: '24px' }}>
         <div>
           <div className="clay-card" style={{ padding: '24px', marginBottom: '20px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Details</h3>

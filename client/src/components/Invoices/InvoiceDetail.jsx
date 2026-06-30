@@ -83,7 +83,7 @@ export default function InvoiceDetail() {
               <div className="clay-skeleton" style={{ width: '160px', height: '14px' }} />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '60px', marginBottom: '32px' }}>
+          <div style={{ display: 'flex', gap: '60px', marginBottom: '32px', flexWrap: 'wrap' }}>
             <div>
               <div className="clay-skeleton" style={{ width: '80px', height: '12px', marginBottom: '8px' }} />
               <div className="clay-skeleton" style={{ width: '140px', height: '14px', marginBottom: '4px' }} />
@@ -142,7 +142,7 @@ export default function InvoiceDetail() {
 
   return (
     <div className="invoice-detail-print">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }} className="no-print">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }} className="no-print">
         <button className="clay-btn clay-btn-ghost" onClick={() => navigate('/invoices')}>
           <ArrowLeft size={18} /> Back to Invoices
         </button>
@@ -156,7 +156,7 @@ export default function InvoiceDetail() {
         </div>
       </div>
 
-      <div className="clay-card" style={{ padding: '44px 48px', maxWidth: '860px', margin: '0 auto' }}>
+      <div className="clay-card clay-responsive-padding" style={{ maxWidth: '860px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', marginBottom: '36px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
@@ -249,7 +249,7 @@ export default function InvoiceDetail() {
         <div className="clay-divider" />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-          <div style={{ width: '260px' }}>
+          <div style={{ maxWidth: '280px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
               <span>Subtotal</span>
               <span style={{ fontWeight: 500 }}>{formatCurrency(subtotal)}</span>

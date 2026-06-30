@@ -122,7 +122,7 @@ export default function Tickets() {
 
   return (
     <div style={s.container}>
-      <div style={s.header}>
+      <div className="page-header">
         <h1 style={{ fontSize: '22px', fontWeight: 700 }}>Tickets</h1>
         <button className="clay-btn clay-btn-primary" onClick={() => { setShowCreate(true); loadContacts(); }}>
           <Plus size={16} /> New Ticket
@@ -171,60 +171,104 @@ export default function Tickets() {
             <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Create your first support ticket.</p>
           </div>
         ) : (
-          <table style={s.table}>
-            <thead>
-              <tr>
-                <th style={s.th}>Ticket</th>
-                <th style={s.th}>Contact</th>
-                <th style={s.th}>Priority</th>
-                <th style={s.th}>Status</th>
-                <th style={s.th}>Category</th>
-                <th style={s.th}>Updated</th>
-                <th style={s.th}></th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <div className="clay-table-desktop">
+              <table style={s.table}>
+                <thead>
+                  <tr>
+                    <th style={s.th}>Ticket</th>
+                    <th style={s.th}>Contact</th>
+                    <th style={s.th}>Priority</th>
+                    <th style={s.th}>Status</th>
+                    <th style={s.th}>Category</th>
+                    <th style={s.th}>Updated</th>
+                    <th style={s.th}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tickets.map(t => (
+                    <tr key={t.id} onClick={() => navigate(`/tickets/${t.id}`)} style={{ cursor: 'pointer' }}>
+                      <td style={s.td}>
+                        <div style={{ fontWeight: 600, fontSize: '13px' }}>{t.subject}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{t.ticket_number}</div>
+                      </td>
+                      <td style={s.td}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <User size={12} />
+                          <span>{t.contact_name || '—'}</span>
+                        </div>
+                        {t.company_name && <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{t.company_name}</div>}
+                      </td>
+                      <td style={s.td}>
+                        <span className={`clay-badge ${PRIORITY_COLORS[t.priority] || 'clay-badge-info'}`}>{t.priority}</span>
+                      </td>
+                      <td style={s.td}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 500 }}>
+                          {STATUS_ICONS[t.status]}{t.status.replace('_', ' ')}
+                        </span>
+                        {t.comment_count ? (
+                          <span style={{ marginLeft: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                            <MessageSquare size={10} /> {t.comment_count}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td style={s.td}>
+                        {t.category ? <span className="clay-tag">{t.category}</span> : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+                      </td>
+                      <td style={{ ...s.td, fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {new Date(t.updated_at).toLocaleDateString()}
+                      </td>
+                      <td style={s.td}>
+                        <button className="clay-btn clay-btn-sm clay-btn-ghost" onClick={(e) => handleDelete(t.id, e)} title="Delete">
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="clay-table-mobile" style={{ flexDirection: 'column' }}>
               {tickets.map(t => (
-                <tr key={t.id} onClick={() => navigate(`/tickets/${t.id}`)} style={{ cursor: 'pointer' }}>
-                  <td style={s.td}>
-                    <div style={{ fontWeight: 600, fontSize: '13px' }}>{t.subject}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{t.ticket_number}</div>
-                  </td>
-                  <td style={s.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <User size={12} />
-                      <span>{t.contact_name || '—'}</span>
-                    </div>
-                    {t.company_name && <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{t.company_name}</div>}
-                  </td>
-                  <td style={s.td}>
-                    <span className={`clay-badge ${PRIORITY_COLORS[t.priority] || 'clay-badge-info'}`}>{t.priority}</span>
-                  </td>
-                  <td style={s.td}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 500 }}>
+                <div key={t.id} className="clay-mobile-card" onClick={() => navigate(`/tickets/${t.id}`)}>
+                  <div style={{ fontWeight: 700, fontSize: '14px', marginBottom: '2px' }}>{t.subject}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace', marginBottom: '6px' }}>{t.ticket_number}</div>
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Status</span>
+                    <span className="value" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                       {STATUS_ICONS[t.status]}{t.status.replace('_', ' ')}
+                      {t.comment_count ? <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '4px' }}><MessageSquare size={10} /> {t.comment_count}</span> : null}
                     </span>
-                    {t.comment_count ? (
-                      <span style={{ marginLeft: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                        <MessageSquare size={10} /> {t.comment_count}
-                      </span>
-                    ) : null}
-                  </td>
-                  <td style={s.td}>
-                    {t.category ? <span className="clay-tag">{t.category}</span> : <span style={{ color: 'var(--text-muted)' }}>—</span>}
-                  </td>
-                  <td style={{ ...s.td, fontSize: '11px', color: 'var(--text-muted)' }}>
-                    {new Date(t.updated_at).toLocaleDateString()}
-                  </td>
-                  <td style={s.td}>
-                    <button className="clay-btn clay-btn-sm clay-btn-ghost" onClick={(e) => handleDelete(t.id, e)} title="Delete">
-                      <Trash2 size={14} />
+                  </div>
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Priority</span>
+                    <span className="value"><span className={`clay-badge ${PRIORITY_COLORS[t.priority] || 'clay-badge-info'}`}>{t.priority}</span></span>
+                  </div>
+                  {t.contact_name && (
+                    <div className="clay-mobile-card-row">
+                      <span className="label">Contact</span>
+                      <span className="value">{t.contact_name}</span>
+                    </div>
+                  )}
+                  {t.category && (
+                    <div className="clay-mobile-card-row">
+                      <span className="label">Category</span>
+                      <span className="value"><span className="clay-tag">{t.category}</span></span>
+                    </div>
+                  )}
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Updated</span>
+                    <span className="value">{new Date(t.updated_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="clay-mobile-card-actions">
+                    <button className="clay-btn clay-btn-sm clay-btn-ghost" onClick={(e) => handleDelete(t.id, e)} style={{ color: 'var(--danger)' }}>
+                      <Trash2 size={14} /> Delete
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
 

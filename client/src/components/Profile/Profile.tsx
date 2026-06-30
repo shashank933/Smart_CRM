@@ -203,7 +203,7 @@ export default function Profile() {
             <p style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px', color: 'var(--danger)' }}>
               Type DELETE to confirm:
             </p>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <input className="clay-input" value={deleteConfirmText} onChange={e => setDeleteConfirmText(e.target.value)} placeholder="Type DELETE" style={{ flex: 1 }} autoFocus />
               <button className="clay-btn clay-btn-danger" onClick={handleDelete} disabled={deleteConfirmText !== 'DELETE' || deleteLoading}>
                 {deleteLoading ? 'Deleting...' : 'Confirm'}

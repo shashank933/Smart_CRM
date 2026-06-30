@@ -155,7 +155,7 @@ export default function Apps() {
       background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', padding: '20px 24px',
       boxShadow: 'var(--clay-shadow)', border: '1px solid rgba(255,255,255,0.6)',
       display: 'flex' as const, justifyContent: 'space-between' as const, alignItems: 'center' as const,
-      transition: 'all 0.3s ease' as const
+      transition: 'all 0.3s ease' as const, flexWrap: 'wrap' as const, gap: '12px' as const
     },
     tokenInfo: { flex: 1 as const },
     tokenName: { fontSize: '15px' as const, fontWeight: 600 as const, display: 'flex' as const, alignItems: 'center' as const, gap: '8px' as const },
@@ -163,7 +163,7 @@ export default function Apps() {
     actions: { display: 'flex' as const, gap: '8px' as const },
     permsGrid: {
       display: 'grid' as const, gridTemplateColumns: '180px repeat(3, 80px)',
-      gap: '4px 0', marginTop: '16px', fontSize: '13px' as const
+      gap: '4px 0', marginTop: '16px', fontSize: '13px' as const, overflowX: 'auto' as const
     },
     permHeader: { fontWeight: 600 as const, color: 'var(--text-muted)' as const, fontSize: '11px' as const, textTransform: 'uppercase' as const, paddingBottom: '8px' as const },
     permRow: { display: 'contents' as const },
@@ -215,7 +215,7 @@ export default function Apps() {
               <div style={styles.tokenPreview}>
                 {tok.token_preview || '••••••••••••••••••••'}
               </div>
-              <div style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
                 {tok.last_used && <span><Clock size={10} /> Last used: {new Date(tok.last_used).toLocaleDateString()}</span>}
                 {tok.expires_at && <span>Expires: {new Date(tok.expires_at).toLocaleDateString()}</span>}
                 <span>Created: {new Date(tok.created_at).toLocaleDateString()}</span>

@@ -36,7 +36,7 @@ export default function CompanyDetail() {
       <div>
         <div className="clay-skeleton" style={{ width: '140px', height: '36px', borderRadius: 'var(--radius-sm)', marginBottom: '20px' }} />
         <div className="clay-skeleton" style={{ height: '200px', borderRadius: 'var(--radius-lg)', marginBottom: '20px' }} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           <div className="clay-skeleton" style={{ height: '100px', borderRadius: 'var(--radius-lg)' }} />
           <div className="clay-skeleton" style={{ height: '100px', borderRadius: 'var(--radius-lg)' }} />
           <div className="clay-skeleton" style={{ height: '100px', borderRadius: 'var(--radius-lg)' }} />

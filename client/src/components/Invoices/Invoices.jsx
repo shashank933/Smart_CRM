@@ -277,7 +277,7 @@ export default function Invoices() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '4px' }}>Invoices</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Manage your invoices and track payments</p>
@@ -368,40 +368,10 @@ export default function Invoices() {
       </div>
 
       {loading ? (
-        <div className="clay-card" style={{ padding: '0', overflow: 'hidden' }}>
-          <table className="clay-table">
-            <thead>
-              <tr>
-                <th>Invoice #</th>
-                <th>Contact</th>
-                <th>Company</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Issue Date</th>
-                <th>Due Date</th>
-                <th style={{ width: '60px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(8)].map((_, i) => (
-                <tr key={i}>
-                  <td><div className="clay-skeleton" style={{ width: '90px', height: '14px' }} /></td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div className="clay-skeleton" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
-                      <div className="clay-skeleton" style={{ width: '100px', height: '14px' }} />
-                    </div>
-                  </td>
-                  <td><div className="clay-skeleton" style={{ width: '100px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '70px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '64px', height: '22px', borderRadius: 'var(--radius-full)' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '80px', height: '14px' }} /></td>
-                  <td><div className="clay-skeleton" style={{ width: '80px', height: '14px' }} /></td>
-                  <td></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="clay-card" style={{ padding: '24px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="clay-skeleton" style={{ height: '48px', borderRadius: '8px' }} />
+          ))}
         </div>
       ) : invoices.length === 0 ? (
         <div className="clay-empty-state" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--clay-shadow)', border: '1px solid rgba(255,255,255,0.6)' }}>
@@ -420,122 +390,171 @@ export default function Invoices() {
         </div>
       ) : (
         <div className="clay-card" style={{ padding: '0', overflow: 'hidden' }}>
-          <table className="clay-table">
-            <thead>
-              <tr>
-                <th>Invoice #</th>
-                <th>Contact</th>
-                <th>Company</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Issue Date</th>
-                <th>Due Date</th>
-                <th style={{ width: '60px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoices.map(invoice => (
-                <tr key={invoice.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/invoices/${invoice.id}`)}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <FileText size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-                      <span style={{ fontWeight: 600, fontSize: '14px' }}>
-                        {invoice.invoice_number || `#${invoice.id}`}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    {invoice.contact_name && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
-                        <User size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                        {invoice.contact_name}
+          <div className="clay-table-desktop">
+            <table className="clay-table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Contact</th>
+                  <th>Company</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th style={{ width: '60px' }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map(invoice => (
+                  <tr key={invoice.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/invoices/${invoice.id}`)}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FileText size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                        <span style={{ fontWeight: 600, fontSize: '14px' }}>
+                          {invoice.invoice_number || `#${invoice.id}`}
+                        </span>
                       </div>
-                    )}
-                  </td>
-                  <td>
-                    {invoice.company_name && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
-                        <Building2 size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                        {invoice.company_name}
-                      </div>
-                    )}
-                  </td>
-                  <td style={{ fontWeight: 600, fontSize: '14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <DollarSign size={14} style={{ color: 'var(--accent)' }} />
-                      {formatCurrency(invoice.total)}
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`clay-badge ${(STATUS_MAP[invoice.status] || STATUS_MAP.draft).className}`}>
-                      {(STATUS_MAP[invoice.status] || STATUS_MAP.draft).label}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
-                      {formatDate(invoice.issue_date)}
-                    </div>
-                  </td>
-                  <td style={{ fontSize: '14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
-                      {formatDate(invoice.due_date)}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ position: 'relative' }}>
-                      <button
-                        className="clay-btn clay-btn-sm clay-btn-ghost"
-                        onClick={e => { e.stopPropagation(); toggleActions(invoice.id); }}
-                        style={{ padding: '4px 6px' }}
-                      >
-                        <MoreVertical size={16} />
-                      </button>
-                      {actionOpen === invoice.id && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            right: '0',
-                            top: '36px',
-                            background: 'var(--bg-card)',
-                            borderRadius: 'var(--radius-sm)',
-                            boxShadow: 'var(--clay-shadow)',
-                            border: '1px solid rgba(255,255,255,0.6)',
-                            zIndex: 50,
-                            minWidth: '140px',
-                            overflow: 'hidden',
-                          }}
-                          onClick={e => e.stopPropagation()}
-                        >
-                          <button
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
-                              border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
-                              color: 'var(--text-primary)', fontFamily: 'inherit',
-                            }}
-                            onClick={() => openEditModal(invoice)}
-                          >
-                            <Edit size={14} /> Edit
-                          </button>
-                          <button
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
-                              border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
-                              color: 'var(--danger)', fontFamily: 'inherit',
-                            }}
-                            onClick={() => { setDeleteConfirm(invoice.id); setActionOpen(null); }}
-                          >
-                            <Trash2 size={14} /> Delete
-                          </button>
+                    </td>
+                    <td>
+                      {invoice.contact_name && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+                          <User size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                          {invoice.contact_name}
                         </div>
                       )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td>
+                      {invoice.company_name && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+                          <Building2 size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                          {invoice.company_name}
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ fontWeight: 600, fontSize: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <DollarSign size={14} style={{ color: 'var(--accent)' }} />
+                        {formatCurrency(invoice.total)}
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`clay-badge ${(STATUS_MAP[invoice.status] || STATUS_MAP.draft).className}`}>
+                        {(STATUS_MAP[invoice.status] || STATUS_MAP.draft).label}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
+                        {formatDate(invoice.issue_date)}
+                      </div>
+                    </td>
+                    <td style={{ fontSize: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
+                        {formatDate(invoice.due_date)}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ position: 'relative' }}>
+                        <button
+                          className="clay-btn clay-btn-sm clay-btn-ghost"
+                          onClick={e => { e.stopPropagation(); toggleActions(invoice.id); }}
+                          style={{ padding: '4px 6px' }}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                        {actionOpen === invoice.id && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              right: '0',
+                              top: '36px',
+                              background: 'var(--bg-card)',
+                              borderRadius: 'var(--radius-sm)',
+                              boxShadow: 'var(--clay-shadow)',
+                              border: '1px solid rgba(255,255,255,0.6)',
+                              zIndex: 50,
+                              minWidth: '140px',
+                              overflow: 'hidden',
+                            }}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            <button
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
+                                border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
+                                color: 'var(--text-primary)', fontFamily: 'inherit',
+                              }}
+                              onClick={() => openEditModal(invoice)}
+                            >
+                              <Edit size={14} /> Edit
+                            </button>
+                            <button
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 14px',
+                                border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '13px',
+                                color: 'var(--danger)', fontFamily: 'inherit',
+                              }}
+                              onClick={() => { setDeleteConfirm(invoice.id); setActionOpen(null); }}
+                            >
+                              <Trash2 size={14} /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="clay-table-mobile" style={{ flexDirection: 'column' }}>
+            {invoices.map(invoice => (
+              <div key={invoice.id} className="clay-mobile-card" onClick={() => navigate(`/invoices/${invoice.id}`)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <FileText size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                  <span style={{ fontWeight: 700, fontSize: '14px' }}>
+                    {invoice.invoice_number || `#${invoice.id}`}
+                  </span>
+                  <span className={`clay-badge ${(STATUS_MAP[invoice.status] || STATUS_MAP.draft).className}`} style={{ marginLeft: 'auto' }}>
+                    {(STATUS_MAP[invoice.status] || STATUS_MAP.draft).label}
+                  </span>
+                </div>
+                <div className="clay-mobile-card-row">
+                  <span className="label">Amount</span>
+                  <span className="value" style={{ fontWeight: 600, color: 'var(--accent)' }}>{formatCurrency(invoice.total)}</span>
+                </div>
+                {invoice.contact_name && (
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Contact</span>
+                    <span className="value">{invoice.contact_name}</span>
+                  </div>
+                )}
+                {invoice.company_name && (
+                  <div className="clay-mobile-card-row">
+                    <span className="label">Company</span>
+                    <span className="value">{invoice.company_name}</span>
+                  </div>
+                )}
+                <div className="clay-mobile-card-row">
+                  <span className="label">Issued</span>
+                  <span className="value">{formatDate(invoice.issue_date)}</span>
+                </div>
+                <div className="clay-mobile-card-row">
+                  <span className="label">Due</span>
+                  <span className="value">{formatDate(invoice.due_date)}</span>
+                </div>
+                <div className="clay-mobile-card-actions">
+                  <button className="clay-btn clay-btn-sm" onClick={(e) => { e.stopPropagation(); openEditModal(invoice); }}>
+                    <Edit size={14} /> Edit
+                  </button>
+                  <button className="clay-btn clay-btn-sm" style={{ color: 'var(--danger)' }} onClick={(e) => { e.stopPropagation(); setDeleteConfirm(invoice.id); }}>
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -579,7 +598,7 @@ export default function Invoices() {
                       {formError}
                   </div>
                 )}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                <div className="clay-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
                   <div className="clay-form-group">
                     <label className="clay-form-label">Contact</label>
                     <select className="clay-input" name="contact_id" value={form.contact_id} onChange={handleFormChange} style={{ appearance: 'none', cursor: 'pointer' }}>
@@ -610,7 +629,7 @@ export default function Invoices() {
 
                 <div style={{ marginBottom: '10px' }}>
                   <label className="clay-form-label" style={{ marginBottom: '8px' }}>Invoice Items</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 40px', gap: '8px', marginBottom: '6px' }}>
+                  <div className="clay-invoice-items-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 40px', gap: '8px', marginBottom: '6px' }}>
                     <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Description</span>
                     <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Qty</span>
                     <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Unit Price</span>
@@ -618,7 +637,7 @@ export default function Invoices() {
                     <span></span>
                   </div>
                   {(form.items || []).map((item, idx) => (
-                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 40px', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                    <div key={idx} className="clay-invoice-items-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 40px', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
                       <input
                         className="clay-input"
                         placeholder="Item description"
@@ -673,7 +692,7 @@ export default function Invoices() {
 
                 <div className="clay-divider" />
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px' }}>
+                <div className="clay-invoice-summary-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px' }}>
                   <div className="clay-form-group">
                     <label className="clay-form-label">Subtotal</label>
                     <input

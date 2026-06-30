@@ -70,7 +70,7 @@ export default function Dashboard() {
 
   return (
     <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ ...cardStyle, padding: '30px', background: 'var(--accent-gradient)', color: '#fff', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ ...cardStyle, padding: 'clamp(20px, 3vw, 30px)', background: 'var(--accent-gradient)', color: '#fff', overflow: 'hidden', position: 'relative' }}>
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', gap: '24px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#cccccc', marginBottom: '10px' }}>Analytics overview</div>
@@ -87,7 +87,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', width: '260px', height: '260px', right: '-70px', top: '-80px', borderRadius: '50%', background: 'rgba(255,255,255,0.12)' }} />
+        <div className="clay-hero-decor" style={{ position: 'absolute', width: '260px', height: '260px', right: '-70px', top: '-80px', borderRadius: '50%', background: 'rgba(255,255,255,0.12)' }} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '16px' }}>
@@ -184,7 +184,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(320px, 1fr)', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
         <div style={{ ...cardStyle, padding: '24px' }}>
           <h3 style={{ fontSize: '16px', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '16px' }}>Revenue Trends</h3>
           {revenueData.length > 0 ? (
@@ -211,7 +211,7 @@ export default function Dashboard() {
           {dealStageData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
-                <Pie data={dealStageData} cx="50%" cy="45%" innerRadius={60} outerRadius={95} paddingAngle={3} dataKey="value">
+                <Pie data={dealStageData} cx="50%" cy="45%" innerRadius="40%" outerRadius="70%" paddingAngle={3} dataKey="value">
                   {dealStageData.map((entry, i) => (
                     <Cell key={i} fill={STAGE_COLORS[entry.stage] || '#808080'} stroke="#111111" strokeWidth={3} />
                   ))}
@@ -236,7 +236,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
         <div style={{ ...cardStyle, padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Recent Deals</h3>

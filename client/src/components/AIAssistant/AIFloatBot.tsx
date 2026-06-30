@@ -48,6 +48,7 @@ export default function AIFloatBot() {
     return (
       <button
         onClick={() => setOpen(true)}
+        className="clay-float-bot-btn"
         style={{
           position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
           width: '56px', height: '56px', borderRadius: '50%',
@@ -73,7 +74,7 @@ export default function AIFloatBot() {
 
   if (minimized) {
     return (
-      <div style={{
+      <div className="clay-float-bot-chip" style={{
         position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
         background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
         boxShadow: 'var(--card-shadow-hover)', border: 'var(--card-border)',
@@ -91,9 +92,9 @@ export default function AIFloatBot() {
   }
 
   return (
-    <div style={{
+    <div className="clay-float-bot-panel" style={{
       position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
-      width: '380px', height: '520px',
+      width: 'min(380px, calc(100vw - 24px))', height: 'min(520px, calc(100vh - 100px))',
       background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
       boxShadow: 'var(--card-shadow-hover)', border: 'var(--card-border)',
       display: 'flex', flexDirection: 'column', overflow: 'hidden',

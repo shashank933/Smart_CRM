@@ -342,15 +342,13 @@ export default function Conversations() {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '16px', height: 'calc(100vh - 200px)', minHeight: '560px' }}>
+      <div className="clay-conversations-wrap" style={{ display: 'flex', gap: '16px', height: 'calc(100vh - 200px)', minHeight: '480px' }}>
         <div
           style={{
-            width: mobileView === 'thread' ? '100%' : '380px',
             flexShrink: 0,
-            display: mobileView === 'thread' ? 'none' : 'flex',
             flexDirection: 'column',
           }}
-          className="clay-card"
+          className={`clay-card clay-conversations-list ${mobileView === 'thread' ? 'mobile-hidden' : ''}`}
         >
           <div style={{ padding: '16px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -499,11 +497,10 @@ export default function Conversations() {
         <div
           style={{
             flex: 1,
-            display: mobileView === 'list' ? 'none' : 'flex',
             flexDirection: 'column',
             minWidth: 0,
           }}
-          className="clay-card"
+          className={`clay-card clay-conversations-thread ${mobileView === 'list' ? 'mobile-hidden' : ''}`}
         >
           {!selectedConversation ? (
             <div className="clay-empty-state" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -532,11 +529,11 @@ export default function Conversations() {
                 alignItems: 'center',
                 gap: '14px',
                 flexShrink: 0,
+                flexWrap: 'wrap',
               }}>
                 <button
-                  className="clay-btn clay-btn-sm clay-btn-ghost"
+                  className="clay-btn clay-btn-sm clay-btn-ghost clay-conversations-back"
                   onClick={goBackToList}
-                  style={{ display: 'none' }}
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -581,7 +578,7 @@ export default function Conversations() {
                     </div>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '8px', flexShrink: 0, flexWrap: 'wrap' }}>
                   <button
                     className="clay-btn clay-btn-sm"
                     onClick={handleSummarize}
