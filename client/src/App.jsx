@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useStore } from './store/store';
 import Layout from './components/Layout/Layout';
@@ -31,24 +31,10 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   const isAuthenticated = useStore(s => s.isAuthenticated);
-  const ensureAuth = useStore(s => s.ensureAuth);
-  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
     document.title = 'SmartCRM';
   }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      ensureAuth().finally(() => setInitializing(false));
-    } else {
-      setInitializing(false);
-    }
-  }, []);
-
-  if (initializing) {
-    return null;
-  }
 
   if (!isAuthenticated) {
     return (
