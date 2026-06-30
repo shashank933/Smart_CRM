@@ -25,6 +25,10 @@ import {
   X,
   Sun,
   Moon,
+  Menu,
+  Home,
+  Brain,
+  Key,
 } from 'lucide-react';
 import { api } from '../../api';
 
@@ -83,6 +87,22 @@ const quickLinks = [
   { label: 'Conversations', desc: 'Messages and email threads', route: '/conversations', icon: MessageSquare },
 ];
 
+const mobileNavItems = [
+  { path: '/', icon: Home, label: 'Home', exact: true },
+  { path: '/dashboard', icon: LayoutDashboard, label: 'Analytics' },
+  { path: '/calendar', icon: Calendar, label: 'Calendar' },
+  { path: '/contacts', icon: Users, label: 'Contacts' },
+  { path: '/companies', icon: Building2, label: 'Companies' },
+  { path: '/deals', icon: Handshake, label: 'Deals' },
+  { path: '/invoices', icon: FileText, label: 'Invoices' },
+  { path: '/tickets', icon: Ticket, label: 'Tickets' },
+  { path: '/conversations', icon: MessageSquare, label: 'Conversations' },
+  { path: '/integrations', icon: Link2, label: 'Integrations' },
+  { path: '/workflows', icon: GitBranch, label: 'Workflows' },
+  { path: '/ai-assistant', icon: Brain, label: 'AI Assistant' },
+  { path: '/apps', icon: Key, label: 'API Tokens' },
+];
+
 function formatCurrency(n: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n || 0);
 }
@@ -97,8 +117,10 @@ export default function Header() {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -240,6 +262,9 @@ export default function Header() {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setSearchOpen(false);
       }
+      if (mobileNavRef.current && !mobileNavRef.current.contains(e.target as Node)) {
+        setMobileNavOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -265,12 +290,67 @@ export default function Header() {
 
   let resultIndex = 0;
 
+  const mobileIsActive = (path: string, exact?: boolean) => {
+    if (exact) return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <header className="app-header">
-      <div>
-        <div className="app-header-kicker">SmartCRM</div>
-        <h1 className="app-header-title">{title}</h1>
-        {isDetail && <div className="app-header-path">{location.pathname}</div>}
+      {mobileNavOpen && (
+        <div className="mobile-nav-backdrop" onClick={() => setMobileNavOpen(false)} />
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div ref={mobileNavRef} className="mobile-nav-wrapper">
+          <button
+            className="mobile-nav-toggle"
+            onClick={() => setMobileNavOpen(prev => !prev)}
+            aria-label="Toggle navigation"
+          >
+            {mobileNavOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+
+          {mobileNavOpen && (
+            <div className="mobile-nav-dropdown" onClick={e => e.stopPropagation()}>
+              <div className="mobile-nav-header">
+                <span style={{ fontWeight: 800, fontSize: '14px' }}>Navigation</span>
+                <button
+                  className="clay-btn clay-btn-sm clay-btn-ghost"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="mobile-nav-items">
+                {mobileNavItems.map(item => {
+                  const Icon = item.icon;
+                  const active = mobileIsActive(item.path, item.exact);
+                  return (
+                    <button
+                      key={item.path}
+                      className={`mobile-nav-item${active ? ' active' : ''}`}
+                      onClick={() => {
+                        navigate(item.path);
+                        setMobileNavOpen(false);
+                      }}
+                    >
+                      <span className="mobile-nav-item-icon">
+                        <Icon size={20} />
+                      </span>
+                      <span className="mobile-nav-item-label">{item.label}</span>
+                      {active && <span className="mobile-nav-active-dot" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="app-header-kicker">SmartCRM</div>
+          <h1 className="app-header-title">{title}</h1>
+          {isDetail && <div className="app-header-path">{location.pathname}</div>}
+        </div>
       </div>
 
       <div className="app-header-search" ref={searchRef}>
