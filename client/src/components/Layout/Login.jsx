@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../store/store';
+import logoSvg from '../../assets/logo.svg';
 import {
-  Brain,
   Mail,
   Lock,
   User,
@@ -24,7 +24,7 @@ import {
 const CRM_CARDS = [
   {
     icon: Handshake,
-    color: '#34D399',
+    color: '#888888',
     title: 'Enterprise Deal',
     subtitle: '$45,000 · Proposal',
     detail: 'Owner: Maya · Close date: Aug 12 · Probability: 68%',
@@ -32,7 +32,7 @@ const CRM_CARDS = [
   },
   {
     icon: Building2,
-    color: '#818CF8',
+    color: '#aaaaaa',
     title: 'Acme Corp',
     subtitle: 'Technology · 500+ employees',
     detail: '12 contacts · 4 active deals · Last touch: Today',
@@ -40,7 +40,7 @@ const CRM_CARDS = [
   },
   {
     icon: Ticket,
-    color: '#F87171',
+    color: '#666666',
     title: 'API Integration',
     subtitle: 'High priority · Open',
     detail: 'SLA: 4h · Assigned to Support · 3 customer replies',
@@ -48,7 +48,7 @@ const CRM_CARDS = [
   },
   {
     icon: FileText,
-    color: '#FBBF24',
+    color: '#999999',
     title: 'INV-2048',
     subtitle: 'Paid · $12,500',
     detail: 'Due Jun 28 · Contact: Sarah Chen · Q2 services',
@@ -56,7 +56,7 @@ const CRM_CARDS = [
   },
   {
     icon: User,
-    color: '#60A5FA',
+    color: '#aaaaaa',
     title: 'Sarah Chen',
     subtitle: 'CTO @ Fintech.io',
     detail: 'Lead score: 92 · Source: Gmail sync · 2 open deals',
@@ -64,7 +64,7 @@ const CRM_CARDS = [
   },
   {
     icon: MessageSquare,
-    color: '#C084FC',
+    color: '#aaaaaa',
     title: 'Support Chat',
     subtitle: 'WhatsApp · 2 unread',
     detail: 'Last message: Pricing question · Sentiment: Positive',
@@ -72,7 +72,7 @@ const CRM_CARDS = [
   },
   {
     icon: PhoneCall,
-    color: '#22D3EE',
+    color: '#999999',
     title: 'Discovery Call',
     subtitle: 'Today · 3:30 PM',
     detail: 'Attendees: 4 · Linked deal: Cloud Migration · Notes ready',
@@ -80,7 +80,7 @@ const CRM_CARDS = [
   },
   {
     icon: CalendarCheck,
-    color: '#A3E635',
+    color: '#888888',
     title: 'Renewal Task',
     subtitle: 'Due tomorrow',
     detail: 'Account: Enterprise Corp · Renewal value: $32,000',
@@ -88,7 +88,7 @@ const CRM_CARDS = [
   },
   {
     icon: BarChart3,
-    color: '#FB7185',
+    color: '#777777',
     title: 'Revenue Forecast',
     subtitle: 'Q4 pipeline · $1.2M',
     detail: 'Weighted forecast: $740K · 14 opportunities tracked',
@@ -96,7 +96,7 @@ const CRM_CARDS = [
   },
   {
     icon: ReceiptText,
-    color: '#F97316',
+    color: '#888888',
     title: 'Invoice Review',
     subtitle: '3 pending approvals',
     detail: 'Outstanding: $84,200 · Oldest due: 9 days ago',
@@ -104,7 +104,7 @@ const CRM_CARDS = [
   },
   {
     icon: Users,
-    color: '#38BDF8',
+    color: '#999999',
     title: 'New Contacts',
     subtitle: '12 imported from event',
     detail: '6 qualified leads · 4 companies matched automatically',
@@ -112,7 +112,7 @@ const CRM_CARDS = [
   },
   {
     icon: Target,
-    color: '#A78BFA',
+    color: '#aaaaaa',
     title: 'Campaign Lead',
     subtitle: 'Webinar · Qualified',
     detail: 'Engagement: High · Next step: Demo invite email',
@@ -156,6 +156,14 @@ const FeatureItem = ({ icon: Icon, text }) => (
     </div>
     <span>{text}</span>
   </div>
+);
+
+const WhatsAppIcon = ({ size = 24, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.22 21.78l4.612-1.218A9.95 9.95 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill={color === 'currentColor' ? '#25D366' : color} opacity="0.15"/>
+    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.22 21.78l4.612-1.218A9.95 9.95 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke={color === 'currentColor' ? '#25D366' : color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 12l2 2 4-4" stroke={color === 'currentColor' ? '#25D366' : color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
 );
 
 export default function Login() {
@@ -203,7 +211,7 @@ export default function Login() {
       minHeight: '100vh',
       width: '100vw',
       overflow: 'hidden',
-      background: '#070A1A',
+      background: '#09090b',
       color: '#ffffff',
     },
     motionField: {
@@ -229,7 +237,7 @@ export default function Login() {
       top: '-15%',
       left: '-8%',
       borderRadius: '999px',
-      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.55), rgba(99, 102, 241, 0) 65%)',
+      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.18), rgba(99, 102, 241, 0) 65%)',
       filter: 'blur(12px)',
       zIndex: 1,
     },
@@ -242,14 +250,14 @@ export default function Login() {
       right: '-10%',
       bottom: '-14%',
       borderRadius: '999px',
-      background: 'radial-gradient(circle, rgba(45, 212, 191, 0.38), rgba(45, 212, 191, 0) 68%)',
+      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0) 68%)',
       filter: 'blur(10px)',
       zIndex: 1,
     },
     veil: {
       position: 'absolute',
       inset: 0,
-      background: 'linear-gradient(115deg, rgba(3, 7, 18, 0.48), rgba(17, 24, 39, 0.72) 47%, rgba(30, 27, 75, 0.42))',
+      background: 'linear-gradient(115deg, rgba(9, 9, 11, 0.7), rgba(24, 24, 27, 0.8) 47%, rgba(9, 9, 11, 0.6))',
       zIndex: 2,
     },
     content: {
@@ -276,31 +284,30 @@ export default function Login() {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '8px',
-      padding: '8px 12px',
-      borderRadius: '999px',
-      border: '1px solid rgba(255, 255, 255, 0.16)',
-      background: 'rgba(255, 255, 255, 0.08)',
-      color: '#C7D2FE',
-      fontSize: '13px',
-      fontWeight: 700,
-      marginBottom: '22px',
-      backdropFilter: 'blur(18px)',
+      padding: '6px 12px',
+      borderRadius: '6px',
+      border: '1px solid rgba(255, 255, 255, 0.12)',
+      background: 'rgba(255, 255, 255, 0.06)',
+      color: '#a1a1aa',
+      fontSize: '12px',
+      fontWeight: 600,
+      marginBottom: '20px',
     },
     heading: {
       margin: 0,
       color: '#ffffff',
-      fontSize: 'clamp(44px, 7vw, 92px)',
-      lineHeight: 0.9,
-      letterSpacing: '-0.07em',
-      fontWeight: 900,
+      fontSize: 'clamp(40px, 6vw, 72px)',
+      lineHeight: 1,
+      letterSpacing: '-0.04em',
+      fontWeight: 700,
       textWrap: 'balance',
     },
     paragraph: {
       maxWidth: '560px',
-      margin: '24px 0 34px',
-      color: '#D9E4FF',
-      fontSize: '18px',
-      lineHeight: 1.65,
+      margin: '20px 0 30px',
+      color: '#a1a1aa',
+      fontSize: '16px',
+      lineHeight: 1.6,
     },
     features: {
       display: 'grid',
@@ -310,14 +317,13 @@ export default function Login() {
     },
     formPanel: {
       width: '100%',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      borderRadius: '32px',
-      background: 'linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(241, 245, 249, 0.82))',
-      boxShadow: '0 30px 100px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.86)',
-      backdropFilter: 'blur(26px)',
-      padding: '34px',
+      border: '1px solid rgba(0, 0, 0, 0.08)',
+      borderRadius: '16px',
+      background: '#ffffff',
+      boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+      padding: '30px',
       boxSizing: 'border-box',
-      color: '#0F172A',
+      color: '#09090b',
     },
     panelTop: {
       display: 'flex',
@@ -327,27 +333,27 @@ export default function Login() {
       marginBottom: '26px',
     },
     title: {
-      fontSize: '30px',
-      fontWeight: 900,
-      color: '#0F172A',
-      margin: '0 0 8px',
-      letterSpacing: '-0.04em',
+      fontSize: '26px',
+      fontWeight: 700,
+      color: '#09090b',
+      margin: '0 0 4px',
+      letterSpacing: '-0.02em',
     },
     subtitle: {
       fontSize: '14px',
-      color: '#64748B',
+      color: '#71717a',
       margin: 0,
       lineHeight: 1.5,
     },
     demoBadge: {
       flexShrink: 0,
-      borderRadius: '16px',
-      padding: '10px 12px',
-      background: 'rgba(79, 70, 229, 0.1)',
-      color: '#4338CA',
-      fontWeight: 800,
+      borderRadius: '8px',
+      padding: '6px 10px',
+      background: 'rgba(99, 102, 241, 0.1)',
+      color: '#6366f1',
+      fontWeight: 600,
       fontSize: '12px',
-      border: '1px solid rgba(79, 70, 229, 0.16)',
+      border: '1px solid rgba(99, 102, 241, 0.15)',
     },
     inputWrap: {
       position: 'relative',
@@ -356,69 +362,68 @@ export default function Login() {
     inputLabel: {
       display: 'block',
       fontSize: '13px',
-      fontWeight: 800,
-      color: '#334155',
-      marginBottom: '7px'
+      fontWeight: 600,
+      color: '#3f3f46',
+      marginBottom: '6px'
     },
     inputIcon: {
       position: 'absolute',
-      left: '15px',
-      top: '40px',
+      left: '14px',
+      top: '38px',
       transform: 'translateY(-50%)',
-      color: '#94A3B8',
+      color: '#a1a1aa',
       pointerEvents: 'none'
     },
     input: {
       width: '100%',
-      padding: '13px 14px 13px 44px',
-      borderRadius: '14px',
-      border: '1px solid rgba(148, 163, 184, 0.48)',
+      padding: '11px 14px 11px 42px',
+      borderRadius: '8px',
+      border: '1px solid rgba(0, 0, 0, 0.12)',
       fontSize: '14px',
-      color: '#0F172A',
-      background: 'rgba(255, 255, 255, 0.78)',
+      color: '#09090b',
+      background: '#fafafa',
       outline: 'none',
-      transition: 'border-color 0.2s, box-shadow 0.2s, background 0.2s',
+      transition: 'border-color 0.15s, box-shadow 0.15s',
       boxSizing: 'border-box'
     },
     buttonPrimary: {
       width: '100%',
-      padding: '15px',
-      borderRadius: '16px',
+      padding: '13px',
+      borderRadius: '8px',
       border: 'none',
-      background: 'linear-gradient(135deg, #4F46E5, #7C3AED 55%, #06B6D4)',
+      background: '#6366f1',
       color: '#ffffff',
-      fontSize: '15px',
-      fontWeight: 800,
+      fontSize: '14px',
+      fontWeight: 600,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '8px',
-      marginTop: '10px',
-      boxShadow: '0 18px 34px rgba(79, 70, 229, 0.32)',
-      transition: 'transform 0.2s ease, opacity 0.2s ease',
+      marginTop: '8px',
+      transition: 'background 0.15s ease',
     },
     buttonGoogle: {
       width: '100%',
-      padding: '12px',
-      borderRadius: '14px',
-      border: '1px solid rgba(148, 163, 184, 0.42)',
-      background: 'rgba(255, 255, 255, 0.66)',
-      color: '#0F172A',
+      padding: '11px',
+      borderRadius: '8px',
+      border: '1px solid rgba(0, 0, 0, 0.12)',
+      background: '#ffffff',
+      color: '#09090b',
       fontSize: '14px',
-      fontWeight: 800,
+      fontWeight: 600,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '10px',
-      marginBottom: '22px',
-      transition: 'background 0.2s ease, transform 0.2s ease',
+      marginBottom: '20px',
+      transition: 'background 0.15s ease',
     },
     error: {
-      background: 'rgba(239, 68, 68, 0.1)',
-      border: '1px solid rgba(239, 68, 68, 0.2)',
-      color: '#B91C1C',
+      background: 'rgba(113, 113, 122, 0.12)',
+      border: '1px solid rgba(113, 113, 122, 0.2)',
+      color: '#a1a1aa',
       padding: '12px 14px',
       borderRadius: '12px',
       marginBottom: '18px',
@@ -429,14 +434,14 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       textAlign: 'center',
-      color: '#94A3B8',
-      fontSize: '13px',
-      fontWeight: 700,
-      marginBottom: '22px',
+      color: '#a1a1aa',
+      fontSize: '12px',
+      fontWeight: 600,
+      marginBottom: '20px',
     },
     dividerLine: {
       flex: 1,
-      borderBottom: '1px solid rgba(148, 163, 184, 0.38)',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
     },
     dividerText: {
       padding: '0 10px',
@@ -475,15 +480,14 @@ export default function Login() {
           width: 430px;
           min-height: 132px;
           padding: 24px;
-          border-radius: 32px;
-          border: 1px solid rgba(255, 255, 255, 0.24);
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(226, 232, 240, 0.82));
-          box-shadow: 0 28px 84px rgba(2, 6, 23, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(255, 255, 255, 0.94);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
           display: flex;
           align-items: center;
           gap: 18px;
           color: #0F172A;
-          backdrop-filter: blur(20px);
           animation: card-float 6s ease-in-out infinite;
           animation-delay: calc(var(--card-index, 0) * -0.6s);
         }
@@ -491,14 +495,13 @@ export default function Login() {
         .motion-card-icon {
           width: 68px;
           height: 68px;
-          border-radius: 22px;
-          background: color-mix(in srgb, var(--card-accent) 18%, white);
+          border-radius: 14px;
+          background: color-mix(in srgb, var(--card-accent) 12%, white);
           color: var(--card-accent);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 18%, transparent), 0 12px 28px color-mix(in srgb, var(--card-accent) 16%, transparent);
         }
 
         .motion-card-copy {
@@ -507,30 +510,30 @@ export default function Login() {
         }
 
         .motion-card-title {
-          font-size: 20px;
-          font-weight: 900;
+          font-size: 18px;
+          font-weight: 700;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          letter-spacing: -0.035em;
+          letter-spacing: -0.02em;
         }
 
         .motion-card-subtitle {
-          margin-top: 6px;
-          font-size: 15px;
-          color: #475569;
-          font-weight: 800;
+          margin-top: 4px;
+          font-size: 14px;
+          color: #52525b;
+          font-weight: 500;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
         .motion-card-detail {
-          margin-top: 8px;
-          font-size: 13px;
-          line-height: 1.45;
-          color: #64748B;
-          font-weight: 700;
+          margin-top: 6px;
+          font-size: 12px;
+          line-height: 1.4;
+          color: #71717a;
+          font-weight: 500;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -539,47 +542,45 @@ export default function Login() {
 
         .motion-card-metric {
           flex-shrink: 0;
-          min-width: 64px;
-          padding: 10px 12px;
-          border-radius: 999px;
-          background: color-mix(in srgb, var(--card-accent) 15%, white);
-          color: color-mix(in srgb, var(--card-accent) 82%, #0F172A);
-          font-size: 14px;
-          font-weight: 900;
+          min-width: 56px;
+          padding: 8px 10px;
+          border-radius: 8px;
+          background: color-mix(in srgb, var(--card-accent) 10%, white);
+          color: var(--card-accent);
+          font-size: 13px;
+          font-weight: 700;
           text-align: center;
-          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 18%, transparent);
         }
 
         .feature-item {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 13px 14px;
-          border-radius: 18px;
-          border: 1px solid rgba(255, 255, 255, 0.13);
-          background: rgba(255, 255, 255, 0.08);
-          color: #E0E7FF;
-          font-weight: 800;
-          font-size: 14px;
-          backdrop-filter: blur(16px);
+          gap: 10px;
+          padding: 11px 14px;
+          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.05);
+          color: #d4d4d8;
+          font-weight: 500;
+          font-size: 13px;
         }
 
         .feature-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 30px;
-          height: 30px;
-          border-radius: 10px;
-          background: rgba(129, 140, 248, 0.22);
-          color: #C4B5FD;
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          background: rgba(99, 102, 241, 0.12);
+          color: #818cf8;
           flex-shrink: 0;
         }
 
         .form-input:focus {
-          border-color: #6366F1 !important;
-          background: rgba(255, 255, 255, 0.94) !important;
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+          border-color: #6366f1 !important;
+          background: #ffffff !important;
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
         }
 
         .google-btn:hover { background: rgba(255, 255, 255, 0.92) !important; transform: translateY(-1px); }
@@ -615,7 +616,7 @@ export default function Login() {
           .motion-card-icon {
             width: 58px;
             height: 58px;
-            border-radius: 20px;
+            border-radius: 12px;
           }
 
           .motion-card-title {
@@ -650,14 +651,14 @@ export default function Login() {
             width: 310px;
             min-height: 108px;
             padding: 16px;
-            border-radius: 24px;
+            border-radius: 12px;
             gap: 13px;
           }
 
           .motion-card-icon {
             width: 50px;
             height: 50px;
-            border-radius: 17px;
+            border-radius: 10px;
           }
 
           .motion-card-title {
@@ -709,10 +710,8 @@ export default function Login() {
       <main className="login-content" style={styles.content}>
         <section className="login-copy" style={styles.hero}>
           <div className="login-brand" style={styles.brand}>
-            <div style={{ width: '46px', height: '46px', borderRadius: '15px', background: 'linear-gradient(135deg, #818CF8, #4F46E5)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 18px 36px rgba(79, 70, 229, 0.35)' }}>
-              <Brain size={25} color="#ffffff" />
-            </div>
-            <span style={{ fontSize: '24px', fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>SmartCRM</span>
+            <img src={logoSvg} alt="SmartCRM" style={{ width: '40px', height: '40px' }} />
+            <span style={{ fontSize: '22px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>SmartCRM</span>
           </div>
 
           <div className="login-hero">
@@ -722,12 +721,12 @@ export default function Login() {
             </div>
             <h1 style={styles.heading}>Every customer signal in motion.</h1>
             <p style={styles.paragraph}>
-              Deals, companies, tickets, invoices, contacts and conversations flow together in one AI-powered workspace built for fast-moving teams.
+              Deals, companies, tickets, invoices, contacts and WhatsApp conversations flow together in one AI-powered workspace built for fast-moving teams.
             </p>
 
             <div className="login-features" style={styles.features}>
+              <FeatureItem icon={WhatsAppIcon} text="Connected with WhatsApp" />
               <FeatureItem icon={Handshake} text="Pipeline and deal velocity" />
-              <FeatureItem icon={MessageSquare} text="Omnichannel conversations" />
               <FeatureItem icon={Zap} text="Automated workflows" />
               <FeatureItem icon={BarChart3} text="Real-time revenue insights" />
             </div>
@@ -800,7 +799,7 @@ export default function Login() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '7px' }}>
                 <label style={{ ...styles.inputLabel, marginBottom: 0 }}>Password</label>
                 {!isRegister && (
-                  <button type="button" style={{ background: 'none', border: 'none', color: '#4F46E5', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>
+                  <button type="button" style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>
                     Forgot password?
                   </button>
                 )}
@@ -828,13 +827,13 @@ export default function Login() {
             </button>
           </form>
 
-          <div style={{ marginTop: '28px', textAlign: 'center', fontSize: '14px', color: '#64748B', fontWeight: 700 }}>
+          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: '#71717a', fontWeight: 500 }}>
             {isRegister ? 'Already have an account? ' : "Don't have an account? "}
             <button
               onClick={() => { setIsRegister(!isRegister); setError(''); }}
               style={{
-                color: '#4F46E5', border: 'none', background: 'none',
-                fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px'
+                color: '#6366f1', border: 'none', background: 'none',
+                fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px'
               }}
             >
               {isRegister ? 'Sign In' : 'Sign up for free'}

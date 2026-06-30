@@ -121,8 +121,8 @@ export default function CompanyDetail() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div className="clay-stat-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #ddeeff)' }}>
-              <Users size={20} color="var(--info)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #d4d4d8)' }}>
+                <Users size={20} color="var(--info)" />
             </div>
           </div>
           <div className="clay-stat-value">{contacts.length}</div>
@@ -131,8 +131,8 @@ export default function CompanyDetail() {
 
         <div className="clay-stat-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #c8f7e5)' }}>
-              <Handshake size={20} color="var(--success)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+                <Handshake size={20} color="var(--success)" />
             </div>
           </div>
           <div className="clay-stat-value">{deals.length}</div>
@@ -141,8 +141,8 @@ export default function CompanyDetail() {
 
         <div className="clay-stat-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #fff3d4)' }}>
-              <DollarSign size={20} color="var(--warning)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #d4d4d8)' }}>
+                <DollarSign size={20} color="var(--warning)" />
             </div>
           </div>
           <div className="clay-stat-value">{formatCurrency(totalRevenue)}</div>
@@ -229,7 +229,7 @@ export default function CompanyDetail() {
                     onClick={() => navigate(`/deals/${deal.id}`)}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #c8f7e5)', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
+                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
                         <Handshake size={18} />
                       </div>
                       <div>
@@ -263,7 +263,7 @@ export default function CompanyDetail() {
                     onClick={() => navigate(`/invoices/${invoice.id}`)}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #ddeeff)', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
+                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #d4d4d8)', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
                         <FileText size={18} />
                       </div>
                       <div>

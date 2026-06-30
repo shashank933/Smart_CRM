@@ -17,11 +17,11 @@ const STAGE_ORDER = ['lead', 'qualified', 'proposal', 'negotiation', 'closed_won
 
 const STAGE_COLORS = {
   lead: '#dfe6e9',
-  qualified: '#74b9ff',
-  proposal: '#fdcb6e',
-  negotiation: '#a29bfe',
-  closed_won: '#00b894',
-  closed_lost: '#e17055',
+  qualified: '#818cf8',
+  proposal: '#a1a1aa',
+  negotiation: '#a5b4fc',
+  closed_won: '#6366f1',
+  closed_lost: '#71717a',
 };
 
 const STAGE_BADGE_MAP = {
@@ -305,16 +305,16 @@ export default function Deals() {
       </div>
 
       {error && (
-        <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px' }}>
-          {error}
-        </div>
+          <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px' }}>
+            {error}
+          </div>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #dfd8ff)' }}>
-              <DollarSign size={20} color="var(--accent)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #a5b4fc)' }}>
+                <DollarSign size={20} color="var(--accent)" />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{formatCurrency(totalPipeline)}</div>
@@ -324,8 +324,8 @@ export default function Deals() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #c8f7e5)' }}>
-              <DollarSign size={20} color="var(--accent)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+                <DollarSign size={20} color="var(--accent)" />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{formatCurrency(wonValue)}</div>
@@ -335,8 +335,8 @@ export default function Deals() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #ddeeff)' }}>
-              <GripVertical size={20} />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #d4d4d8)' }}>
+                <GripVertical size={20} />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{allDeals.length}</div>
@@ -560,8 +560,8 @@ export default function Deals() {
             <form onSubmit={handleSave}>
               <div className="clay-modal-body">
                 {formError && (
-                  <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
-                    {formError}
+                    <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
+                      {formError}
                   </div>
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

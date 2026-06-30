@@ -4,7 +4,7 @@ import { api } from '../api';
 export const useStore = create((set, get) => ({
   user: JSON.parse(localStorage.getItem('user') || 'null'),
   isAuthenticated: !!localStorage.getItem('token'),
-  theme: localStorage.getItem('crm-theme') || 'midnight',
+  theme: localStorage.getItem('crm-theme') || 'dark',
   sidebarCollapsed: true,
   stats: null,
   contacts: [],
@@ -27,7 +27,7 @@ export const useStore = create((set, get) => ({
   },
 
   initTheme: () => {
-    const theme = localStorage.getItem('crm-theme') || 'midnight';
+    const theme = localStorage.getItem('crm-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
   },
 

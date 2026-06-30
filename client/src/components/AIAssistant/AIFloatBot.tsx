@@ -52,18 +52,18 @@ export default function AIFloatBot() {
           position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
           width: '56px', height: '56px', borderRadius: '50%',
           background: 'var(--accent-gradient)', border: 'none', cursor: 'pointer',
-          boxShadow: '0 4px 20px rgba(108,92,231,0.4)',
+          boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'transform 0.2s ease, box-shadow 0.2s ease',
           animation: 'pulse 2s infinite'
         }}
         onMouseEnter={e => {
           (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)';
-          (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 28px rgba(108,92,231,0.5)';
+          (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 28px rgba(99,102,241,0.5)';
         }}
         onMouseLeave={e => {
           (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
-          (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(108,92,231,0.4)';
+          (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(99,102,241,0.4)';
         }}
       >
         <Brain size={24} color="white" />

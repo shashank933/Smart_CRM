@@ -72,7 +72,7 @@ export default function Profile() {
       width: '72px', height: '72px', borderRadius: 'var(--radius-lg)',
       background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center',
       justifyContent: 'center', fontSize: '28px', fontWeight: 800, color: 'white',
-      boxShadow: '8px 8px 16px rgba(108,92,231,0.3)', marginBottom: '20px'
+      boxShadow: '8px 8px 16px rgba(99,102,241,0.3)', marginBottom: '20px'
     },
     formGroup: { marginBottom: '18px' },
     label: { display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' },
@@ -83,15 +83,15 @@ export default function Profile() {
       padding: '4px'
     },
     dangerZone: {
-      background: 'linear-gradient(135deg, #fff0f0, #ffe8e8)',
+      background: 'linear-gradient(135deg, #e4e4e7, #d4d4d8)',
       borderRadius: 'var(--radius-lg)', padding: '24px',
-      border: '1px solid rgba(225,112,85,0.2)', marginBottom: '20px'
+      border: '1px solid rgba(113,113,122,0.2)', marginBottom: '20px'
     },
     alert: (type: 'success' | 'error') => ({
       padding: '12px 16px', borderRadius: 'var(--radius-sm)', marginBottom: '16px',
       fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px',
-      background: type === 'success' ? 'linear-gradient(135deg, #e0fff5, #d0ffec)' : 'linear-gradient(135deg, #ffe8e0, #ffddd4)',
-      color: type === 'success' ? '#006c50' : '#8a2a1a'
+      background: type === 'success' ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)' : 'linear-gradient(135deg, #e4e4e7, #d4d4d8)',
+      color: type === 'success' ? '#4f46e5' : '#3f3f46'
     }),
     infoRow: {
       display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0',

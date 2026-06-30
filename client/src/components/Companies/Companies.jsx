@@ -210,8 +210,8 @@ export default function Companies() {
           </select>
         </div>
         {error && (
-          <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
-            {error}
+            <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
+              {error}
             <button onClick={() => setError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '2px' }}><X size={14} /></button>
           </div>
         )}
@@ -390,8 +390,8 @@ export default function Companies() {
             <form onSubmit={handleSave}>
               <div className="clay-modal-body">
                 {formError && (
-                  <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
-                    {formError}
+                    <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
+                      {formError}
                   </div>
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

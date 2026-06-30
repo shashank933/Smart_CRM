@@ -22,14 +22,14 @@ const STATUS_MAP = {
 };
 
 const AVATAR_COLORS = [
-  'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-  'linear-gradient(135deg, #00b894, #55efc4)',
-  'linear-gradient(135deg, #e17055, #fab1a0)',
-  'linear-gradient(135deg, #fdcb6e, #ffeaa7)',
-  'linear-gradient(135deg, #74b9ff, #a4d1ff)',
-  'linear-gradient(135deg, #fd79a8, #fab1c8)',
-  'linear-gradient(135deg, #a29bfe, #dfd8ff)',
-  'linear-gradient(135deg, #00cec9, #81ecec)',
+  'linear-gradient(135deg, #6366f1, #a5b4fc)',
+  'linear-gradient(135deg, #4f46e5, #818cf8)',
+  'linear-gradient(135deg, #71717a, #a1a1aa)',
+  'linear-gradient(135deg, #a1a1aa, #d4d4d8)',
+  'linear-gradient(135deg, #818cf8, #a5b4fc)',
+  'linear-gradient(135deg, #a1a1aa, #d4d4d8)',
+  'linear-gradient(135deg, #a5b4fc, #818cf8)',
+  'linear-gradient(135deg, #818cf8, #a5b4fc)',
 ];
 
 function getInitials(name) {
@@ -336,7 +336,7 @@ export default function Conversations() {
       </div>
 
       {error && (
-        <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           {error}
           <button onClick={() => setError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '2px' }}><X size={14} /></button>
         </div>
@@ -511,7 +511,7 @@ export default function Conversations() {
                 width: '80px',
                 height: '80px',
                 borderRadius: 'var(--radius-lg)',
-                background: 'linear-gradient(135deg, var(--accent-light), #dfd8ff)',
+                background: 'linear-gradient(135deg, var(--accent-light), #a5b4fc)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -607,11 +607,11 @@ export default function Conversations() {
                 {aiSummary && (
                   <div
                     style={{
-                      background: 'linear-gradient(135deg, #f0edff, #e8e0ff)',
+                      background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
                       borderRadius: 'var(--radius)',
                       padding: '16px 20px',
                       marginBottom: '20px',
-                      border: '1px solid rgba(108, 92, 231, 0.2)',
+                      border: '1px solid rgba(99, 102, 241, 0.15)',
                       boxShadow: 'var(--clay-shadow-sm)',
                       position: 'relative',
                     }}
@@ -691,7 +691,7 @@ export default function Conversations() {
                                 background: isUser
                                   ? 'var(--accent-gradient)'
                                   : isAI
-                                    ? 'linear-gradient(135deg, #f0edff, #e8e0ff)'
+                                    ? 'linear-gradient(135deg, #ecfdf5, #d1fae5)'
                                     : 'var(--bg-card)',
                                 color: isUser ? 'white' : 'var(--text-primary)',
                                 padding: '12px 16px',
@@ -699,7 +699,7 @@ export default function Conversations() {
                                   ? 'var(--radius) var(--radius) 4px var(--radius)'
                                   : 'var(--radius) var(--radius) var(--radius) 4px',
                                 boxShadow: isUser
-                                  ? '4px 4px 12px rgba(108, 92, 231, 0.25), -2px -2px 8px rgba(255, 255, 255, 0.3)'
+                                  ? '4px 4px 12px rgba(99, 102, 241, 0.25), -2px -2px 8px rgba(255, 255, 255, 0.3)'
                                   : 'var(--clay-shadow-sm)',
                                 border: isUser ? 'none' : '1px solid rgba(255, 255, 255, 0.6)',
                                 fontSize: '14px',
@@ -753,16 +753,16 @@ export default function Conversations() {
                 <div
                   style={{
                     margin: '0 20px 12px 20px',
-                    background: 'linear-gradient(135deg, #f0f9ff, #e0f5fe)',
+                    background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
                     borderRadius: 'var(--radius)',
                     padding: '14px 18px',
-                    border: '1px solid rgba(116, 185, 255, 0.3)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
                     boxShadow: 'var(--clay-shadow-sm)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     <Bot size={16} />
-                    <span style={{ fontWeight: 700, fontSize: '13px', color: '#004a7a' }}>AI Suggested Reply</span>
+                    <span style={{ fontWeight: 700, fontSize: '13px', color: '#4f46e5' }}>AI Suggested Reply</span>
                     <button
                       onClick={() => setAiReply(null)}
                       style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}
@@ -832,7 +832,7 @@ export default function Conversations() {
             <form onSubmit={handleCreateConversation}>
               <div className="clay-modal-body">
                 {formError && (
-                  <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
                     {formError}
                   </div>
                 )}

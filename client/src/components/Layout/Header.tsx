@@ -23,6 +23,8 @@ import {
   Link2,
   Sparkles,
   X,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { api } from '../../api';
 
@@ -90,6 +92,8 @@ export default function Header() {
   const navigate = useNavigate();
   const user = useStore(s => s.user);
   const logout = useStore(s => s.logout);
+  const theme = useStore(s => s.theme);
+  const setTheme = useStore(s => s.setTheme);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -362,6 +366,23 @@ export default function Header() {
       </div>
 
       <div className="app-header-actions">
+        <div style={{ display: 'flex', gap: '4px', marginRight: '8px' }}>
+          <button
+            className={`app-theme-button${theme === 'light' ? ' active' : ''}`}
+            onClick={() => setTheme('light')}
+            style={{ width: '34px', height: '34px' }}
+          >
+            <Sun size={14} />
+          </button>
+          <button
+            className={`app-theme-button${theme === 'dark' ? ' active' : ''}`}
+            onClick={() => setTheme('dark')}
+            style={{ width: '34px', height: '34px' }}
+          >
+            <Moon size={14} />
+          </button>
+        </div>
+
         <div ref={notifRef} style={{ position: 'relative' }}>
           <button className="app-icon-button" onClick={() => setNotifOpen(prev => !prev)}>
             <Bell size={17} />

@@ -290,8 +290,8 @@ export default function Invoices() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #dfd8ff)' }}>
-              <FileText size={20} />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #a5b4fc)' }}>
+                <FileText size={20} />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{summary.total}</div>
@@ -301,8 +301,8 @@ export default function Invoices() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #c8f7e5)' }}>
-              <DollarSign size={20} />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+                <DollarSign size={20} />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{formatCurrency(summary.paid)}</div>
@@ -312,8 +312,8 @@ export default function Invoices() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #fff3d4)' }}>
-              <DollarSign size={20} />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #d4d4d8)' }}>
+                <DollarSign size={20} />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{formatCurrency(summary.outstanding)}</div>
@@ -323,8 +323,8 @@ export default function Invoices() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--danger-light), #fdd)' }}>
-              <Calendar size={20} />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--danger-light), #d4d4d8)' }}>
+                <Calendar size={20} />
             </div>
             <div>
               <div className="clay-stat-value" style={{ fontSize: '24px' }}>{summary.overdue}</div>
@@ -360,8 +360,8 @@ export default function Invoices() {
           </select>
         </div>
         {error && (
-          <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
-            {error}
+            <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
+              {error}
             <button onClick={() => setError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '2px' }}><X size={14} /></button>
           </div>
         )}
@@ -575,8 +575,8 @@ export default function Invoices() {
             <form onSubmit={handleSave}>
               <div className="clay-modal-body">
                 {formError && (
-                  <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
-                    {formError}
+                    <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
+                      {formError}
                   </div>
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>

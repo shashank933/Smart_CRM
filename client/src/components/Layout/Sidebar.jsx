@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/store';
+import logoSvg from '../../assets/logo.svg';
 import {
   LayoutDashboard,
   Users,
@@ -17,9 +18,6 @@ import {
   GitBranch,
   Brain,
   Sparkles,
-  Sun,
-  Moon,
-  Orbit,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -38,12 +36,6 @@ const navItems = [
   { path: '/workflows', icon: GitBranch, label: 'Workflows', desc: 'Automation builder' },
   { path: '/ai-assistant', icon: Brain, label: 'AI Assistant', desc: 'Insights and generation' },
   { path: '/apps', icon: Key, label: 'API Tokens', desc: 'External access' },
-];
-
-const themeItems = [
-  { key: 'light', icon: Sun, label: 'Light' },
-  { key: 'dark', icon: Moon, label: 'Dark' },
-  { key: 'midnight', icon: Orbit, label: 'Midnight' },
 ];
 
 function TooltipPortal({ targetRef, show, children }) {
@@ -106,32 +98,9 @@ function ToggleBtn({ collapsed, onToggle }) {
   );
 }
 
-function ThemeButton({ item, active, onClick }) {
-  const Icon = item.icon;
-  const btnRef = React.useRef(null);
-  const [hovered, setHovered] = React.useState(false);
-
-  return (
-    <button
-      ref={btnRef}
-      className={`app-theme-button${active ? ' active' : ''}`}
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <Icon size={16} />
-      <TooltipPortal targetRef={btnRef} show={hovered}>
-        <span className="app-nav-tooltip-label">{item.label} theme</span>
-      </TooltipPortal>
-    </button>
-  );
-}
-
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const theme = useStore(s => s.theme);
-  const setTheme = useStore(s => s.setTheme);
   const collapsed = useStore(s => s.sidebarCollapsed);
   const toggleSidebar = useStore(s => s.toggleSidebar);
 
@@ -144,7 +113,7 @@ export default function Sidebar() {
     <aside className={`app-sidebar${collapsed ? ' collapsed' : ''}`}>
       <div className="app-sidebar-brand">
         <div className="app-sidebar-logo">
-          <Brain size={24} />
+          <img src={logoSvg} alt="SmartCRM" style={{ width: '28px', height: '28px' }} />
         </div>
         <div className="app-sidebar-brand-copy">
           <div className="app-sidebar-brand-title">SmartCRM</div>
@@ -162,7 +131,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="app-sidebar-footer">
-        <div className="app-sidebar-ai">
+        <div className="app-sidebar-ai" onClick={() => navigate('/ai-assistant')} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') navigate('/ai-assistant'); }}>
           <div className="app-sidebar-ai-title">
             <Sparkles size={16} color="var(--accent)" />
             <span>AI co-pilot</span>
@@ -173,12 +142,6 @@ export default function Sidebar() {
           <button className="clay-btn clay-btn-primary clay-btn-sm" onClick={() => navigate('/ai-assistant')} style={{ width: '100%', justifyContent: 'center' }}>
             Open Assistant
           </button>
-        </div>
-
-        <div className="app-theme-row">
-          {themeItems.map(item => (
-            <ThemeButton key={item.key} item={item} active={theme === item.key} onClick={() => setTheme(item.key)} />
-          ))}
         </div>
       </div>
     </aside>

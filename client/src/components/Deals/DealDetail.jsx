@@ -144,8 +144,8 @@ export default function DealDetail() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div className="clay-stat-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #dfd8ff)' }}>
-              <DollarSign size={20} color="var(--accent)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--accent-light), #a5b4fc)' }}>
+                <DollarSign size={20} color="var(--accent)" />
             </div>
           </div>
           <div className="clay-stat-value" style={{ fontSize: '24px' }}>{formatCurrency(deal.value)}</div>
@@ -154,8 +154,8 @@ export default function DealDetail() {
 
         <div className="clay-stat-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #fff3d4)' }}>
-              <TrendingUp size={20} color="var(--warning)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--warning-light), #d4d4d8)' }}>
+                <TrendingUp size={20} color="var(--warning)" />
             </div>
           </div>
           <div className="clay-stat-value" style={{ fontSize: '24px' }}>{probability}%</div>
@@ -167,8 +167,8 @@ export default function DealDetail() {
 
         <div className="clay-stat-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #ddeeff)' }}>
-              <Calendar size={20} color="var(--info)" />
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--info-light), #d4d4d8)' }}>
+                <Calendar size={20} color="var(--info)" />
             </div>
           </div>
           <div className="clay-stat-value" style={{ fontSize: '20px' }}>
@@ -229,7 +229,7 @@ export default function DealDetail() {
           )}
 
           {deal.stage === 'closed_lost' && deal.loss_reason && (
-            <div className="clay-card" style={{ padding: '24px', marginBottom: '20px', border: '1px solid rgba(225, 112, 85, 0.2)' }}>
+            <div className="clay-card" style={{ padding: '24px', marginBottom: '20px', border: '1px solid rgba(113, 113, 122, 0.2)' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '12px', color: 'var(--danger)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <TrendingUp size={16} style={{ transform: 'rotate(180deg)' }} /> Loss Reason
               </h3>
@@ -346,7 +346,7 @@ export default function DealDetail() {
           </div>
 
           {deal.stage === 'closed_lost' && !deal.loss_reason && (
-            <div className="clay-card" style={{ padding: '20px 24px', background: 'rgba(225,112,85,0.05)', border: '1px solid rgba(225,112,85,0.15)' }}>
+            <div className="clay-card" style={{ padding: '20px 24px', background: 'rgba(113,113,122,0.1)', border: '1px solid rgba(113,113,122,0.15)' }}>
               <p style={{ fontSize: '13px', color: 'var(--danger)', fontWeight: 500 }}>
                 This deal was marked as lost. No loss reason has been recorded.
               </p>

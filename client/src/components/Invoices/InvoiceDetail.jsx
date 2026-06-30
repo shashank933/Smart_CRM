@@ -163,7 +163,7 @@ export default function InvoiceDetail() {
               <div style={{
                 width: '48px', height: '48px', borderRadius: 'var(--radius)',
                 background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '4px 4px 12px rgba(108,92,231,0.3), -4px -4px 12px rgba(255,255,255,0.5)',
+                boxShadow: '4px 4px 12px rgba(99,102,241,0.3), -4px -4px 12px rgba(255,255,255,0.5)',
               }}>
                 <FileText size={24} color="white" />
               </div>

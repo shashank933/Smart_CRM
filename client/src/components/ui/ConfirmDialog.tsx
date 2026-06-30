@@ -40,7 +40,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'Co
         <div style={{ display: 'flex', gap: '14px', marginBottom: '20px' }}>
           <div style={{
             width: '40px', height: '40px', borderRadius: '10px',
-            background: danger ? 'rgba(239,68,68,0.1)' : 'var(--accent-bg)',
+            background: danger ? 'rgba(113,113,122,0.15)' : 'var(--accent-bg)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>

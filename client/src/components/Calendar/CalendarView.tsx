@@ -20,9 +20,7 @@ export default function CalendarView() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [form, setForm] = useState({ type: 'task', subject: '', description: '', due_date: '', status: 'pending' });
-  const [contacts, setContacts] = useState<{ id: string; first_name: string; last_name: string }[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const deletingIdRef = useRef<string | null>(null);
 
@@ -54,7 +52,6 @@ export default function CalendarView() {
   };
 
   useEffect(() => { fetchEvents(); }, [year, month]);
-  useEffect(() => { api.getContacts({ limit: 200 }).then(d => setContacts(d.contacts || [])).catch(() => {}); }, []);
 
   const handleCreate = async () => {
     if (!form.subject.trim() || !form.due_date) return;
@@ -67,7 +64,6 @@ export default function CalendarView() {
   };
 
   const openDate = (dateStr: string) => {
-    setSelectedDate(dateStr);
     setForm(f => ({ ...f, due_date: dateStr }));
     setShowCreate(true);
   };
@@ -75,6 +71,7 @@ export default function CalendarView() {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1));
   const today = new Date().toISOString().split('T')[0];
+  const todayDate = new Date();
 
   const monthName = currentDate.toLocaleString('default', { month: 'long' });
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -89,40 +86,90 @@ export default function CalendarView() {
     return map;
   }, [events]);
 
+  const upcomingEvents = useMemo(() => {
+    const now = todayDate.toISOString().split('T')[0];
+    return events
+      .filter(e => e.due_date >= now && e.status !== 'completed')
+      .sort((a, b) => a.due_date.localeCompare(b.due_date))
+      .slice(0, 12);
+  }, [events, todayDate]);
+
+  const pendingTasks = useMemo(() => {
+    return events
+      .filter(e => e.type === 'task' && e.status !== 'completed')
+      .sort((a, b) => a.due_date.localeCompare(b.due_date))
+      .slice(0, 8);
+  }, [events]);
+
+  const meetings = useMemo(() => {
+    return upcomingEvents.filter(e => e.type === 'meeting' || e.type === 'call');
+  }, [upcomingEvents]);
+
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr + 'T00:00');
+    const now = new Date();
+    const diffDays = Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays === -1) return 'Yesterday';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   const s = {
-    container: { maxWidth: '1000px' as const },
-    header: { display: 'flex' as const, justifyContent: 'space-between' as const, alignItems: 'center' as const, marginBottom: '20px' as const },
-    monthTitle: { fontSize: '22px', fontWeight: 700 },
-    navBtn: { background: 'var(--bg-card)', border: 'none', borderRadius: 'var(--radius-sm)', width: '36px', height: '36px', display: 'flex' as const, alignItems: 'center' as const, justifyContent: 'center' as const, cursor: 'pointer', boxShadow: 'var(--clay-shadow-sm)', color: 'var(--text-primary)' },
+    container: { display: 'flex' as const, gap: '20px', maxWidth: '1200px' as const, alignItems: 'flex-start' as const },
+    header: { display: 'flex' as const, justifyContent: 'space-between' as const, alignItems: 'center' as const, marginBottom: '16px' as const },
+    monthTitle: { fontSize: '20px', fontWeight: 700 },
+    navBtn: { background: 'var(--bg-card)', border: 'var(--card-border)', borderRadius: 'var(--radius-sm)', width: '34px', height: '34px', display: 'flex' as const, alignItems: 'center' as const, justifyContent: 'center' as const, cursor: 'pointer', color: 'var(--text-primary)' },
+    calendarWrap: { flex: '1 1 0', minWidth: 0 },
+    sidePanel: { width: '300px', flexShrink: 0, display: 'flex' as const, flexDirection: 'column' as const, gap: '16px' as const },
     calendarGrid: {
       display: 'grid' as const, gridTemplateColumns: 'repeat(7, 1fr)',
       gap: '1px', background: 'rgba(0,0,0,0.04)', borderRadius: 'var(--radius-lg)',
-      overflow: 'hidden', boxShadow: 'var(--clay-shadow)'
+      overflow: 'hidden', border: 'var(--card-border)'
     },
     dayHeader: {
-      padding: '10px', fontSize: '11px', fontWeight: 600, textAlign: 'center' as const,
+      padding: '8px 4px', fontSize: '10px', fontWeight: 600, textAlign: 'center' as const,
       color: 'var(--text-muted)', textTransform: 'uppercase' as const, letterSpacing: '0.5px',
       background: 'var(--bg-card)'
     },
     dayCell: {
-      minHeight: '90px', padding: '6px', background: 'var(--bg-card)',
+      minHeight: '72px', padding: '5px', background: 'var(--bg-card)',
       cursor: 'pointer', transition: 'background 0.15s',
       display: 'flex' as const, flexDirection: 'column' as const
     },
     dayNumber: {
-      fontSize: '12px', fontWeight: 600, marginBottom: '4px',
-      width: '24px', height: '24px', display: 'flex' as const, alignItems: 'center' as const,
+      fontSize: '11px', fontWeight: 600, marginBottom: '2px',
+      width: '22px', height: '22px', display: 'flex' as const, alignItems: 'center' as const,
       justifyContent: 'center' as const, borderRadius: '6px'
     },
     eventDot: (type: string) => ({
-      display: 'flex' as const, alignItems: 'center' as const, gap: '4px',
-      padding: '2px 5px', borderRadius: '4px', fontSize: '10px', fontWeight: 500,
-      marginBottom: '2px', whiteSpace: 'nowrap' as const, overflow: 'hidden' as const,
+      display: 'flex' as const, alignItems: 'center' as const, gap: '3px',
+      padding: '1px 4px', borderRadius: '3px', fontSize: '9px', fontWeight: 500,
+      marginBottom: '1px', whiteSpace: 'nowrap' as const, overflow: 'hidden' as const,
       textOverflow: 'ellipsis' as const,
-      background: type === 'meeting' ? '#e8e8ff' : type === 'call' ? '#fff8e0' : '#d0ffe8',
-      color: type === 'meeting' ? '#6c5ce7' : type === 'call' ? '#b8860b' : '#006c50'
+      background: type === 'meeting' ? '#d1fae5' : type === 'call' ? '#e4e4e7' : '#a7f3d0',
+      color: type === 'meeting' ? '#6366f1' : type === 'call' ? '#71717a' : '#4f46e5'
+    }),
+    sideCard: {
+      background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: 'var(--card-border)',
+      padding: '20px'
+    },
+    sideCardTitle: {
+      fontSize: '13px', fontWeight: 700, marginBottom: '14px',
+      display: 'flex' as const, alignItems: 'center' as const, gap: '8px',
+      color: 'var(--text-primary)'
+    },
+    sideEvent: {
+      display: 'flex' as const, alignItems: 'center' as const, gap: '10px',
+      padding: '8px 0', borderBottom: '1px solid var(--divider-color)'
+    },
+    sideEventIcon: (type: string) => ({
+      width: '32px', height: '32px', borderRadius: '8px',
+      display: 'flex' as const, alignItems: 'center' as const, justifyContent: 'center' as const,
+      flexShrink: 0,
+      background: type === 'meeting' ? '#d1fae5' : type === 'call' ? '#e4e4e7' : '#a7f3d0'
     })
   };
 
@@ -139,93 +186,117 @@ export default function CalendarView() {
         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-glass)'; }}
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--bg-card)'; }}
         onClick={() => openDate(dateStr)}>
-        <div style={{ ...s.dayNumber, background: isToday ? 'var(--accent-gradient)' : 'transparent', color: isToday ? 'white' : 'var(--text-secondary)' }}>
+        <div style={{ ...s.dayNumber, background: isToday ? 'var(--accent)' : 'transparent', color: isToday ? 'white' : 'var(--text-secondary)', fontWeight: isToday ? 700 : 600 }}>
           {d}
         </div>
-        {dayEvents.slice(0, 3).map(ev => (
+        {dayEvents.slice(0, 2).map(ev => (
           <div key={ev.id} style={s.eventDot(ev.type)} title={ev.subject}>
-            {ev.type === 'meeting' ? <Phone size={9} /> : ev.type === 'call' ? <Phone size={9} /> : <CheckSquare size={9} />}
+            {ev.type === 'task' ? <CheckSquare size={9} /> : <Phone size={9} />}
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.subject}</span>
           </div>
         ))}
-        {dayEvents.length > 3 && (
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', paddingLeft: '5px' }}>+{dayEvents.length - 3} more</div>
+        {dayEvents.length > 2 && (
+          <div style={{ fontSize: '9px', color: 'var(--text-muted)', paddingLeft: '4px' }}>+{dayEvents.length - 2}</div>
         )}
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', gap: '20px', maxWidth: '1200px' }}>
+        <div className="clay-skeleton" style={{ flex: 1, height: '500px', borderRadius: 'var(--radius-lg)' }} />
+        <div className="clay-skeleton" style={{ width: '300px', height: '500px', borderRadius: 'var(--radius-lg)' }} />
       </div>
     );
   }
 
   return (
     <div style={s.container}>
-      <div style={s.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button style={s.navBtn} onClick={prevMonth}><ChevronLeft size={18} /></button>
-          <h2 style={s.monthTitle}>{monthName} {year}</h2>
-          <button style={s.navBtn} onClick={nextMonth}><ChevronRight size={18} /></button>
+      <div style={s.calendarWrap}>
+        <div style={s.header}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button style={s.navBtn} onClick={prevMonth}><ChevronLeft size={16} /></button>
+            <h2 style={s.monthTitle}>{monthName} {year}</h2>
+            <button style={s.navBtn} onClick={nextMonth}><ChevronRight size={16} /></button>
+          </div>
+          <button className="clay-btn clay-btn-primary clay-btn-sm" onClick={() => { setForm(f => ({ ...f, due_date: today })); setShowCreate(true); }}>
+            <Plus size={14} /> Add
+          </button>
         </div>
-        <button className="clay-btn clay-btn-primary" onClick={() => { setSelectedDate(today); setForm(f => ({ ...f, due_date: today })); setShowCreate(true); }}>
-          <Plus size={16} /> Add Event
-        </button>
+
+        <div style={s.calendarGrid}>
+          {dayNames.map(d => <div key={d} style={s.dayHeader}>{d}</div>)}
+          {days}
+        </div>
       </div>
 
-      {loading ? (
-        <div className="clay-skeleton" style={{ height: '500px', borderRadius: 'var(--radius-lg)' }} />
-      ) : (
-        <>
-          <div style={s.calendarGrid}>
-            {dayNames.map(d => <div key={d} style={s.dayHeader}>{d}</div>)}
-            {days}
+      <div style={s.sidePanel}>
+        <div style={s.sideCard}>
+          <div style={s.sideCardTitle}>
+            <Phone size={14} color="var(--accent)" />
+            Upcoming Meetings
           </div>
-
-          {/* Selected date events list */}
-          {selectedDate && !showCreate && (
-            <div className="clay-card" style={{ marginTop: '20px', padding: '20px 24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 700 }}>
-                  Events for {new Date(selectedDate + 'T00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                </h3>
-                <button className="clay-btn clay-btn-sm clay-btn-primary" onClick={() => setShowCreate(true)}>
-                  <Plus size={12} /> Add
+          {meetings.length === 0 ? (
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px', padding: '12px 0', textAlign: 'center' }}>
+              No upcoming meetings
+            </div>
+          ) : (
+            meetings.map(ev => (
+              <div key={ev.id} style={s.sideEvent}>
+                <div style={s.sideEventIcon(ev.type)}>
+                  <Phone size={14} color="#6366f1" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.subject}</div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{formatDate(ev.due_date)}</div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deletingIdRef.current = ev.id; setConfirmOpen(true); }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px', borderRadius: '4px', display: 'flex' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--danger)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; }}
+                >
+                  <Trash2 size={12} />
                 </button>
               </div>
-              {(eventsByDate[selectedDate] || []).length === 0 ? (
-                <div style={{ color: 'var(--text-muted)', fontSize: '13px', padding: '16px 0' }}>No events on this day</div>
-              ) : (
-                (eventsByDate[selectedDate] || []).map(ev => (
-                  <div key={ev.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <div style={{ width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                      background: ev.type === 'meeting' ? '#e8e8ff' : ev.type === 'call' ? '#fff8e0' : '#d0ffe8' }}>
-                      {ev.type === 'meeting' || ev.type === 'call' ? <Phone size={14} color="#6c5ce7" /> : <CheckSquare size={14} color="#00b894" />}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', fontWeight: 600 }}>{ev.subject}</div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        {ev.contact_name && <span><User size={10} /> {ev.contact_name}</span>}
-                        {ev.status && <span> · {ev.status}</span>}
-                      </div>
-                    </div>
-                    <span className="clay-tag">{ev.type}</span>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); deletingIdRef.current = ev.id; setConfirmOpen(true); }}
-                      style={{
-                        background: 'none', border: 'none', cursor: 'pointer',
-                        color: 'var(--text-muted)', padding: '4px', borderRadius: '4px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--danger)'; (e.currentTarget as HTMLElement).style.background = 'var(--danger-bg)'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
+            ))
           )}
-        </>
-      )}
+        </div>
 
-      {/* Create event modal */}
+        <div style={s.sideCard}>
+          <div style={s.sideCardTitle}>
+            <CheckSquare size={14} color="var(--accent)" />
+            Pending Tasks
+          </div>
+          {pendingTasks.length === 0 ? (
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px', padding: '12px 0', textAlign: 'center' }}>
+              No pending tasks
+            </div>
+          ) : (
+            pendingTasks.map(ev => (
+              <div key={ev.id} style={s.sideEvent}>
+                <div style={s.sideEventIcon(ev.type)}>
+                  <CheckSquare size={14} color="#4f46e5" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.subject}</div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{formatDate(ev.due_date)}</div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deletingIdRef.current = ev.id; setConfirmOpen(true); }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px', borderRadius: '4px', display: 'flex' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--danger)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; }}
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
       {showCreate && (
         <div className="clay-modal-overlay" onClick={() => setShowCreate(false)}>
           <div className="clay-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px' }}>

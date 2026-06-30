@@ -6,7 +6,7 @@ import './styles/modern.css';
 import './styles/themes.css';
 import { useStore } from './store/store';
 
-const savedTheme = localStorage.getItem('crm-theme') || 'midnight';
+const savedTheme = localStorage.getItem('crm-theme') || 'dark';
 document.documentElement.setAttribute('data-theme', savedTheme);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -5,7 +5,7 @@ import { Users, Building2, Handshake, DollarSign, TrendingUp, FileText, MessageS
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
-const STAGE_COLORS = { lead: '#6366f1', qualified: '#06b6d4', proposal: '#f59e0b', negotiation: '#3b82f6', closed_won: '#10b981', closed_lost: '#ef4444' };
+const STAGE_COLORS = { lead: '#71717a', qualified: '#a1a1aa', proposal: '#d4d4d8', negotiation: '#52525b', closed_won: '#6366f1', closed_lost: '#3f3f46' };
 
 function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n || 0);
@@ -70,19 +70,19 @@ export default function Dashboard() {
 
   return (
     <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ ...cardStyle, padding: '30px', background: 'linear-gradient(135deg, rgba(79,70,229,0.94), rgba(124,58,237,0.9) 54%, rgba(6,182,212,0.82))', color: '#fff', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ ...cardStyle, padding: '30px', background: 'var(--accent-gradient)', color: '#fff', overflow: 'hidden', position: 'relative' }}>
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', gap: '24px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#c7d2fe', marginBottom: '10px' }}>Analytics overview</div>
+            <div style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#cccccc', marginBottom: '10px' }}>Analytics overview</div>
             <h2 style={{ fontSize: 'clamp(32px, 5vw, 56px)', lineHeight: 0.96, letterSpacing: '-0.06em', margin: 0, fontWeight: 900 }}>Pipeline health and revenue signals.</h2>
           </div>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
-              <div style={{ fontSize: '11px', color: '#c7d2fe', fontWeight: 800 }}>Won Revenue</div>
+              <div style={{ fontSize: '11px', color: '#cccccc', fontWeight: 800 }}>Won Revenue</div>
               <div style={{ fontSize: '22px', fontWeight: 900 }}>{formatCurrency(stats.totalRevenue)}</div>
             </div>
             <div style={{ padding: '12px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(14px)' }}>
-              <div style={{ fontSize: '11px', color: '#c7d2fe', fontWeight: 800 }}>Win Rate</div>
+              <div style={{ fontSize: '11px', color: '#cccccc', fontWeight: 800 }}>Win Rate</div>
               <div style={{ fontSize: '22px', fontWeight: 900 }}>{stats.winRate}%</div>
             </div>
           </div>
@@ -94,11 +94,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalContacts}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: '#818cf8' }}><Users size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Users size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Total Contacts</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#34d399', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 12% vs last month
             </span>
           </div>
@@ -107,11 +107,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalCompanies}</span>
-            <div style={{ padding: '8px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', color: '#34d399' }}><Building2 size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Building2 size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Companies</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#34d399', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 8% vs last month
             </span>
           </div>
@@ -120,11 +120,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.openDeals}</span>
-            <div style={{ padding: '8px', background: 'rgba(245,158,11,0.1)', borderRadius: '8px', color: '#fbbf24' }}><Handshake size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Handshake size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Open Deals</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#34d399', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 5% vs last month
             </span>
           </div>
@@ -132,8 +132,8 @@ export default function Dashboard() {
 
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: '#818cf8', lineHeight: 1 }}>{formatCurrency(stats.pipelineValue)}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: '#818cf8' }}><DollarSign size={16} /></div>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: '#6366f1', lineHeight: 1 }}>{formatCurrency(stats.pipelineValue)}</span>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><DollarSign size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Pipeline Value</p>
@@ -144,11 +144,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.winRate}%</span>
-            <div style={{ padding: '8px', background: 'rgba(168,85,247,0.1)', borderRadius: '8px', color: '#c084fc' }}><TrendingUp size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><TrendingUp size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Win Rate</p>
-            <span style={{ fontSize: '11px', color: '#c084fc', marginTop: '4px', display: 'block' }}>Steady performance</span>
+            <span style={{ fontSize: '11px', color: '#6366f1', marginTop: '4px', display: 'block' }}>Steady performance</span>
           </div>
         </div>
       </div>
@@ -159,28 +159,28 @@ export default function Dashboard() {
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Revenue Won</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{formatCurrency(stats.totalRevenue)}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', color: '#34d399' }}><CheckCircle2 size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><CheckCircle2 size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Outstanding</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{formatCurrency(stats.outstandingAmount)}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(245,158,11,0.1)', borderRadius: '8px', color: '#fbbf24' }}><Clock size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: '#a1a1aa' }}><Clock size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Open Conversations</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{stats.openConversations}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(6,182,212,0.1)', borderRadius: '8px', color: '#22d3ee' }}><MessageSquare size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><MessageSquare size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Open Tickets</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{stats.openTickets || 0}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(244,114,182,0.1)', borderRadius: '8px', color: '#f472b6' }}><Ticket size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: '#a1a1aa' }}><Ticket size={16} /></div>
         </div>
       </div>
 
@@ -190,12 +190,12 @@ export default function Dashboard() {
           {revenueData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e2238" />
-                <XAxis dataKey="month" fontSize={10} tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
-                <YAxis fontSize={10} tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
+                <XAxis dataKey="month" fontSize={10} tick={{ fill: '#888888' }} axisLine={false} tickLine={false} />
+                <YAxis fontSize={10} tick={{ fill: '#888888' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  contentStyle={{ background: '#111322', border: '1px solid #1e2238', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', fontSize: '12px' }}
-                  labelStyle={{ color: '#94a3b8' }}
+                  contentStyle={{ background: '#111111', border: '1px solid #1a1a1a', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', fontSize: '12px' }}
+                  labelStyle={{ color: '#999999' }}
                   formatter={v => [formatCurrency(v), 'Revenue']}
                 />
                 <Line type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={3} dot={{ fill: '#6366f1', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
@@ -213,12 +213,12 @@ export default function Dashboard() {
               <PieChart>
                 <Pie data={dealStageData} cx="50%" cy="45%" innerRadius={60} outerRadius={95} paddingAngle={3} dataKey="value">
                   {dealStageData.map((entry, i) => (
-                    <Cell key={i} fill={STAGE_COLORS[entry.stage] || '#6366f1'} stroke="#111322" strokeWidth={3} />
+                    <Cell key={i} fill={STAGE_COLORS[entry.stage] || '#808080'} stroke="#111111" strokeWidth={3} />
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ background: '#111322', border: '1px solid #1e2238', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', fontSize: '12px' }}
-                  labelStyle={{ color: '#94a3b8' }}
+                  contentStyle={{ background: '#111111', border: '1px solid #1a1a1a', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', fontSize: '12px' }}
+                  labelStyle={{ color: '#999999' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -228,7 +228,7 @@ export default function Dashboard() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
             {dealStageData.map((d, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: 'var(--text-secondary)' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: STAGE_COLORS[d.stage] || '#6366f1' }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: STAGE_COLORS[d.stage] || '#808080' }} />
                 {d.name} ({d.value})
               </div>
             ))}
@@ -240,7 +240,7 @@ export default function Dashboard() {
         <div style={{ ...cardStyle, padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Recent Deals</h3>
-            <button onClick={() => navigate('/deals')} style={{ background: 'none', border: 'none', color: '#818cf8', fontSize: '12px', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit' }}>View All</button>
+            <button onClick={() => navigate('/deals')} style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '12px', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit' }}>View All</button>
           </div>
           {(stats.recentDeals || []).length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -265,8 +265,8 @@ export default function Dashboard() {
                     <span style={{
                       display: 'inline-block', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px',
                       padding: '2px 8px', borderRadius: '4px', marginTop: '4px',
-                      background: deal.stage === 'closed_won' ? 'rgba(16,185,129,0.1)' : deal.stage === 'closed_lost' ? 'rgba(239,68,68,0.1)' : 'rgba(99,102,241,0.1)',
-                      color: deal.stage === 'closed_won' ? '#34d399' : deal.stage === 'closed_lost' ? '#f87171' : '#818cf8',
+                      background: deal.stage === 'closed_won' ? 'rgba(99,102,241,0.12)' : deal.stage === 'closed_lost' ? 'rgba(113,113,122,0.12)' : 'rgba(99,102,241,0.08)',
+                      color: deal.stage === 'closed_won' ? '#6366f1' : deal.stage === 'closed_lost' ? '#71717a' : '#6366f1',
                     }}>
                       {deal.stage.replace(/_/g, ' ')}
                     </span>
@@ -291,7 +291,7 @@ export default function Dashboard() {
                   padding: '10px 0', borderBottom: i < Math.min(activities.length, 6) - 1 ? '1px solid var(--divider-color)' : 'none',
                 }}>
                   <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Activity size={14} color="#818cf8" />
+                    <Activity size={14} color="#6366f1" />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{act.subject}</div>

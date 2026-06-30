@@ -188,7 +188,7 @@ export default function TicketDetail() {
 
           {/* AI Summary */}
           {aiSummary && (
-            <div style={{ ...s.card, background: 'linear-gradient(135deg, #f0e8ff, #e8e0ff)' }}>
+            <div style={{ ...s.card, background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Brain size={16} /> AI Summary
@@ -201,7 +201,7 @@ export default function TicketDetail() {
 
           {/* AI suggested reply */}
           {aiReply && (
-            <div style={{ ...s.card, background: 'linear-gradient(135deg, #e0fff0, #d0ffe8)' }}>
+            <div style={{ ...s.card, background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Brain size={16} /> AI Suggested Reply
@@ -226,7 +226,7 @@ export default function TicketDetail() {
               </div>
             )}
             {(ticket.comments || []).map((c: Comment) => (
-              <div key={c.id} style={{ ...s.comment, background: c.is_internal ? 'rgba(255,220,200,0.2)' : 'transparent', borderRadius: '8px', padding: c.is_internal ? '12px' : '14px 0' }}>
+              <div key={c.id} style={{ ...s.comment, background: c.is_internal ? 'rgba(161,161,170,0.2)' : 'transparent', borderRadius: '8px', padding: c.is_internal ? '12px' : '14px 0' }}>
                 <div style={{
                   width: '32px', height: '32px', borderRadius: '8px', flexShrink: 0,
                   background: c.author_type === 'user' ? 'var(--accent-gradient)' : 'linear-gradient(135deg, var(--info), var(--info-light))',

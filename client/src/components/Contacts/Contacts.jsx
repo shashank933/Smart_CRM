@@ -5,14 +5,14 @@ import { useStore } from '../../store/store';
 import { Plus, Search, Mail, Phone, MoreVertical, Edit, Trash2, Building2, Filter, X } from 'lucide-react';
 
 const AVATAR_COLORS = [
-  'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-  'linear-gradient(135deg, #00b894, #55efc4)',
-  'linear-gradient(135deg, #e17055, #fab1a0)',
-  'linear-gradient(135deg, #fdcb6e, #ffeaa7)',
-  'linear-gradient(135deg, #74b9ff, #a4d1ff)',
-  'linear-gradient(135deg, #fd79a8, #fab1c8)',
-  'linear-gradient(135deg, #a29bfe, #dfd8ff)',
-  'linear-gradient(135deg, #00cec9, #81ecec)',
+  'linear-gradient(135deg, #6366f1, #a5b4fc)',
+  'linear-gradient(135deg, #4f46e5, #818cf8)',
+  'linear-gradient(135deg, #71717a, #a1a1aa)',
+  'linear-gradient(135deg, #a1a1aa, #d4d4d8)',
+  'linear-gradient(135deg, #818cf8, #a5b4fc)',
+  'linear-gradient(135deg, #a1a1aa, #d4d4d8)',
+  'linear-gradient(135deg, #a5b4fc, #818cf8)',
+  'linear-gradient(135deg, #818cf8, #a5b4fc)',
 ];
 
 function getInitials(first, last) {
@@ -218,8 +218,8 @@ export default function Contacts() {
           </select>
         </div>
         {error && (
-          <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
-            {error}
+            <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', flexBasis: '100%' }}>
+              {error}
             <button onClick={() => setError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '2px' }}><X size={14} /></button>
           </div>
         )}
@@ -428,8 +428,8 @@ export default function Contacts() {
             <form onSubmit={handleSave}>
               <div className="clay-modal-body">
                 {formError && (
-                  <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
-                    {formError}
+                    <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '20px' }}>
+                      {formError}
                   </div>
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

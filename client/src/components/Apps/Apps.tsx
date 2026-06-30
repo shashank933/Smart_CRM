@@ -264,7 +264,7 @@ export default function Apps() {
               <h2>Token Generated</h2>
             </div>
             <div className="clay-modal-body">
-              <div style={{ background: 'linear-gradient(135deg, #fff8e0, #fff3d4)', padding: '16px', borderRadius: 'var(--radius)', marginBottom: '16px', fontSize: '13px', color: '#8a6d00', fontWeight: 500 }}>
+              <div style={{ background: 'linear-gradient(135deg, #e4e4e7, #d4d4d8)', padding: '16px', borderRadius: 'var(--radius)', marginBottom: '16px', fontSize: '13px', color: '#3f3f46', fontWeight: 500 }}>
                 Save this token now. You won't be able to see it again.
               </div>
               <div style={{ background: 'var(--bg-primary)', padding: '14px 16px', borderRadius: 'var(--radius-sm)', fontFamily: 'monospace', fontSize: '13px', wordBreak: 'break-all', boxShadow: 'var(--clay-shadow-inset)', marginBottom: '12px' }}>

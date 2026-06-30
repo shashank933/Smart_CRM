@@ -30,10 +30,10 @@ interface StatCard {
   trend?: { value: number; up: boolean };
 }
 
-const emerald = '#10b981';
+const emerald = '#6366f1';
 const indigo = '#6366f1';
-const cyan = '#06b6d4';
-const amber = '#f59e0b';
+const cyan = '#818cf8';
+const amber = '#a1a1aa';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -150,10 +150,10 @@ export default function Home() {
   const shortcuts = [
     { icon: UserPlus, label: 'New Contact', path: '/contacts', color: indigo },
     { icon: Handshake, label: 'New Deal', path: '/deals', color: emerald },
-    { icon: Ticket, label: 'New Ticket', path: '/tickets', color: '#ef4444' },
-    { icon: GitBranch, label: 'Workflows', path: '/workflows', color: '#8b5cf6' },
-    { icon: Sparkles, label: 'AI Assistant', path: '/ai-assistant', color: '#a78bfa' },
-    { icon: FilePlus, label: 'New Invoice', path: '/invoices', color: '#3b82f6' }
+    { icon: Ticket, label: 'New Ticket', path: '/tickets', color: '#71717a' },
+    { icon: GitBranch, label: 'Workflows', path: '/workflows', color: '#6366f1' },
+    { icon: Sparkles, label: 'AI Assistant', path: '/ai-assistant', color: '#818cf8' },
+    { icon: FilePlus, label: 'New Invoice', path: '/invoices', color: '#4f46e5' }
   ];
 
   /* ---------- reusable style fragments ---------- */
@@ -176,7 +176,7 @@ export default function Home() {
     padding: '6px 14px', borderRadius: 'var(--radius)',
     display: 'inline-flex', alignItems: 'center', gap: '8px',
     fontSize: '13px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace',
-    color: '#e0e7ff'
+    color: '#cccccc'
   };
 
   /* ==================== RENDER ==================== */
@@ -185,21 +185,21 @@ export default function Home() {
     <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
       {/* ── Hero Banner ── */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(49,46,129,0.94) 0%, rgba(107,33,168,0.9) 50%, rgba(8,145,178,0.82) 100%)',
+        background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%)',
         border: '1px solid rgba(255,255,255,0.18)',
         borderRadius: '32px', padding: '38px',
         position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: 'clamp(34px, 5vw, 58px)', fontWeight: 900, color: '#f5f3ff', margin: '0 0 8px', letterSpacing: '-0.06em', lineHeight: 0.95 }}>
+          <h1 style={{ fontSize: 'clamp(34px, 5vw, 58px)', fontWeight: 900, color: '#f5f5f5', margin: '0 0 8px', letterSpacing: '-0.06em', lineHeight: 0.95 }}>
             {getGreeting()}, {firstName}
           </h1>
-          <p style={{ fontSize: '17px', color: 'rgba(224,231,255,0.82)', margin: '0 0 22px', maxWidth: '620px', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '17px', color: 'rgba(200,200,200,0.82)', margin: '0 0 22px', maxWidth: '620px', lineHeight: 1.6 }}>
             Your revenue, customer conversations, support work, and next actions are synced into one live workspace.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <div style={timeBadge}>
-              <Clock size={15} color="#a5b4fc" /> {formattedTime}
+              <Clock size={15} color="#aaaaaa" /> {formattedTime}
             </div>
             <div style={{
               ...timeBadge,
@@ -207,14 +207,14 @@ export default function Home() {
               fontSize: '12px',
               fontWeight: 500
             }}>
-              <Calendar size={13} color="#a5b4fc" /> {formattedDate}
+              <Calendar size={13} color="#aaaaaa" /> {formattedDate}
             </div>
           </div>
         </div>
         <div style={{ position: 'absolute', right: '34px', top: '28px', width: '260px', padding: '18px', borderRadius: '24px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)', transform: 'rotate(4deg)' }}>
-          <div style={{ fontSize: '12px', color: '#c7d2fe', fontWeight: 800, marginBottom: '10px' }}>Pipeline momentum</div>
+          <div style={{ fontSize: '12px', color: '#cccccc', fontWeight: 800, marginBottom: '10px' }}>Pipeline momentum</div>
           <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.18)', overflow: 'hidden', marginBottom: '12px' }}>
-            <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, #34d399, #22d3ee)', borderRadius: '999px' }} />
+            <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, #6366f1, #818cf8)', borderRadius: '999px' }} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontWeight: 900 }}>
             <span>{formatCurrency(stats?.pipelineValue || 0)}</span>
@@ -224,12 +224,12 @@ export default function Home() {
         <div style={{
           position: 'absolute', right: '140px', bottom: '-50px',
           width: '160px', height: '160px', borderRadius: '50%',
-          background: 'rgba(99,102,241,0.08)', pointerEvents: 'none'
+          background: 'rgba(99,102,241,0.12)', pointerEvents: 'none'
         }} />
         <div style={{
           position: 'absolute', right: '250px', top: '-20px',
           width: '80px', height: '80px', borderRadius: '50%',
-          background: 'rgba(192,132,252,0.06)', pointerEvents: 'none'
+          background: 'rgba(52,211,153,0.1)', pointerEvents: 'none'
         }} />
       </div>
 
@@ -253,9 +253,9 @@ export default function Home() {
                   display: 'inline-flex', alignItems: 'center', gap: '4px',
                   padding: '3px 8px', borderRadius: '999px', fontSize: '12px',
                   fontWeight: 600,
-                  background: s.trend.up ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                  background: s.trend.up ? 'rgba(99,102,241,0.12)' : 'rgba(113,113,122,0.12)',
                   color: s.trend.up ? 'var(--success-text)' : 'var(--danger-text)',
-                  border: `1px solid ${s.trend.up ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`
+                  border: `1px solid ${s.trend.up ? 'rgba(99,102,241,0.2)' : 'rgba(113,113,122,0.2)'}`
                 }}>
                   <TrendArrow up={s.trend.up} />
                   {formatPercentage(s.trend.value)}
@@ -447,7 +447,7 @@ export default function Home() {
                 display: 'flex', alignItems: 'center', gap: '12px',
                 padding: '10px 0', borderBottom: '1px solid var(--divider-color)'
               }}>
-                <div style={iconBoxSm('#f59e0b1a')}>
+                <div style={iconBoxSm('#a1a1aa1a')}>
                   <CheckSquare size={14} color={amber} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>

@@ -311,11 +311,11 @@ export default function AIAssistant() {
                         background: msg.role === 'user'
                           ? 'var(--accent-gradient)'
                           : msg.isError
-                            ? 'rgba(225,112,85,0.08)'
+                            ? 'rgba(113,113,122,0.15)'
                             : 'var(--bg-card)',
                         color: msg.role === 'user' ? '#fff' : msg.isError ? 'var(--danger)' : 'var(--text-primary)',
                         boxShadow: msg.role === 'user'
-                          ? '4px 4px 12px rgba(108,92,231,0.3), -4px -4px 12px rgba(255,255,255,0.3)'
+                          ? '4px 4px 12px rgba(99,102,241,0.3), -4px -4px 12px rgba(255,255,255,0.3)'
                           : 'var(--clay-shadow-sm)',
                         fontSize: '14px',
                         lineHeight: 1.6,
@@ -348,7 +348,7 @@ export default function AIAssistant() {
             </div>
 
             {chatError && (
-              <div style={{ margin: '0 20px', background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '8px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500 }}>
+              <div style={{ margin: '0 20px', background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '8px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500 }}>
                 {chatError}
               </div>
             )}
@@ -452,7 +452,7 @@ export default function AIAssistant() {
           </div>
 
           {scoringError && (
-            <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px' }}>
+            <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: 500, marginBottom: '16px' }}>
               {scoringError}
             </div>
           )}
@@ -517,7 +517,7 @@ export default function AIAssistant() {
             </h3>
 
             {emailError && (
-              <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '16px' }}>
+              <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '16px' }}>
                 {emailError}
               </div>
             )}
@@ -624,7 +624,7 @@ export default function AIAssistant() {
               </h3>
 
               {insightError && (
-                <div style={{ background: 'rgba(225,112,85,0.1)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '16px' }}>
+                <div style={{ background: 'rgba(113,113,122,0.15)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginBottom: '16px' }}>
                   {insightError}
                 </div>
               )}

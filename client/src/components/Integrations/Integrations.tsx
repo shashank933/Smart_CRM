@@ -163,14 +163,14 @@ export default function Integrations() {
       overflow: 'hidden' as const,
       borderRadius: '32px',
       padding: '34px',
-      background: 'linear-gradient(135deg, rgba(79,70,229,0.95), rgba(124,58,237,0.9) 54%, rgba(6,182,212,0.78))',
+      background: 'linear-gradient(135deg, rgba(79,70,229,0.95), rgba(99,102,241,0.9) 54%, rgba(129,140,248,0.78))',
       border: '1px solid rgba(255,255,255,0.18)',
       boxShadow: 'var(--card-shadow-hover)',
       color: '#fff',
     },
     heroGrid: { position: 'relative' as const, zIndex: 1, display: 'grid' as const, gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '28px', alignItems: 'end' as const },
     heroTitle: { fontSize: 'clamp(36px, 6vw, 66px)', lineHeight: 0.92, letterSpacing: '-0.07em', fontWeight: 900, margin: '0 0 14px' },
-    heroText: { fontSize: '16px', lineHeight: 1.7, color: 'rgba(224,231,255,0.88)', maxWidth: '680px', margin: 0 },
+    heroText: { fontSize: '16px', lineHeight: 1.7, color: 'rgba(167,243,208,0.88)', maxWidth: '680px', margin: 0 },
     heroStats: { display: 'grid' as const, gridTemplateColumns: 'repeat(3, minmax(116px, 1fr))', gap: '12px', minWidth: '420px' },
     heroStat: { padding: '15px', borderRadius: '20px', background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.16)', backdropFilter: 'blur(16px)' },
     grid: { display: 'grid' as const, gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '18px' },
@@ -248,7 +248,7 @@ export default function Integrations() {
       <section style={s.hero}>
         <div className="integrations-hero-grid" style={s.heroGrid}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', color: '#c7d2fe', fontSize: '12px', fontWeight: 900, marginBottom: '18px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.16)', color: '#a5b4fc', fontSize: '12px', fontWeight: 900, marginBottom: '18px' }}>
               <Sparkles size={14} /> Integration Hub
             </div>
             <h1 style={s.heroTitle}>Connect every customer signal.</h1>
@@ -258,24 +258,24 @@ export default function Integrations() {
           </div>
           <div className="integrations-hero-stats" style={s.heroStats}>
             <div style={s.heroStat}>
-              <Activity size={18} color="#a5f3fc" />
+              <Activity size={18} color="#a5b4fc" />
               <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{providers.length}</div>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Available providers</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#a5b4fc' }}>Available providers</div>
             </div>
             <div style={s.heroStat}>
-              <ShieldCheck size={18} color="#86efac" />
+              <ShieldCheck size={18} color="#a5b4fc" />
               <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{connectedCount}</div>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Connected</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#a5b4fc' }}>Connected</div>
             </div>
             <div style={s.heroStat}>
-              <Radio size={18} color="#fef08a" />
+              <Radio size={18} color="#a1a1aa" />
               <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{webhookCount}</div>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#c7d2fe' }}>Webhook-ready</div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#a5b4fc' }}>Webhook-ready</div>
             </div>
           </div>
         </div>
         <div style={{ position: 'absolute', right: '-90px', top: '-90px', width: '310px', height: '310px', borderRadius: '999px', background: 'rgba(255,255,255,0.12)' }} />
-        <div style={{ position: 'absolute', right: '22%', bottom: '-130px', width: '260px', height: '260px', borderRadius: '999px', background: 'rgba(34,211,238,0.18)' }} />
+        <div style={{ position: 'absolute', right: '22%', bottom: '-130px', width: '260px', height: '260px', borderRadius: '999px', background: 'rgba(99,102,241,0.18)' }} />
       </section>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
@@ -323,7 +323,7 @@ export default function Integrations() {
 
                     {/* Sync result display */}
                     {syncResult[p.id] && !syncResult[p.id].prompts && (
-                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--success-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--success-text)', border: '1px solid rgba(16,185,129,0.18)', fontWeight: 700 }}>
+                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--success-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--success-text)', border: '1px solid rgba(99,102,241,0.18)', fontWeight: 700 }}>
                         <Check size={12} /> {syncResult[p.id].message}
                         {syncResult[p.id].synced && (
                           <span style={{ marginLeft: '8px', fontSize: '11px', opacity: 0.8 }}>
@@ -335,7 +335,7 @@ export default function Integrations() {
 
                     {/* Action prompts after sync */}
                     {syncResult[p.id]?.prompts?.type === 'action_prompt' && (
-                      <div style={{ marginTop: '14px', padding: '18px', background: 'linear-gradient(135deg, var(--accent-bg), var(--bg-glass))', borderRadius: '20px', border: '1px solid rgba(108, 92, 231, 0.15)', boxShadow: 'var(--card-shadow-sm)' }}>
+                      <div style={{ marginTop: '14px', padding: '18px', background: 'linear-gradient(135deg, var(--accent-bg), var(--bg-glass))', borderRadius: '20px', border: '1px solid rgba(99, 102, 241, 0.15)', boxShadow: 'var(--card-shadow-sm)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <Check size={14} color="var(--accent)" />
                           <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--accent-dark)' }}>{syncResult[p.id].message}</span>
@@ -387,14 +387,14 @@ export default function Integrations() {
                           </div>
                         )}
                         {syncResult[p.id].prompts.note && (
-                          <p style={{ fontSize: '11px', color: 'var(--warning-dark)', marginTop: '10px', padding: '8px 12px', background: 'rgba(253, 203, 110, 0.15)', borderRadius: 'var(--radius-sm)', lineHeight: 1.5 }}>{syncResult[p.id].prompts.note}</p>
+                          <p style={{ fontSize: '11px', color: 'var(--warning-dark)', marginTop: '10px', padding: '8px 12px', background: 'rgba(161,161,170,0.15)', borderRadius: 'var(--radius-sm)', lineHeight: 1.5 }}>{syncResult[p.id].prompts.note}</p>
                         )}
                       </div>
                     )}
 
                     {/* Simple info prompt for other providers */}
                     {syncResult[p.id]?.prompts?.type === 'info' && (
-                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--info-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--info-text)', border: '1px solid rgba(14,165,233,0.18)', fontWeight: 700 }}>
+                      <div style={{ marginTop: '14px', padding: '12px 14px', background: 'var(--info-bg)', borderRadius: '16px', fontSize: '12px', color: 'var(--info-text)', border: '1px solid rgba(99,102,241,0.18)', fontWeight: 700 }}>
                         <Check size={12} /> {syncResult[p.id].prompts.message}
                       </div>
                     )}

@@ -190,7 +190,7 @@ export default function Guide() {
     }),
     confettiBanner: {
       background: 'linear-gradient(135deg, #065f46 0%, #047857 50%, #065f46 100%)',
-      border: '1px solid rgba(16, 185, 129, 0.3)',
+      border: '1px solid rgba(99, 102, 241, 0.3)',
       borderRadius: 'var(--radius-lg)',
       padding: '20px 24px',
       marginBottom: '24px',
@@ -205,7 +205,7 @@ export default function Guide() {
       width: '44px',
       height: '44px',
       borderRadius: 'var(--radius-full)',
-      background: 'rgba(16, 185, 129, 0.2)',
+      background: 'rgba(99, 102, 241, 0.2)',
       display: 'flex' as const,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
@@ -333,7 +333,7 @@ export default function Guide() {
       {showConfetti && (
         <div style={s.confettiBanner}>
           <div style={s.confettiIcon}>
-            <PartyPopper size={22} color="#34d399" />
+            <PartyPopper size={22} color="#818cf8" />
           </div>
           <div style={s.confettiText}>
             <p style={s.confettiTitle}>You&apos;re all set!</p>

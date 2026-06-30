@@ -13,11 +13,7 @@ html {
 
 body {
   font-family: var(--font-family);
-  background:
-    radial-gradient(circle at 10% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 34rem),
-    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--info-light) 16%, transparent), transparent 30rem),
-    radial-gradient(circle at 50% 105%, color-mix(in srgb, var(--accent-light) 13%, transparent), transparent 36rem),
-    linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+  background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -68,29 +64,6 @@ button {
   isolation: isolate;
 }
 
-.app-shell::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.64), transparent 82%);
-  z-index: -2;
-}
-
-.app-shell::after {
-  content: '';
-  position: fixed;
-  inset: 14px;
-  border-radius: 34px;
-  pointer-events: none;
-  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
-  z-index: -1;
-}
-
 .app-sidebar {
   position: sticky;
   top: 0;
@@ -99,10 +72,9 @@ button {
   flex-shrink: 0;
   background: var(--sidebar-bg);
   border-right: var(--sidebar-border);
-  backdrop-filter: blur(26px);
   display: flex;
   flex-direction: column;
-  padding: 18px 14px;
+  padding: 16px 12px;
   z-index: 100;
   transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -134,7 +106,13 @@ button {
 .app-sidebar.collapsed .app-sidebar-ai {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 12px;
+  cursor: pointer;
+}
+
+.app-sidebar.collapsed .app-sidebar-ai:hover {
+  background: var(--bg-glass-hover);
 }
 
 .app-sidebar.collapsed .app-sidebar-ai .clay-btn {
@@ -153,15 +131,14 @@ button {
   position: fixed;
   background: var(--bg-card);
   border: var(--card-border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   box-shadow: var(--card-shadow-hover);
-  backdrop-filter: blur(28px);
-  padding: 12px 15px;
+  padding: 10px 14px;
   white-space: nowrap;
   pointer-events: none;
   z-index: 2000;
   font-family: var(--font-family);
-  animation: tooltipIn 0.16s ease;
+  animation: tooltipIn 0.12s ease;
 }
 
 @keyframes tooltipIn {
@@ -191,19 +168,18 @@ button {
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--divider-color);
   background: var(--bg-glass);
   color: var(--text-muted);
   cursor: pointer;
-  margin: -4px auto 12px;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  margin: -4px auto 10px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .app-sidebar-toggle:hover {
   background: var(--bg-glass-hover);
   color: var(--text-primary);
-  transform: translateX(1px);
 }
 
 .app-sidebar.collapsed .app-sidebar-toggle:hover {
@@ -218,15 +194,14 @@ button {
 }
 
 .app-sidebar-logo {
-  width: 46px;
-  height: 46px;
-  border-radius: 17px;
-  background: var(--accent-gradient);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: var(--accent-glow);
   flex-shrink: 0;
 }
 
@@ -235,15 +210,15 @@ button {
 }
 
 .app-sidebar-brand-title {
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--sidebar-text-primary);
 }
 
 .app-sidebar-brand-subtitle {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--sidebar-text-secondary);
   margin-top: 2px;
 }
@@ -260,11 +235,11 @@ button {
 
 .app-sidebar-section-label {
   font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: 12px 12px 6px;
+  padding: 10px 12px 6px;
 }
 
 .app-nav-link {
@@ -272,24 +247,25 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 46px;
-  padding: 10px 12px;
-  border-radius: 16px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border-radius: 8px;
   text-decoration: none;
   color: var(--sidebar-text-secondary);
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .app-nav-link:hover {
   background: var(--sidebar-nav-hover-bg);
   color: var(--sidebar-text-primary);
-  transform: translateX(2px);
 }
 
 .app-nav-link.active {
-  color: #ffffff;
-  background: var(--accent-gradient);
-  box-shadow: var(--accent-glow);
+  color: var(--sidebar-text-primary);
+  background: var(--sidebar-nav-hover-bg);
+  font-weight: 600;
 }
 
 .app-nav-icon {
@@ -308,15 +284,15 @@ button {
 
 .app-nav-label {
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 500;
   line-height: 1.1;
 }
 
 .app-nav-desc {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   opacity: 0.7;
-  margin-top: 3px;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -332,12 +308,9 @@ button {
 
 .app-sidebar-ai {
   border: var(--card-border);
-  border-radius: 22px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), transparent),
-    var(--bg-glass);
+  border-radius: 12px;
+  background: var(--bg-glass);
   padding: 14px;
-  box-shadow: var(--card-shadow-sm);
 }
 
 .app-sidebar-ai-title {
@@ -345,7 +318,7 @@ button {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 600;
   margin-bottom: 6px;
 }
 
@@ -353,8 +326,8 @@ button {
   font-size: 11px;
   line-height: 1.5;
   color: var(--text-muted);
-  font-weight: 650;
-  margin-bottom: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .app-theme-row {
@@ -364,25 +337,25 @@ button {
 
 .app-theme-button {
   width: 100%;
-  height: 36px;
+  height: 34px;
   border: 1px solid var(--divider-color);
-  border-radius: 14px;
+  border-radius: 8px;
   background: var(--bg-glass);
   color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .app-theme-button:hover {
-  transform: translateY(-1px);
   background: var(--bg-glass-hover);
+  border-color: var(--card-border-hover);
 }
 
 .app-theme-button.active {
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  border-color: var(--accent);
   background: var(--accent-bg);
   color: var(--accent);
 }
@@ -400,9 +373,8 @@ button {
   grid-template-columns: minmax(190px, 0.8fr) minmax(260px, 1.2fr) auto;
   align-items: center;
   gap: 18px;
-  padding: 14px clamp(18px, 3vw, 38px);
+  padding: 12px clamp(18px, 3vw, 32px);
   background: var(--header-bg);
-  backdrop-filter: blur(26px);
   border-bottom: var(--header-border);
   position: sticky;
   top: 0;
@@ -411,18 +383,18 @@ button {
 
 .app-header-kicker {
   font-size: 10px;
-  font-weight: 950;
-  color: var(--accent);
+  font-weight: 600;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-bottom: 6px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
 }
 
 .app-header-title {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
-  font-weight: 950;
-  letter-spacing: -0.055em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
 }
 
@@ -442,25 +414,24 @@ button {
 
 .app-search-input {
   width: 100%;
-  padding: 14px 16px 14px 44px;
-  border-radius: 18px;
-  background: var(--bg-glass);
-  border: var(--card-border);
+  padding: 10px 14px 10px 40px;
+  border-radius: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--divider-color);
   color: var(--text-primary);
   outline: none;
-  box-shadow: var(--card-shadow-sm);
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .app-search-input:focus {
-  border-color: color-mix(in srgb, var(--accent) 48%, transparent);
-  background: var(--bg-input);
-  box-shadow: 0 0 0 4px var(--accent-bg), var(--card-shadow-sm);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .app-search-icon {
   position: absolute;
-  left: 16px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -469,19 +440,18 @@ button {
 
 .app-search-panel {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   left: 0;
   width: min(560px, calc(100vw - 32px));
   max-height: 430px;
   overflow-y: auto;
   background: var(--bg-card);
   border: var(--card-border);
-  border-radius: 24px;
+  border-radius: 12px;
   box-shadow: var(--card-shadow-hover);
-  backdrop-filter: blur(28px);
   z-index: 1200;
   padding: 8px;
-  animation: slideUp 0.16s ease;
+  animation: slideUp 0.15s ease;
 }
 
 .app-search-group-title {
@@ -520,9 +490,9 @@ button {
 
 .app-search-result-icon,
 .app-search-quick-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 13px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: var(--accent-bg);
   color: var(--accent);
   display: inline-flex;
@@ -533,7 +503,7 @@ button {
 
 .app-search-result-title {
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -542,8 +512,8 @@ button {
 .app-search-result-subtitle {
   font-size: 11px;
   color: var(--text-muted);
-  font-weight: 650;
-  margin-top: 3px;
+  font-weight: 500;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -557,66 +527,61 @@ button {
 }
 
 .app-icon-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   border: var(--card-border);
   background: var(--bg-glass);
   color: var(--text-secondary);
-  box-shadow: var(--card-shadow-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .app-icon-button:hover {
-  transform: translateY(-1px);
   background: var(--bg-glass-hover);
   color: var(--text-primary);
-  box-shadow: var(--btn-shadow-hover);
+  border-color: var(--card-border-hover);
 }
 
 .app-notification-dot {
   position: absolute;
-  top: 9px;
-  right: 9px;
+  top: 8px;
+  right: 8px;
   width: 8px;
   height: 8px;
-  background: var(--danger);
+  background: var(--accent);
   border-radius: 999px;
-  box-shadow: 0 0 0 3px var(--bg-card);
 }
 
 .app-user-button {
   border: var(--card-border);
   background: var(--bg-glass);
-  border-radius: 18px;
-  padding: 5px 12px 5px 5px;
+  border-radius: 10px;
+  padding: 4px 10px 4px 4px;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   cursor: pointer;
   color: var(--text-primary);
-  box-shadow: var(--card-shadow-sm);
-  transition: transform 0.18s ease, background 0.18s ease;
+  transition: background 0.15s ease;
 }
 
 .app-user-button:hover {
-  transform: translateY(-1px);
   background: var(--bg-glass-hover);
 }
 
 .app-user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 14px;
-  background: var(--accent-gradient);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--accent);
   color: #fff;
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -624,16 +589,15 @@ button {
 
 .app-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
-  width: 280px;
+  width: 260px;
   background: var(--bg-card);
   border: var(--card-border);
-  border-radius: 24px;
+  border-radius: 12px;
   box-shadow: var(--card-shadow-hover);
-  backdrop-filter: blur(28px);
   overflow: hidden;
-  animation: slideUp 0.16s ease;
+  animation: slideUp 0.15s ease;
   z-index: 1200;
 }
 
@@ -699,14 +663,12 @@ button {
   border-radius: var(--radius-lg);
   border: var(--card-border);
   box-shadow: var(--card-shadow);
-  backdrop-filter: blur(24px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .clay-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--card-shadow-hover);
   border-color: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .clay-card-sm {
@@ -714,84 +676,110 @@ button {
   border-radius: var(--radius);
   border: var(--card-border);
   box-shadow: var(--card-shadow-sm);
-  backdrop-filter: blur(20px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
 .clay-card-sm:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--card-shadow-hover);
+  border-color: var(--card-border-hover);
 }
 
 .clay-input {
   background: var(--bg-input);
   border: 1px solid var(--divider-color);
-  border-radius: var(--radius);
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 10px 14px;
   font-size: 14px;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   width: 100%;
   font-family: var(--font-family);
-  box-shadow: var(--card-shadow-sm);
 }
 
 .clay-input:focus {
-  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-  box-shadow: 0 0 0 4px var(--accent-bg), var(--card-shadow-sm);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .clay-input::placeholder {
   color: var(--text-muted);
 }
 
+.clay-input[type="date"] {
+  color-scheme: dark;
+  position: relative;
+}
+
+.clay-input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  filter: invert(0.5);
+  transition: opacity 0.15s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.clay-input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 0.9;
+}
+
+.clay-input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.clay-input[type="date"]::-webkit-datetime-edit {
+  color: var(--text-primary);
+}
+
+select.clay-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
 .clay-btn {
   background: var(--bg-card);
   border: 1px solid var(--divider-color);
-  border-radius: var(--radius);
-  padding: 10px 16px;
+  border-radius: 8px;
+  padding: 9px 16px;
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 600;
   color: var(--text-primary);
-  box-shadow: var(--btn-shadow);
   cursor: pointer;
-  backdrop-filter: blur(18px);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
   font-family: var(--font-family);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
 }
 
 .clay-btn:hover:not(:disabled) {
   background: var(--bg-glass-hover);
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--divider-color));
-  transform: translateY(-1px);
-  box-shadow: var(--btn-shadow-hover);
+  border-color: var(--card-border-hover);
 }
 
 .clay-btn:active:not(:disabled) {
-  transform: scale(0.985);
-  box-shadow: var(--btn-shadow-active);
+  background: var(--bg-secondary);
 }
 
 .clay-btn:disabled {
-  opacity: 0.56;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .clay-btn-primary {
-  background: var(--accent-gradient);
+  background: var(--accent);
   color: #ffffff;
   border: 1px solid transparent;
-  box-shadow: var(--accent-glow);
+  font-weight: 600;
 }
 
 .clay-btn-primary:hover:not(:disabled) {
-  opacity: 0.95;
-  background: var(--accent-gradient);
+  background: var(--accent-dark);
   border-color: transparent;
 }
 
@@ -841,10 +829,10 @@ button {
 .clay-badge {
   display: inline-flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: var(--radius-full);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 600;
   text-transform: none;
   line-height: 1;
 }
@@ -928,9 +916,9 @@ button {
 }
 
 .clay-modal-header h2 {
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .clay-modal-body {
@@ -954,22 +942,21 @@ button {
 
 .clay-table th {
   text-align: left;
-  padding: 14px 16px;
-  font-size: 10px;
-  font-weight: 950;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.085em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
   border-bottom: 1px solid var(--divider-color);
-  background: color-mix(in srgb, var(--bg-secondary) 74%, transparent);
 }
 
 .clay-table td {
-  padding: 16px;
+  padding: 14px 16px;
   font-size: 13px;
   border-bottom: 1px solid var(--divider-color);
   color: var(--text-primary);
-  transition: background 0.15s ease;
+  transition: background 0.1s ease;
 }
 
 .clay-table tr:hover td {
@@ -1008,31 +995,29 @@ button {
 
 .clay-stat-card {
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   padding: 24px;
   border: var(--card-border);
   box-shadow: var(--card-shadow);
-  backdrop-filter: blur(24px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .clay-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--card-shadow-hover);
   border-color: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .clay-stat-value {
-  font-size: 32px;
-  font-weight: 950;
-  letter-spacing: -0.04em;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
 }
 
 .clay-stat-label {
   font-size: 12px;
   color: var(--text-secondary);
-  font-weight: 850;
+  font-weight: 500;
 }
 
 .clay-stat-icon {
@@ -1060,16 +1045,16 @@ button {
 }
 
 .clay-tab {
-  padding: 11px 14px;
+  padding: 10px 14px;
   margin-bottom: -1px;
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
   font-family: inherit;
   white-space: nowrap;
 }
@@ -1081,8 +1066,6 @@ button {
 .clay-tab.active {
   color: var(--accent);
   border-bottom-color: var(--accent);
-  background: var(--accent-bg);
-  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .clay-progress {
@@ -1094,8 +1077,8 @@ button {
 
 .clay-progress-bar {
   height: 100%;
-  background: var(--accent-gradient);
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--accent);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .clay-skeleton {
@@ -1112,9 +1095,9 @@ button {
 .clay-form-label {
   display: block;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 7px;
+  margin-bottom: 6px;
 }
 
 .clay-form-error {
@@ -1192,9 +1175,7 @@ button {
 @media (max-width: 1180px) {
   :root,
   [data-theme="light"],
-  [data-theme="dark"],
-  [data-theme="midnight"],
-  [data-theme="clay"] {
+  [data-theme="dark"] {
     --sidebar-width: 92px;
   }
 
@@ -1224,7 +1205,17 @@ button {
   .app-sidebar-ai {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 12px;
+    cursor: pointer;
+  }
+
+  .app-sidebar-ai:hover {
+    background: var(--bg-glass-hover);
+  }
+
+  .app-sidebar-ai .clay-btn {
+    display: none;
   }
 
   .app-sidebar-ai-title {
