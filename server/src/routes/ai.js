@@ -33,7 +33,15 @@ async function callAI(prompt, systemPrompt = 'You are a helpful CRM assistant.')
     const response = await openai.chat.completions.create({
       model: client.model,
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: `You are an AI assistant embedded inside SmartCRM, a customer relationship management platform. Your purpose is strictly limited to CRM-related topics: sales pipelines, deal strategies, contact management, follow-ups, revenue insights, customer support tickets, invoices, workflows, email generation, meeting scheduling, and CRM best practices. You operate within the SmartCRM workspace and only have knowledge of the CRM data provided to you in the current conversation.
+
+CRITICAL RULES:
+1. NEVER discuss topics unrelated to CRM (no coding, no general knowledge, no jokes, no personal advice, no politics, no entertainment).
+2. If a user asks about anything outside CRM context, politely decline and redirect them back to CRM topics.
+3. Always be concise, professional, and actionable.
+4. Do not mention your underlying model or training data.
+5. Keep responses under 200 words unless the user explicitly asks for detail.
+6. Base your answers on the CRM context provided. If no context is available, guide the user to provide relevant CRM data (deals, contacts, etc.).\n\n${systemPrompt}` },
         { role: 'user', content: prompt }
       ],
       temperature: 0.7,
@@ -68,7 +76,7 @@ router.post('/chat', async (req, res) => {
 
   const response = await callAI(
     `Context from CRM:${contextStr}\n\nUser message: ${message}`,
-    'You are a helpful CRM assistant for Smart CRM. Provide concise, actionable insights. Help with sales strategies, follow-up suggestions, and CRM best practices.'
+    'You are a CRM assistant for SmartCRM. Provide concise, actionable insights about sales, deals, contacts, and CRM workflows. Decline non-CRM questions.'
   );
 
   res.json({ response, context: contextStr });
@@ -92,7 +100,7 @@ router.post('/insights/deal', async (req, res) => {
 
     Provide: 1) Win probability assessment 2) Next best actions 3) Risk factors 4) Recommended follow-up strategy. Keep it under 300 words.`;
 
-  const insight = await callAI(prompt, 'You are a sales strategist and CRM expert. Provide concise, actionable deal analysis.');
+  const insight = await callAI(prompt, 'You are a sales strategist for SmartCRM. Analyze deals and provide actionable next steps.');
 
   db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
     .run(uuidv4(), 'deal', deal_id, 'deal_analysis', insight);
@@ -120,7 +128,7 @@ router.post('/insights/contact', async (req, res) => {
 
     Provide: 1) Engagement score assessment 2) Recommended next outreach 3) Relationship health 4) Upsell/cross-sell opportunities. Keep under 300 words.`;
 
-  const insight = await callAI(prompt, 'You are a CRM and sales relationship expert.');
+  const insight = await callAI(prompt, 'You are a CRM relationship expert for SmartCRM. Analyze contacts and suggest engagement strategies.');
 
   db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
     .run(uuidv4(), 'contact', contact_id, 'contact_analysis', insight);
@@ -143,7 +151,7 @@ router.post('/generate-email', async (req, res) => {
 
   const prompt = `Generate a professional email for:${context}\n\nPurpose: ${purpose || 'general follow-up'}\n\nWrite a concise, personalized email. Include subject line.`;
 
-  const email = await callAI(prompt, 'You are a professional business email writer. Write concise, effective emails.');
+  const email = await callAI(prompt, 'You are a business email writer for SmartCRM. Write concise, professional emails within CRM context only.');
 
   res.json({ email });
 });
@@ -177,7 +185,7 @@ router.post('/predictive/scoring', async (req, res) => {
   const dealList = deals.map(d => `- ${d.name}: $${d.value}, stage ${d.stage}, probability ${d.probability}%`).join('\n');
   const prompt = `Rank these open deals by likelihood to close, considering value, stage, and probability. Return as JSON array with fields: deal_name, score (1-100), reasoning:\n\n${dealList}`;
 
-  const response = await callAI(prompt, 'You are a sales analytics expert. Return valid JSON only.');
+  const response = await callAI(prompt, 'You are a sales analytics expert for SmartCRM. Score deals based on CRM data. Return valid JSON only.');
   res.json({ scored: response });
 });
 
