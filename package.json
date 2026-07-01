@@ -9,7 +9,8 @@
     "dev:client": "cd client && npx vite --port 5173",
     "build": "cd client && npx vite build",
     "start": "cd server && npx tsx src/index.ts",
-    "setup": "npm install && cd server && npm install && cd ../client && npm install"
+    "setup": "npm install && cd server && npm install && cd ../client && npm install",
+    "test": "cd client && npm test"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
