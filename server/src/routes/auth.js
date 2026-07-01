@@ -6,21 +6,21 @@ import { generateToken, authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
       return res.status(400).json({ error: 'Email, password, and name are required' });
     }
 
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    const existing = await db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (existing) {
       return res.status(409).json({ error: 'User already exists' });
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
     const id = uuidv4();
-    db.prepare(
+    await db.prepare(
       'INSERT INTO users (id, email, name, password, role) VALUES (?, ?, ?, ?, ?)'
     ).run(id, email, name, hashedPassword, 'user');
 
@@ -32,10 +32,10 @@ router.post('/register', (req, res) => {
   }
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -51,12 +51,16 @@ router.post('/login', (req, res) => {
   }
 });
 
-router.get('/me', authenticateToken, (req, res) => {
-  const user = db.prepare('SELECT id, email, name, role, avatar FROM users WHERE id = ?').get(req.user.id);
-  res.json(user);
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const user = await db.prepare('SELECT id, email, name, role, avatar FROM users WHERE id = ?').get(req.user.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.put('/profile', authenticateToken, (req, res) => {
+router.put('/profile', authenticateToken, async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(400).json({ error: 'User ID not found' });
@@ -67,13 +71,13 @@ router.put('/profile', authenticateToken, (req, res) => {
 
     if (name !== undefined) { updates.push('name = ?'); params.push(name); }
     if (email !== undefined) {
-      const existing = db.prepare('SELECT id FROM users WHERE email = ? AND id != ?').get(email, userId);
+      const existing = await db.prepare('SELECT id FROM users WHERE email = ? AND id != ?').get(email, userId);
       if (existing) return res.status(409).json({ error: 'Email already in use' });
       updates.push('email = ?'); params.push(email);
     }
     if (new_password) {
       if (!current_password) return res.status(400).json({ error: 'Current password required to change password' });
-      const user = db.prepare('SELECT password FROM users WHERE id = ?').get(userId);
+      const user = await db.prepare('SELECT password FROM users WHERE id = ?').get(userId);
       if (!user || !bcrypt.compareSync(current_password, user.password)) {
         return res.status(401).json({ error: 'Current password is incorrect' });
       }
@@ -83,23 +87,23 @@ router.put('/profile', authenticateToken, (req, res) => {
     if (updates.length > 0) {
       updates.push("updated_at = datetime('now')");
       params.push(userId);
-      db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+      await db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
     }
 
-    const updated = db.prepare('SELECT id, email, name, role, avatar FROM users WHERE id = ?').get(userId);
+    const updated = await db.prepare('SELECT id, email, name, role, avatar FROM users WHERE id = ?').get(userId);
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.delete('/account', authenticateToken, (req, res) => {
+router.delete('/account', authenticateToken, async (req, res) => {
   try {
     const userId = req.user?.id || req.apiToken?.id;
     if (!userId) return res.status(400).json({ error: 'User ID not found' });
 
-    db.prepare('DELETE FROM api_tokens WHERE created_by = ?').run(userId);
-    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+    await db.prepare('DELETE FROM api_tokens WHERE created_by = ?').run(userId);
+    await db.prepare('DELETE FROM users WHERE id = ?').run(userId);
     res.json({ message: 'Account deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });

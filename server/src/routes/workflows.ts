@@ -132,133 +132,166 @@ function parseWorkflow(row: WorkflowRow): Workflow {
 }
 
 // Metadata for UI
-router.get('/metadata', (_req: Request, res: Response) => {
-  res.json({ triggers: TRIGGER_TYPES, actions: ACTION_TYPES });
+router.get('/metadata', async (_req: Request, res: Response) => {
+  try {
+    res.json({ triggers: TRIGGER_TYPES, actions: ACTION_TYPES });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // List workflows
-router.get('/', (_req: Request, res: Response) => {
-  const workflows = db.prepare('SELECT * FROM workflows ORDER BY updated_at DESC').all() as WorkflowRow[];
-  res.json(workflows.map(parseWorkflow));
+router.get('/', async (_req: Request, res: Response) => {
+  try {
+    const workflows = await db.prepare('SELECT * FROM workflows ORDER BY updated_at DESC').all() as WorkflowRow[];
+    res.json(workflows.map(parseWorkflow));
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Get single workflow
-router.get('/:id', (req: Request, res: Response) => {
-  const workflow = db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
-  if (!workflow) return res.status(404).json({ error: 'Workflow not found' });
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const workflow = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
+    if (!workflow) return res.status(404).json({ error: 'Workflow not found' });
 
-  const executions = db.prepare(
-    'SELECT * FROM workflow_executions WHERE workflow_id = ? ORDER BY created_at DESC LIMIT 20'
-  ).all(req.params.id);
+    const executions = await db.prepare(
+      'SELECT * FROM workflow_executions WHERE workflow_id = ? ORDER BY created_at DESC LIMIT 20'
+    ).all(req.params.id);
 
-  res.json({ ...parseWorkflow(workflow), executions });
+    res.json({ ...parseWorkflow(workflow), executions });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Create workflow
-router.post('/', (req: Request, res: Response) => {
-  const id = uuidv4();
-  const { name, description, trigger_type, trigger_config, actions, status } = req.body;
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const id = uuidv4();
+    const { name, description, trigger_type, trigger_config, actions, status } = req.body;
 
-  if (!name || !trigger_type) {
-    return res.status(400).json({ error: 'Name and trigger_type are required' });
+    if (!name || !trigger_type) {
+      return res.status(400).json({ error: 'Name and trigger_type are required' });
+    }
+
+    await db.prepare(`INSERT INTO workflows (id, name, description, trigger_type, trigger_config, actions, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
+      id, name, description || '', trigger_type,
+      JSON.stringify(trigger_config || {}),
+      JSON.stringify(actions || []),
+      status || 'draft'
+    );
+
+    const row = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(id) as WorkflowRow;
+    res.status(201).json(parseWorkflow(row));
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  db.prepare(`INSERT INTO workflows (id, name, description, trigger_type, trigger_config, actions, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
-    id, name, description || '', trigger_type,
-    JSON.stringify(trigger_config || {}),
-    JSON.stringify(actions || []),
-    status || 'draft'
-  );
-
-  const row = db.prepare('SELECT * FROM workflows WHERE id = ?').get(id) as WorkflowRow;
-  res.status(201).json(parseWorkflow(row));
 });
 
 // Update workflow
-router.put('/:id', (req: Request, res: Response) => {
-  const existing = db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Workflow not found' });
+router.put('/:id', async (req: Request, res: Response) => {
+  try {
+    const existing = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Workflow not found' });
 
-  const { name, description, trigger_type, trigger_config, actions, status } = req.body;
-  const updates: string[] = [];
-  const params: unknown[] = [];
+    const { name, description, trigger_type, trigger_config, actions, status } = req.body;
+    const updates: string[] = [];
+    const params: unknown[] = [];
 
-  if (name !== undefined) { updates.push('name = ?'); params.push(name); }
-  if (description !== undefined) { updates.push('description = ?'); params.push(description); }
-  if (trigger_type !== undefined) { updates.push('trigger_type = ?'); params.push(trigger_type); }
-  if (trigger_config !== undefined) { updates.push('trigger_config = ?'); params.push(JSON.stringify(trigger_config)); }
-  if (actions !== undefined) { updates.push('actions = ?'); params.push(JSON.stringify(actions)); }
-  if (status !== undefined) { updates.push('status = ?'); params.push(status); }
+    if (name !== undefined) { updates.push('name = ?'); params.push(name); }
+    if (description !== undefined) { updates.push('description = ?'); params.push(description); }
+    if (trigger_type !== undefined) { updates.push('trigger_type = ?'); params.push(trigger_type); }
+    if (trigger_config !== undefined) { updates.push('trigger_config = ?'); params.push(JSON.stringify(trigger_config)); }
+    if (actions !== undefined) { updates.push('actions = ?'); params.push(JSON.stringify(actions)); }
+    if (status !== undefined) { updates.push('status = ?'); params.push(status); }
 
-  if (updates.length > 0) {
-    updates.push("updated_at = datetime('now')");
-    params.push(req.params.id);
-    db.prepare(`UPDATE workflows SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+    if (updates.length > 0) {
+      updates.push("updated_at = datetime('now')");
+      params.push(req.params.id);
+      await db.prepare(`UPDATE workflows SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+    }
+
+    const row = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow;
+    res.json(parseWorkflow(row));
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  const row = db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow;
-  res.json(parseWorkflow(row));
 });
 
 // Delete workflow
-router.delete('/:id', (req: Request, res: Response) => {
-  const result = db.prepare('DELETE FROM workflows WHERE id = ?').run(req.params.id);
-  if (result.changes === 0) return res.status(404).json({ error: 'Workflow not found' });
-  res.json({ message: 'Workflow deleted' });
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const result = await db.prepare('DELETE FROM workflows WHERE id = ?').run(req.params.id);
+    if (result.changes === 0) return res.status(404).json({ error: 'Workflow not found' });
+    res.json({ message: 'Workflow deleted' });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Toggle workflow active/paused
-router.post('/:id/toggle', (req: Request, res: Response) => {
-  const workflow = db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
-  if (!workflow) return res.status(404).json({ error: 'Workflow not found' });
+router.post('/:id/toggle', async (req: Request, res: Response) => {
+  try {
+    const workflow = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
+    if (!workflow) return res.status(404).json({ error: 'Workflow not found' });
 
-  const newStatus = workflow.status === 'active' ? 'paused' : 'active';
-  db.prepare("UPDATE workflows SET status = ?, updated_at = datetime('now') WHERE id = ?").run(newStatus, req.params.id);
-  res.json({ id: req.params.id, status: newStatus });
+    const newStatus = workflow.status === 'active' ? 'paused' : 'active';
+    await db.prepare("UPDATE workflows SET status = ?, updated_at = datetime('now') WHERE id = ?").run(newStatus, req.params.id);
+    res.json({ id: req.params.id, status: newStatus });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Execute workflow manually
 router.post('/:id/execute', async (req: Request, res: Response) => {
-  const row = db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
-  if (!row) return res.status(404).json({ error: 'Workflow not found' });
+  try {
+    const row = await db.prepare('SELECT * FROM workflows WHERE id = ?').get(req.params.id) as WorkflowRow | undefined;
+    if (!row) return res.status(404).json({ error: 'Workflow not found' });
 
-  const workflow = parseWorkflow(row);
-  const execId = uuidv4();
-  const triggerData = req.body.trigger_data || {};
+    const workflow = parseWorkflow(row);
+    const execId = uuidv4();
+    const triggerData = req.body.trigger_data || {};
 
-  db.prepare(`INSERT INTO workflow_executions (id, workflow_id, status, trigger_data, started_at)
-    VALUES (?, ?, 'running', ?, datetime('now'))`).run(execId, req.params.id, JSON.stringify(triggerData));
+    await db.prepare(`INSERT INTO workflow_executions (id, workflow_id, status, trigger_data, started_at)
+      VALUES (?, ?, 'running', ?, datetime('now'))`).run(execId, req.params.id, JSON.stringify(triggerData));
 
-  const results: ExecutionResult[] = [];
-  for (const action of workflow.actions) {
-    try {
-      const result = await executeAction(action, { workflow, trigger_data: triggerData });
-      results.push({ action: action.type, success: true, details: result });
-    } catch (err) {
-      results.push({ action: action.type, success: false, error: (err as Error).message });
+    const results: ExecutionResult[] = [];
+    for (const action of workflow.actions) {
+      try {
+        const result = await executeAction(action, { workflow, trigger_data: triggerData });
+        results.push({ action: action.type, success: true, details: result });
+      } catch (err) {
+        results.push({ action: action.type, success: false, error: (err as Error).message });
+      }
     }
+
+    await db.prepare(`UPDATE workflow_executions SET status = 'completed', result = ?, completed_at = datetime('now') WHERE id = ?`)
+      .run(JSON.stringify(results), execId);
+
+    await db.prepare("UPDATE workflows SET last_run = datetime('now'), run_count = run_count + 1, updated_at = datetime('now') WHERE id = ?")
+      .run(req.params.id);
+
+    const exec = await db.prepare('SELECT * FROM workflow_executions WHERE id = ?').get(execId);
+    res.json({ execution: exec, results });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  db.prepare(`UPDATE workflow_executions SET status = 'completed', result = ?, completed_at = datetime('now') WHERE id = ?`)
-    .run(JSON.stringify(results), execId);
-
-  db.prepare("UPDATE workflows SET last_run = datetime('now'), run_count = run_count + 1, updated_at = datetime('now') WHERE id = ?")
-    .run(req.params.id);
-
-  const exec = db.prepare('SELECT * FROM workflow_executions WHERE id = ?').get(execId);
-  res.json({ execution: exec, results });
 });
 
 // AI chat endpoint for workflow generation
 router.post('/ai/generate', async (req: Request, res: Response) => {
-  const { message, conversation_history } = req.body;
-  if (!message) return res.status(400).json({ error: 'Message required' });
+  try {
+    const { message, conversation_history } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message required' });
 
-  const triggerList = TRIGGER_TYPES.map(t => `- ${t.value}: ${t.description}`).join('\n');
-  const actionList = ACTION_TYPES.map(a => `- ${a.value}: ${a.description} (fields: ${a.fields.join(', ')})`).join('\n');
+    const triggerList = TRIGGER_TYPES.map(t => `- ${t.value}: ${t.description}`).join('\n');
+    const actionList = ACTION_TYPES.map(a => `- ${a.value}: ${a.description} (fields: ${a.fields.join(', ')})`).join('\n');
 
-  const systemPrompt = `You are a CRM workflow automation builder. Help users build automated workflows.
+    const systemPrompt = `You are a CRM workflow automation builder. Help users build automated workflows.
 
 Available triggers:
 ${triggerList}
@@ -301,24 +334,27 @@ Rules:
 - For actions: config fields should match the action's field list
 - Return valid JSON only, no markdown formatting`;
 
-  const history = (conversation_history as { role: string; content: string }[] || [])
-    .map(m => `${m.role}: ${m.content}`).join('\n');
-  const prompt = `Previous conversation:\n${history}\n\nUser: ${message}`;
+    const history = (conversation_history as { role: string; content: string }[] || [])
+      .map(m => `${m.role}: ${m.content}`).join('\n');
+    const prompt = `Previous conversation:\n${history}\n\nUser: ${message}`;
 
-  const response = await callAI(prompt, systemPrompt);
-  if (!response) {
-    return res.json({
-      type: 'message',
-      message: 'AI is not configured. Please set your DEEPSEEK_API_KEY in server/.env'
-    });
-  }
+    const response = await callAI(prompt, systemPrompt);
+    if (!response) {
+      return res.json({
+        type: 'message',
+        message: 'AI is not configured. Please set your DEEPSEEK_API_KEY in server/.env'
+      });
+    }
 
-  try {
-    const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const parsed = JSON.parse(cleaned);
-    res.json(parsed);
-  } catch {
-    res.json({ type: 'message', message: response });
+    try {
+      const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      res.json(parsed);
+    } catch {
+      res.json({ type: 'message', message: response });
+    }
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 
@@ -336,7 +372,7 @@ async function executeAction(
         ? new Date(Date.now() + config.due_offset_days * 86400000).toISOString().split('T')[0]
         : null;
 
-      db.prepare(`INSERT INTO activities (id, type, subject, description, contact_id, company_id, deal_id, status, due_date)
+      await db.prepare(`INSERT INTO activities (id, type, subject, description, contact_id, company_id, deal_id, status, due_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)`).run(
         activityId,
         (config.type as string) || 'task',
@@ -352,11 +388,11 @@ async function executeAction(
 
     case 'update_deal': {
       if (context.trigger_data?.deal_id && config.target_stage) {
-        db.prepare("UPDATE deals SET stage = ?, updated_at = datetime('now') WHERE id = ?")
+        await db.prepare("UPDATE deals SET stage = ?, updated_at = datetime('now') WHERE id = ?")
           .run(config.target_stage, context.trigger_data.deal_id);
       }
       if (context.trigger_data?.deal_id && config.target_probability) {
-        db.prepare("UPDATE deals SET probability = ?, updated_at = datetime('now') WHERE id = ?")
+        await db.prepare("UPDATE deals SET probability = ?, updated_at = datetime('now') WHERE id = ?")
           .run(config.target_probability, context.trigger_data.deal_id);
       }
       return { updated: true };
@@ -364,14 +400,14 @@ async function executeAction(
 
     case 'update_contact': {
       if (context.trigger_data?.contact_id && config.target_status) {
-        db.prepare("UPDATE contacts SET status = ?, updated_at = datetime('now') WHERE id = ?")
+        await db.prepare("UPDATE contacts SET status = ?, updated_at = datetime('now') WHERE id = ?")
           .run(config.target_status, context.trigger_data.contact_id);
       }
       return { updated: true };
     }
 
     case 'send_email': {
-      db.prepare(`INSERT INTO activities (id, type, subject, description, contact_id, status)
+      await db.prepare(`INSERT INTO activities (id, type, subject, description, contact_id, status)
         VALUES (?, 'email', ?, ?, ?, 'pending')`).run(
         uuidv4(),
         (config.subject_template as string) || 'Automated notification',
@@ -383,7 +419,7 @@ async function executeAction(
 
     case 'create_conversation': {
       const convId = uuidv4();
-      db.prepare(`INSERT INTO conversations (id, contact_id, company_id, deal_id, subject, channel, status)
+      await db.prepare(`INSERT INTO conversations (id, contact_id, company_id, deal_id, subject, channel, status)
         VALUES (?, ?, ?, ?, ?, ?, 'open')`).run(
         convId,
         context.trigger_data?.contact_id || null,

@@ -54,139 +54,167 @@ CRITICAL RULES:
 }
 
 router.post('/chat', async (req, res) => {
-  const { message, context } = req.body;
-  if (!message) return res.status(400).json({ error: 'Message required' });
+  try {
+    const { message, context } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message required' });
 
-  let contextStr = '';
-  if (context) {
-    const { contact_id, company_id, deal_id } = context;
-    if (contact_id) {
-      const contact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
-      if (contact) contextStr += `\nContact: ${contact.first_name} ${contact.last_name} (${contact.email || 'no email'})`;
+    let contextStr = '';
+    if (context) {
+      const { contact_id, company_id, deal_id } = context;
+      if (contact_id) {
+        const contact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
+        if (contact) contextStr += `\nContact: ${contact.first_name} ${contact.last_name} (${contact.email || 'no email'})`;
+      }
+      if (company_id) {
+        const company = await db.prepare('SELECT * FROM companies WHERE id = ?').get(company_id);
+        if (company) contextStr += `\nCompany: ${company.name} (${company.industry || 'no industry'})`;
+      }
+      if (deal_id) {
+        const deal = await db.prepare('SELECT * FROM deals WHERE id = ?').get(deal_id);
+        if (deal) contextStr += `\nDeal: ${deal.name} at stage ${deal.stage}, value $${deal.value}`;
+      }
     }
-    if (company_id) {
-      const company = db.prepare('SELECT * FROM companies WHERE id = ?').get(company_id);
-      if (company) contextStr += `\nCompany: ${company.name} (${company.industry || 'no industry'})`;
-    }
-    if (deal_id) {
-      const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(deal_id);
-      if (deal) contextStr += `\nDeal: ${deal.name} at stage ${deal.stage}, value $${deal.value}`;
-    }
+
+    const response = await callAI(
+      `Context from CRM:${contextStr}\n\nUser message: ${message}`,
+      'You are a CRM assistant for SmartCRM. Provide concise, actionable insights about sales, deals, contacts, and CRM workflows. Decline non-CRM questions.'
+    );
+
+    res.json({ response, context: contextStr });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  const response = await callAI(
-    `Context from CRM:${contextStr}\n\nUser message: ${message}`,
-    'You are a CRM assistant for SmartCRM. Provide concise, actionable insights about sales, deals, contacts, and CRM workflows. Decline non-CRM questions.'
-  );
-
-  res.json({ response, context: contextStr });
 });
 
 router.post('/insights/deal', async (req, res) => {
-  const { deal_id } = req.body;
-  if (!deal_id) return res.status(400).json({ error: 'Deal ID required' });
+  try {
+    const { deal_id } = req.body;
+    if (!deal_id) return res.status(400).json({ error: 'Deal ID required' });
 
-  const deal = db.prepare(`SELECT d.*, c.first_name || ' ' || c.last_name as contact_name
-    FROM deals d LEFT JOIN contacts c ON d.contact_id = c.id WHERE d.id = ?`).get(deal_id);
-  if (!deal) return res.status(404).json({ error: 'Deal not found' });
+    const deal = await db.prepare(`SELECT d.*, c.first_name || ' ' || c.last_name as contact_name
+      FROM deals d LEFT JOIN contacts c ON d.contact_id = c.id WHERE d.id = ?`).get(deal_id);
+    if (!deal) return res.status(404).json({ error: 'Deal not found' });
 
-  const prompt = `Analyze this CRM deal and provide insights:
-    Deal: ${deal.name}
-    Value: $${deal.value}
-    Stage: ${deal.stage}
-    Probability: ${deal.probability}%
-    Contact: ${deal.contact_name || 'N/A'}
-    Description: ${deal.description || 'N/A'}
+    const prompt = `Analyze this CRM deal and provide insights:
+      Deal: ${deal.name}
+      Value: $${deal.value}
+      Stage: ${deal.stage}
+      Probability: ${deal.probability}%
+      Contact: ${deal.contact_name || 'N/A'}
+      Description: ${deal.description || 'N/A'}
 
-    Provide: 1) Win probability assessment 2) Next best actions 3) Risk factors 4) Recommended follow-up strategy. Keep it under 300 words.`;
+      Provide: 1) Win probability assessment 2) Next best actions 3) Risk factors 4) Recommended follow-up strategy. Keep it under 300 words.`;
 
-  const insight = await callAI(prompt, 'You are a sales strategist for SmartCRM. Analyze deals and provide actionable next steps.');
+    const insight = await callAI(prompt, 'You are a sales strategist for SmartCRM. Analyze deals and provide actionable next steps.');
 
-  db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
-    .run(uuidv4(), 'deal', deal_id, 'deal_analysis', insight);
+    await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
+      .run(uuidv4(), 'deal', deal_id, 'deal_analysis', insight);
 
-  res.json({ insight });
+    res.json({ insight });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.post('/insights/contact', async (req, res) => {
-  const { contact_id } = req.body;
-  if (!contact_id) return res.status(400).json({ error: 'Contact ID required' });
+  try {
+    const { contact_id } = req.body;
+    if (!contact_id) return res.status(400).json({ error: 'Contact ID required' });
 
-  const contact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
-  if (!contact) return res.status(404).json({ error: 'Contact not found' });
+    const contact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
+    if (!contact) return res.status(404).json({ error: 'Contact not found' });
 
-  const deals = db.prepare('SELECT * FROM deals WHERE contact_id = ?').all(contact_id);
+    const deals = await db.prepare('SELECT * FROM deals WHERE contact_id = ?').all(contact_id);
 
-  const prompt = `Analyze this CRM contact:
-    Name: ${contact.first_name} ${contact.last_name}
-    Title: ${contact.title || 'N/A'}
-    Company: ${contact.department || 'N/A'}
-    Status: ${contact.status}
-    Notes: ${contact.notes || 'N/A'}
-    Active deals: ${deals.length}
-    ${deals.length > 0 ? `Deal details: ${JSON.stringify(deals)}` : ''}
+    const prompt = `Analyze this CRM contact:
+      Name: ${contact.first_name} ${contact.last_name}
+      Title: ${contact.title || 'N/A'}
+      Company: ${contact.department || 'N/A'}
+      Status: ${contact.status}
+      Notes: ${contact.notes || 'N/A'}
+      Active deals: ${deals.length}
+      ${deals.length > 0 ? `Deal details: ${JSON.stringify(deals)}` : ''}
 
-    Provide: 1) Engagement score assessment 2) Recommended next outreach 3) Relationship health 4) Upsell/cross-sell opportunities. Keep under 300 words.`;
+      Provide: 1) Engagement score assessment 2) Recommended next outreach 3) Relationship health 4) Upsell/cross-sell opportunities. Keep under 300 words.`;
 
-  const insight = await callAI(prompt, 'You are a CRM relationship expert for SmartCRM. Analyze contacts and suggest engagement strategies.');
+    const insight = await callAI(prompt, 'You are a CRM relationship expert for SmartCRM. Analyze contacts and suggest engagement strategies.');
 
-  db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
-    .run(uuidv4(), 'contact', contact_id, 'contact_analysis', insight);
+    await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
+      .run(uuidv4(), 'contact', contact_id, 'contact_analysis', insight);
 
-  res.json({ insight });
+    res.json({ insight });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.post('/generate-email', async (req, res) => {
-  const { contact_id, deal_id, purpose } = req.body;
+  try {
+    const { contact_id, deal_id, purpose } = req.body;
 
-  let context = '';
-  if (contact_id) {
-    const contact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
-    if (contact) context += `\nContact: ${contact.first_name} ${contact.last_name}, Title: ${contact.title || 'N/A'}, Company: ${contact.department || 'N/A'}`;
+    let context = '';
+    if (contact_id) {
+      const contact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(contact_id);
+      if (contact) context += `\nContact: ${contact.first_name} ${contact.last_name}, Title: ${contact.title || 'N/A'}, Company: ${contact.department || 'N/A'}`;
+    }
+    if (deal_id) {
+      const deal = await db.prepare('SELECT * FROM deals WHERE id = ?').get(deal_id);
+      if (deal) context += `\nDeal: ${deal.name}, Stage: ${deal.stage}, Value: $${deal.value}`;
+    }
+
+    const prompt = `Generate a professional email for:${context}\n\nPurpose: ${purpose || 'general follow-up'}\n\nWrite a concise, personalized email. Include subject line.`;
+
+    const email = await callAI(prompt, 'You are a business email writer for SmartCRM. Write concise, professional emails within CRM context only.');
+
+    res.json({ email });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  if (deal_id) {
-    const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(deal_id);
-    if (deal) context += `\nDeal: ${deal.name}, Stage: ${deal.stage}, Value: $${deal.value}`;
-  }
-
-  const prompt = `Generate a professional email for:${context}\n\nPurpose: ${purpose || 'general follow-up'}\n\nWrite a concise, personalized email. Include subject line.`;
-
-  const email = await callAI(prompt, 'You are a business email writer for SmartCRM. Write concise, professional emails within CRM context only.');
-
-  res.json({ email });
 });
 
 router.post('/summarize-conversation', async (req, res) => {
-  const { conversation_id } = req.body;
-  if (!conversation_id) return res.status(400).json({ error: 'Conversation ID required' });
+  try {
+    const { conversation_id } = req.body;
+    if (!conversation_id) return res.status(400).json({ error: 'Conversation ID required' });
 
-  const messages = db.prepare('SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC').all(conversation_id);
-  if (messages.length === 0) return res.status(404).json({ error: 'No messages found' });
+    const messages = await db.prepare('SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC').all(conversation_id);
+    if (messages.length === 0) return res.status(404).json({ error: 'No messages found' });
 
-  const transcript = messages.map(m => `${m.sender_type}: ${m.content}`).join('\n');
-  const summary = await callAI(`Summarize this conversation:\n\n${transcript}\n\nProvide: Key points, action items, sentiment, and next steps.`);
+    const transcript = messages.map(m => `${m.sender_type}: ${m.content}`).join('\n');
+    const summary = await callAI(`Summarize this conversation:\n\n${transcript}\n\nProvide: Key points, action items, sentiment, and next steps.`);
 
-  db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
-    .run(uuidv4(), 'conversation', conversation_id, 'summary', summary);
+    await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
+      .run(uuidv4(), 'conversation', conversation_id, 'summary', summary);
 
-  res.json({ summary });
+    res.json({ summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.get('/insights/:entityType/:entityId', (req, res) => {
-  const insights = db.prepare('SELECT * FROM ai_insights WHERE entity_type = ? AND entity_id = ? ORDER BY created_at DESC')
-    .all(req.params.entityType, req.params.entityId);
-  res.json(insights);
+router.get('/insights/:entityType/:entityId', async (req, res) => {
+  try {
+    const insights = await db.prepare('SELECT * FROM ai_insights WHERE entity_type = ? AND entity_id = ? ORDER BY created_at DESC')
+      .all(req.params.entityType, req.params.entityId);
+    res.json(insights);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.post('/predictive/scoring', async (req, res) => {
-  const deals = db.prepare("SELECT * FROM deals WHERE stage NOT IN ('closed_won','closed_lost')").all();
-  if (deals.length === 0) return res.json({ scored: [] });
+  try {
+    const deals = await db.prepare("SELECT * FROM deals WHERE stage NOT IN ('closed_won','closed_lost')").all();
+    if (deals.length === 0) return res.json({ scored: [] });
 
-  const dealList = deals.map(d => `- ${d.name}: $${d.value}, stage ${d.stage}, probability ${d.probability}%`).join('\n');
-  const prompt = `Rank these open deals by likelihood to close, considering value, stage, and probability. Return as JSON array with fields: deal_name, score (1-100), reasoning:\n\n${dealList}`;
+    const dealList = deals.map(d => `- ${d.name}: $${d.value}, stage ${d.stage}, probability ${d.probability}%`).join('\n');
+    const prompt = `Rank these open deals by likelihood to close, considering value, stage, and probability. Return as JSON array with fields: deal_name, score (1-100), reasoning:\n\n${dealList}`;
 
-  const response = await callAI(prompt, 'You are a sales analytics expert for SmartCRM. Score deals based on CRM data. Return valid JSON only.');
-  res.json({ scored: response });
+    const response = await callAI(prompt, 'You are a sales analytics expert for SmartCRM. Score deals based on CRM data. Return valid JSON only.');
+    res.json({ scored: response });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

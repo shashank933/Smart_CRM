@@ -1,28 +1,112 @@
-import initSqlJs from 'sql.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
+import knex from 'knex';
 import { v4 as uuidv4 } from 'uuid';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
-const DB_PATH = path.join(DATA_DIR, 'crm.db');
+let kdb = null;
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+class StatementWrapper {
+  constructor(kdb, sql) {
+    this.kdb = kdb;
+    this.sql = this.translateSql(sql);
+  }
+
+  translateSql(sql) {
+    let s = sql
+      .replace(/strftime\('%Y-%m',\s*([^)]+)\)/g, "DATE_FORMAT($1, '%Y-%m')")
+      .replace(/datetime\('now'\)/g, 'NOW()')
+      .replace(/datetime\('now','-([^']+)'\)/g, (_, arg) => {
+        const match = arg.match(/(\d+)\s*(days?|months?|years?)/i);
+        if (match) {
+          const num = match[1];
+          const unit = match[2].toLowerCase().startsWith('day') ? 'DAY'
+            : match[2].toLowerCase().startsWith('month') ? 'MONTH'
+            : 'YEAR';
+          return `DATE_SUB(NOW(), INTERVAL ${num} ${unit})`;
+        }
+        return `DATE_SUB(NOW(), INTERVAL ${arg})`;
+      })
+      .replace(/datetime\('now','\+([^']+)'\)/g, (_, arg) => {
+        const match = arg.match(/(\d+)\s*(days?|months?|years?)/i);
+        if (match) {
+          const num = match[1];
+          const unit = match[2].toLowerCase().startsWith('day') ? 'DAY'
+            : match[2].toLowerCase().startsWith('month') ? 'MONTH'
+            : 'YEAR';
+          return `DATE_ADD(NOW(), INTERVAL ${num} ${unit})`;
+        }
+        return `DATE_ADD(NOW(), INTERVAL ${arg})`;
+      })
+      .replace(/date\('now','-([^']+)'\)/g, (_, arg) => {
+        const match = arg.match(/(\d+)\s*(days?|months?|years?)/i);
+        if (match) {
+          const num = match[1];
+          const unit = match[2].toLowerCase().startsWith('day') ? 'DAY'
+            : match[2].toLowerCase().startsWith('month') ? 'MONTH'
+            : 'YEAR';
+          return `DATE_SUB(CURDATE(), INTERVAL ${num} ${unit})`;
+        }
+        return `DATE_SUB(CURDATE(), INTERVAL ${arg})`;
+      })
+      .replace(/date\('now','\+([^']+)'\)/g, (_, arg) => {
+        const match = arg.match(/(\d+)\s*(days?|months?|years?)/i);
+        if (match) {
+          const num = match[1];
+          const unit = match[2].toLowerCase().startsWith('day') ? 'DAY'
+            : match[2].toLowerCase().startsWith('month') ? 'MONTH'
+            : 'YEAR';
+          return `DATE_ADD(CURDATE(), INTERVAL ${num} ${unit})`;
+        }
+        return `DATE_ADD(CURDATE(), INTERVAL ${arg})`;
+      });
+
+    s = s.replace(/(\w+\.\w+)\s*\|\|\s*'([^']*)'\s*\|\|\s*(\w+\.\w+)/g,
+      "CONCAT($1, '$2', $3)");
+    s = s.replace(/(\w+\.\w+)\s*\|\|\s*'([^']*)'\s*\|\|\s*(\w+\.\w+)\s*\|\|\s*'([^']*)'\s*\|\|\s*(\w+\.\w+)/g,
+      "CONCAT($1, '$2', $3, '$4', $5)");
+
+    return s;
+  }
+
+  async all(...params) {
+    const clean = sanitizeParams(params);
+    const result = await this.kdb.raw(this.sql, clean);
+    const rows = result[0];
+    return rows.map(row => {
+      const obj = {};
+      for (const key of Object.keys(row)) {
+        obj[key] = row[key];
+      }
+      return obj;
+    });
+  }
+
+  async get(...params) {
+    const results = await this.all(...params);
+    return results.length > 0 ? results[0] : undefined;
+  }
+
+  async run(...params) {
+    const clean = sanitizeParams(params);
+    const result = await this.kdb.raw(this.sql, clean);
+    return { changes: result[0]?.affectedRows || 0 };
+  }
 }
 
-let db = null;
-let SQL = null;
+class DBWrapper {
+  constructor(kdb) {
+    this.kdb = kdb;
+  }
 
-function saveToDisk() {
-  if (!db) return;
-  try {
-    const data = db.rawDb.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(DB_PATH, buffer);
-  } catch (e) {
-    console.error('Failed to save database:', e.message);
+  prepare(sql) {
+    return new StatementWrapper(this.kdb, sql);
+  }
+
+  async exec(sql) {
+    const statements = sql.split(';').filter(s => s.trim());
+    for (const stmt of statements) {
+      if (stmt.trim()) {
+        await this.kdb.raw(stmt.trim());
+      }
+    }
   }
 }
 
@@ -30,357 +114,318 @@ function sanitizeParams(params) {
   return params.map(p => p === undefined ? null : p);
 }
 
-class StatementWrapper {
-  constructor(sqlDb, sql) {
-    this.sqlDb = sqlDb;
-    this.sql = sql;
-  }
-
-  all(...params) {
-    const stmt = this.sqlDb.prepare(this.sql);
-    const clean = sanitizeParams(params);
-    if (clean.length > 0) stmt.bind(clean);
-    const results = [];
-    while (stmt.step()) {
-      results.push(stmt.getAsObject());
-    }
-    stmt.free();
-    return results;
-  }
-
-  get(...params) {
-    const results = this.all(...params);
-    return results.length > 0 ? results[0] : undefined;
-  }
-
-  run(...params) {
-    const clean = sanitizeParams(params);
-    this.sqlDb.run(this.sql, clean);
-    saveToDisk();
-    return { changes: this.sqlDb.getRowsModified() };
-  }
-}
-
-class DBWrapper {
-  constructor(sqlDb) {
-    this.rawDb = sqlDb;
-  }
-
-  prepare(sql) {
-    return new StatementWrapper(this.rawDb, sql);
-  }
-
-  exec(sql) {
-    this.rawDb.exec(sql);
-    saveToDisk();
-  }
-}
+let db = null;
 
 export async function initializeDatabase() {
-  SQL = await initSqlJs();
+  const host = process.env.DB_HOST || '72.62.188.79';
+  const port = process.env.DB_PORT || '32778';
+  const user = process.env.DB_USER || 'agentic_db';
+  const password = process.env.DB_PASSWORD || 'NDbWWeYaQTjlKFRGprj5SFsrau8Wjspd';
+  const database = process.env.DB_NAME || 'smart_crm';
 
-  if (fs.existsSync(DB_PATH)) {
-    try {
-      const buffer = fs.readFileSync(DB_PATH);
-      db = new DBWrapper(new SQL.Database(buffer));
-    } catch (e) {
-      console.error('Failed to load existing database, creating new:', e.message);
-      db = new DBWrapper(new SQL.Database());
-    }
-  } else {
-    db = new DBWrapper(new SQL.Database());
-  }
+  kdb = knex({
+    client: 'mysql2',
+    connection: {
+      host,
+      port: parseInt(port),
+      user,
+      password,
+      database,
+    },
+    pool: { min: 0, max: 10 },
+  });
 
-  db.exec(`PRAGMA foreign_keys = ON;`);
+  await kdb.raw('SELECT 1');
+  console.log('Connected to MariaDB');
 
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      password TEXT NOT NULL,
-      role TEXT DEFAULT 'user',
-      avatar TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
+  await kdb.raw('SET FOREIGN_KEY_CHECKS = 1');
 
-    CREATE TABLE IF NOT EXISTS companies (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      industry TEXT,
-      size TEXT,
-      website TEXT,
-      phone TEXT,
-      address TEXT,
-      city TEXT,
-      state TEXT,
-      country TEXT,
-      revenue REAL,
-      description TEXT,
-      linkedin TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
+  await createTables();
 
-    CREATE TABLE IF NOT EXISTS contacts (
-      id TEXT PRIMARY KEY,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
-      email TEXT,
-      phone TEXT,
-      mobile TEXT,
-      title TEXT,
-      department TEXT,
-      company_id TEXT,
-      status TEXT DEFAULT 'active',
-      source TEXT,
-      address TEXT,
-      city TEXT,
-      state TEXT,
-      country TEXT,
-      linkedin TEXT,
-      notes TEXT,
-      avatar TEXT,
-      last_contacted TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
-    );
+  db = new DBWrapper(kdb);
 
-    CREATE TABLE IF NOT EXISTS deals (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      value REAL DEFAULT 0,
-      stage TEXT DEFAULT 'lead',
-      contact_id TEXT,
-      company_id TEXT,
-      probability INTEGER DEFAULT 20,
-      expected_close TEXT,
-      description TEXT,
-      lost_reason TEXT,
-      won_date TEXT,
-      priority TEXT DEFAULT 'medium',
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE SET NULL,
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS activities (
-      id TEXT PRIMARY KEY,
-      type TEXT NOT NULL,
-      subject TEXT NOT NULL,
-      description TEXT,
-      contact_id TEXT,
-      company_id TEXT,
-      deal_id TEXT,
-      status TEXT DEFAULT 'pending',
-      due_date TEXT,
-      completed_at TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
-      FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS invoices (
-      id TEXT PRIMARY KEY,
-      invoice_number TEXT UNIQUE NOT NULL,
-      contact_id TEXT,
-      company_id TEXT,
-      status TEXT DEFAULT 'draft',
-      issue_date TEXT,
-      due_date TEXT,
-      subtotal REAL DEFAULT 0,
-      tax_rate REAL DEFAULT 0,
-      tax_amount REAL DEFAULT 0,
-      discount REAL DEFAULT 0,
-      total REAL DEFAULT 0,
-      currency TEXT DEFAULT 'USD',
-      notes TEXT,
-      paid_at TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE SET NULL,
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS invoice_items (
-      id TEXT PRIMARY KEY,
-      invoice_id TEXT NOT NULL,
-      description TEXT NOT NULL,
-      quantity REAL DEFAULT 1,
-      unit_price REAL DEFAULT 0,
-      total REAL DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS conversations (
-      id TEXT PRIMARY KEY,
-      contact_id TEXT,
-      company_id TEXT,
-      deal_id TEXT,
-      subject TEXT,
-      channel TEXT DEFAULT 'email',
-      status TEXT DEFAULT 'open',
-      last_message TEXT,
-      last_message_at TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE SET NULL,
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
-      FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS messages (
-      id TEXT PRIMARY KEY,
-      conversation_id TEXT NOT NULL,
-      sender_type TEXT NOT NULL,
-      content TEXT NOT NULL,
-      is_ai_generated INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS ai_insights (
-      id TEXT PRIMARY KEY,
-      entity_type TEXT NOT NULL,
-      entity_id TEXT NOT NULL,
-      insight_type TEXT NOT NULL,
-      content TEXT NOT NULL,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS workflows (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT,
-      trigger_type TEXT NOT NULL,
-      trigger_config TEXT,
-      actions TEXT,
-      status TEXT DEFAULT 'draft',
-      last_run TEXT,
-      run_count INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS workflow_executions (
-      id TEXT PRIMARY KEY,
-      workflow_id TEXT NOT NULL,
-      status TEXT DEFAULT 'pending',
-      trigger_data TEXT,
-      result TEXT,
-      started_at TEXT,
-      completed_at TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (workflow_id) REFERENCES workflows(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS api_tokens (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      token TEXT UNIQUE NOT NULL,
-      permissions TEXT DEFAULT '{}',
-      created_by TEXT,
-      last_used TEXT,
-      expires_at TEXT,
-      status TEXT DEFAULT 'active',
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS tickets (
-      id TEXT PRIMARY KEY,
-      ticket_number TEXT UNIQUE NOT NULL,
-      subject TEXT NOT NULL,
-      description TEXT,
-      status TEXT DEFAULT 'open',
-      priority TEXT DEFAULT 'medium',
-      contact_id TEXT,
-      company_id TEXT,
-      deal_id TEXT,
-      assigned_to TEXT,
-      category TEXT,
-      source TEXT DEFAULT 'web',
-      tags TEXT,
-      resolution TEXT,
-      resolved_at TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE SET NULL,
-      FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
-      FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS ticket_comments (
-      id TEXT PRIMARY KEY,
-      ticket_id TEXT NOT NULL,
-      content TEXT NOT NULL,
-      author_type TEXT NOT NULL,
-      is_internal INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_contacts_company ON contacts(company_id);
-    CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
-    CREATE INDEX IF NOT EXISTS idx_deals_contact ON deals(contact_id);
-    CREATE INDEX IF NOT EXISTS idx_deals_company ON deals(company_id);
-    CREATE INDEX IF NOT EXISTS idx_deals_stage ON deals(stage);
-    CREATE INDEX IF NOT EXISTS idx_activities_contact ON activities(contact_id);
-    CREATE INDEX IF NOT EXISTS idx_activities_deal ON activities(deal_id);
-    CREATE INDEX IF NOT EXISTS idx_invoices_contact ON invoices(contact_id);
-    CREATE INDEX IF NOT EXISTS idx_conversations_contact ON conversations(contact_id);
-    CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
-    CREATE INDEX IF NOT EXISTS idx_ai_insights_entity ON ai_insights(entity_type, entity_id);
-    CREATE INDEX IF NOT EXISTS idx_workflows_status ON workflows(status);
-    CREATE INDEX IF NOT EXISTS idx_workflow_executions_workflow ON workflow_executions(workflow_id);
-    CREATE INDEX IF NOT EXISTS idx_api_tokens_token ON api_tokens(token);
-
-    CREATE TABLE IF NOT EXISTS integrations (
-      id TEXT PRIMARY KEY,
-      provider TEXT NOT NULL,
-      name TEXT NOT NULL,
-      config TEXT DEFAULT '{}',
-      credentials TEXT DEFAULT '{}',
-      status TEXT DEFAULT 'disconnected',
-      last_sync TEXT,
-      webhook_secret TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_integrations_provider ON integrations(provider);
-    CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
-    CREATE INDEX IF NOT EXISTS idx_tickets_contact ON tickets(contact_id);
-    CREATE INDEX IF NOT EXISTS idx_ticket_comments_ticket ON ticket_comments(ticket_id);
-  `);
-
-  saveToDisk();
-
-  const contactCount = db.prepare('SELECT COUNT(*) as c FROM contacts').get();
-  if (contactCount.c === 0) {
-    seedDemoData();
-  }
-
-  const userCount = db.prepare('SELECT COUNT(*) as c FROM users').get();
-  if (userCount.c === 0) {
-    const bcrypt = (await import('bcryptjs')).default;
-    const demoId = uuidv4();
-    const hashedPassword = bcrypt.hashSync('demo123', 10);
-    db.prepare("INSERT INTO users (id, email, name, password, role) VALUES (?, 'demo@smartcrm.com', 'Demo User', ?, 'admin')")
-      .run(demoId, hashedPassword);
-    console.log('Demo user created: demo@smartcrm.com / demo123');
-  }
-
+  await ensureDemoData();
   console.log('Database initialized successfully');
 }
 
-function seedDemoData() {
+async function createTables() {
+  const hasUsers = await kdb.schema.hasTable('users');
+  if (hasUsers) return;
+
+  await kdb.schema.createTable('users', (table) => {
+    table.string('id', 36).primary();
+    table.string('email', 255).unique().notNullable();
+    table.string('name', 255).notNullable();
+    table.string('password', 255).notNullable();
+    table.string('role', 50).defaultTo('user');
+    table.string('avatar', 255);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+  });
+
+  await kdb.schema.createTable('companies', (table) => {
+    table.string('id', 36).primary();
+    table.string('name', 255).notNullable();
+    table.string('industry', 100);
+    table.string('size', 50);
+    table.string('website', 255);
+    table.string('phone', 50);
+    table.string('address', 255);
+    table.string('city', 100);
+    table.string('state', 100);
+    table.string('country', 100);
+    table.decimal('revenue', 15, 2);
+    table.text('description');
+    table.string('linkedin', 255);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+  });
+
+  await kdb.schema.createTable('contacts', (table) => {
+    table.string('id', 36).primary();
+    table.string('first_name', 100).notNullable();
+    table.string('last_name', 100).notNullable();
+    table.string('email', 255);
+    table.string('phone', 50);
+    table.string('mobile', 50);
+    table.string('title', 100);
+    table.string('department', 100);
+    table.string('company_id', 36);
+    table.string('status', 50).defaultTo('active');
+    table.string('source', 50);
+    table.string('address', 255);
+    table.string('city', 100);
+    table.string('state', 100);
+    table.string('country', 100);
+    table.string('linkedin', 255);
+    table.text('notes');
+    table.string('avatar', 255);
+    table.timestamp('last_contacted');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('company_id').references('id').inTable('companies').onDelete('SET NULL');
+  });
+
+  await kdb.schema.createTable('deals', (table) => {
+    table.string('id', 36).primary();
+    table.string('name', 255).notNullable();
+    table.decimal('value', 15, 2).defaultTo(0);
+    table.string('stage', 50).defaultTo('lead');
+    table.string('contact_id', 36);
+    table.string('company_id', 36);
+    table.integer('probability').defaultTo(20);
+    table.date('expected_close');
+    table.text('description');
+    table.text('lost_reason');
+    table.date('won_date');
+    table.string('priority', 20).defaultTo('medium');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('contact_id').references('id').inTable('contacts').onDelete('SET NULL');
+    table.foreign('company_id').references('id').inTable('companies').onDelete('SET NULL');
+  });
+
+  await kdb.schema.createTable('activities', (table) => {
+    table.string('id', 36).primary();
+    table.string('type', 50).notNullable();
+    table.string('subject', 255).notNullable();
+    table.text('description');
+    table.string('contact_id', 36);
+    table.string('company_id', 36);
+    table.string('deal_id', 36);
+    table.string('status', 50).defaultTo('pending');
+    table.date('due_date');
+    table.timestamp('completed_at');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('contact_id').references('id').inTable('contacts').onDelete('CASCADE');
+    table.foreign('company_id').references('id').inTable('companies').onDelete('CASCADE');
+    table.foreign('deal_id').references('id').inTable('deals').onDelete('CASCADE');
+  });
+
+  await kdb.schema.createTable('invoices', (table) => {
+    table.string('id', 36).primary();
+    table.string('invoice_number', 50).unique().notNullable();
+    table.string('contact_id', 36);
+    table.string('company_id', 36);
+    table.string('status', 50).defaultTo('draft');
+    table.date('issue_date');
+    table.date('due_date');
+    table.decimal('subtotal', 15, 2).defaultTo(0);
+    table.decimal('tax_rate', 5, 2).defaultTo(0);
+    table.decimal('tax_amount', 15, 2).defaultTo(0);
+    table.decimal('discount', 15, 2).defaultTo(0);
+    table.decimal('total', 15, 2).defaultTo(0);
+    table.string('currency', 10).defaultTo('USD');
+    table.text('notes');
+    table.timestamp('paid_at');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('contact_id').references('id').inTable('contacts').onDelete('SET NULL');
+    table.foreign('company_id').references('id').inTable('companies').onDelete('SET NULL');
+  });
+
+  await kdb.schema.createTable('invoice_items', (table) => {
+    table.string('id', 36).primary();
+    table.string('invoice_id', 36).notNullable();
+    table.string('description', 255).notNullable();
+    table.decimal('quantity', 10, 2).defaultTo(1);
+    table.decimal('unit_price', 15, 2).defaultTo(0);
+    table.decimal('total', 15, 2).defaultTo(0);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.foreign('invoice_id').references('id').inTable('invoices').onDelete('CASCADE');
+  });
+
+  await kdb.schema.createTable('conversations', (table) => {
+    table.string('id', 36).primary();
+    table.string('contact_id', 36);
+    table.string('company_id', 36);
+    table.string('deal_id', 36);
+    table.string('subject', 255);
+    table.string('channel', 50).defaultTo('email');
+    table.string('status', 50).defaultTo('open');
+    table.text('last_message');
+    table.timestamp('last_message_at');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('contact_id').references('id').inTable('contacts').onDelete('SET NULL');
+    table.foreign('company_id').references('id').inTable('companies').onDelete('SET NULL');
+    table.foreign('deal_id').references('id').inTable('deals').onDelete('SET NULL');
+  });
+
+  await kdb.schema.createTable('messages', (table) => {
+    table.string('id', 36).primary();
+    table.string('conversation_id', 36).notNullable();
+    table.string('sender_type', 50).notNullable();
+    table.text('content').notNullable();
+    table.boolean('is_ai_generated').defaultTo(false);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.foreign('conversation_id').references('id').inTable('conversations').onDelete('CASCADE');
+  });
+
+  await kdb.schema.createTable('ai_insights', (table) => {
+    table.string('id', 36).primary();
+    table.string('entity_type', 50).notNullable();
+    table.string('entity_id', 36).notNullable();
+    table.string('insight_type', 50).notNullable();
+    table.text('content').notNullable();
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.index(['entity_type', 'entity_id']);
+  });
+
+  await kdb.schema.createTable('workflows', (table) => {
+    table.string('id', 36).primary();
+    table.string('name', 255).notNullable();
+    table.text('description');
+    table.string('trigger_type', 100).notNullable();
+    table.json('trigger_config');
+    table.json('actions');
+    table.string('status', 50).defaultTo('draft');
+    table.timestamp('last_run');
+    table.integer('run_count').defaultTo(0);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+  });
+
+  await kdb.schema.createTable('workflow_executions', (table) => {
+    table.string('id', 36).primary();
+    table.string('workflow_id', 36).notNullable();
+    table.string('status', 50).defaultTo('pending');
+    table.json('trigger_data');
+    table.text('result');
+    table.timestamp('started_at');
+    table.timestamp('completed_at');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.foreign('workflow_id').references('id').inTable('workflows').onDelete('CASCADE');
+  });
+
+  await kdb.schema.createTable('api_tokens', (table) => {
+    table.string('id', 36).primary();
+    table.string('name', 255).notNullable();
+    table.string('token', 255).unique().notNullable();
+    table.json('permissions').defaultTo('{}');
+    table.string('created_by', 36);
+    table.timestamp('last_used');
+    table.timestamp('expires_at');
+    table.string('status', 50).defaultTo('active');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+  });
+
+  await kdb.schema.createTable('tickets', (table) => {
+    table.string('id', 36).primary();
+    table.string('ticket_number', 50).unique().notNullable();
+    table.string('subject', 255).notNullable();
+    table.text('description');
+    table.string('status', 50).defaultTo('open');
+    table.string('priority', 50).defaultTo('medium');
+    table.string('contact_id', 36);
+    table.string('company_id', 36);
+    table.string('deal_id', 36);
+    table.string('assigned_to', 36);
+    table.string('category', 100);
+    table.string('source', 50).defaultTo('web');
+    table.json('tags');
+    table.text('resolution');
+    table.timestamp('resolved_at');
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.foreign('contact_id').references('id').inTable('contacts').onDelete('SET NULL');
+    table.foreign('company_id').references('id').inTable('companies').onDelete('SET NULL');
+    table.foreign('deal_id').references('id').inTable('deals').onDelete('SET NULL');
+  });
+
+  await kdb.schema.createTable('ticket_comments', (table) => {
+    table.string('id', 36).primary();
+    table.string('ticket_id', 36).notNullable();
+    table.text('content').notNullable();
+    table.string('author_type', 50).notNullable();
+    table.boolean('is_internal').defaultTo(false);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.foreign('ticket_id').references('id').inTable('tickets').onDelete('CASCADE');
+  });
+
+  await kdb.schema.createTable('integrations', (table) => {
+    table.string('id', 36).primary();
+    table.string('provider', 100).notNullable();
+    table.string('name', 255).notNullable();
+    table.json('config').defaultTo('{}');
+    table.json('credentials').defaultTo('{}');
+    table.string('status', 50).defaultTo('disconnected');
+    table.timestamp('last_sync');
+    table.string('webhook_secret', 255);
+    table.timestamp('created_at').defaultTo(kdb.fn.now());
+    table.timestamp('updated_at').defaultTo(kdb.fn.now());
+    table.index('provider');
+  });
+
+  console.log('Database tables created');
+}
+
+async function ensureDemoData() {
+  const { default: bcrypt } = await import('bcryptjs');
+
+  const userCount = await kdb('users').count('id as c').first();
+  if (userCount.c === 0) {
+    const userId = uuidv4();
+    const hashedPassword = bcrypt.hashSync('demo123', 10);
+    await kdb('users').insert({
+      id: userId,
+      email: 'demo@smartcrm.com',
+      name: 'Demo User',
+      password: hashedPassword,
+      role: 'admin',
+    });
+    console.log('Demo user created: demo@smartcrm.com / demo123');
+  }
+
+  const contactCount = await kdb('contacts').count('id as c').first();
+  if (contactCount.c === 0) {
+    await seedDemoData();
+  }
+}
+
+async function seedDemoData() {
   const cids = {};
   const coids = {};
 
@@ -425,35 +470,33 @@ function seedDemoData() {
   for (const c of contacts) {
     const id = uuidv4();
     cids[c.email] = id;
-    db.prepare(`INSERT INTO contacts (id, first_name, last_name, email, phone, title, department, status, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 'manual')`).run(id, c.fn, c.ln, c.email, c.phone, c.title, c.dept);
+    await kdb('contacts').insert({
+      id, first_name: c.fn, last_name: c.ln, email: c.email,
+      phone: c.phone, title: c.title, department: c.dept,
+      status: 'active', source: 'manual',
+    });
   }
+
+  const contactEmails = [
+    ['sarah.chen@fintech.io'], ['m.rivera@buildcorp.com'], ['elena@medcore.health'],
+    ['j.okonkwo@afritech.ng'], ['priya.sharma@datasense.ai'], ['lucas@greenlogistics.co'],
+    ['aisha@edtech.learn'], ['thomas@nordic.design'], ['y.tanaka@sakura-eng.jp'],
+    ['maria@latam.ventures'], ['rfrost@enterprise.com'], ['diana@amazon.ventures'],
+  ];
 
   for (let i = 0; i < companies.length; i++) {
     const c = companies[i];
     const id = uuidv4();
     coids[c.name] = id;
-    db.prepare(`INSERT INTO companies (id, name, industry, size, website, city, state, country)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(id, c.name, c.industry, c.size, c.website, c.city, c.state, c.country);
+    await kdb('companies').insert({
+      id, name: c.name, industry: c.industry, size: c.size,
+      website: c.website, city: c.city, state: c.state, country: c.country,
+    });
 
-    const contactEmails = [
-      ['sarah.chen@fintech.io'],
-      ['m.rivera@buildcorp.com'],
-      ['elena@medcore.health'],
-      ['j.okonkwo@afritech.ng'],
-      ['priya.sharma@datasense.ai'],
-      ['lucas@greenlogistics.co'],
-      ['aisha@edtech.learn'],
-      ['thomas@nordic.design'],
-      ['y.tanaka@sakura-eng.jp'],
-      ['maria@latam.ventures'],
-      ['rfrost@enterprise.com'],
-      ['diana@amazon.ventures'],
-    ];
     const links = contactEmails[i] || [];
     for (const e of links) {
       if (cids[e]) {
-        db.prepare('UPDATE contacts SET company_id = ? WHERE id = ?').run(id, cids[e]);
+        await kdb('contacts').where('id', cids[e]).update({ company_id: id });
       }
     }
   }
@@ -467,17 +510,19 @@ function seedDemoData() {
     'Pacific Trade Desk', 'European Market Entry', 'Mumbai Startup Incubator',
     'Healthcare Data Platform', 'Construction ERP', 'Nordic Brand Identity',
     'LATAM Logistics Network', 'AI Model Training Suite', 'Cloud Migration Deal',
-    'Digital Transformation', 'Smart Factory IoT', 'Fintech API Suite'
+    'Digital Transformation', 'Smart Factory IoT', 'Fintech API Suite',
   ];
 
-  const stageWeights = ['lead', 'lead', 'lead', 'qualified', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_won', 'closed_won', 'closed_won', 'closed_lost', 'closed_lost'];
+  const stageWeights = ['lead', 'lead', 'lead', 'qualified', 'qualified', 'proposal', 'negotiation',
+    'closed_won', 'closed_won', 'closed_won', 'closed_won', 'closed_lost', 'closed_lost'];
   const contactList = Object.values(cids);
   const companyList = Object.values(coids);
-
   const now = new Date();
+
   for (let i = 0; i < dealNames.length; i++) {
     const id = uuidv4();
-    const stage = i < stageWeights.length ? stageWeights[i] : dealStages[Math.floor(Math.random() * dealStages.length)];
+    const stage = i < stageWeights.length ? stageWeights[i]
+      : dealStages[Math.floor(Math.random() * dealStages.length)];
     const value = Math.round((Math.random() * 180000 + 20000) / 1000) * 1000;
     const probability = stage === 'closed_won' ? 100 : stage === 'closed_lost' ? 0 : Math.round(Math.random() * 70 + 10);
     const contactId = contactList[i % contactList.length];
@@ -494,11 +539,11 @@ function seedDemoData() {
       expectedClose = d.toISOString().split('T')[0];
     }
 
-    db.prepare(`INSERT INTO deals (id, name, value, stage, contact_id, company_id, probability, expected_close, won_date, priority)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
-      id, dealNames[i], value, stage, contactId, companyId, probability, expectedClose, wonDate,
-      ['low', 'medium', 'high'][Math.floor(Math.random() * 3)]
-    );
+    await kdb('deals').insert({
+      id, name: dealNames[i], value, stage, contact_id: contactId, company_id: companyId,
+      probability, expected_close: expectedClose, won_date: wonDate,
+      priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
+    });
   }
 
   const invoiceStatuses = ['paid', 'sent', 'overdue', 'draft', 'paid', 'paid', 'sent'];
@@ -511,28 +556,38 @@ function seedDemoData() {
     const total = subtotal + taxAmount;
     const contactId = contactList[i % contactList.length];
     const invNum = `INV-${String(i + 1).padStart(4, '0')}`;
-    db.prepare(`INSERT INTO invoices (id, invoice_number, contact_id, status, issue_date, due_date, subtotal, tax_rate, tax_amount, total)
-      VALUES (?, ?, ?, ?, date('now','-' || ? || ' days'), date('now','+' || ? || ' days'), ?, ?, ?, ?)`)
-      .run(id, invNum, contactId, status, 30 + i * 5, 15, subtotal, taxRate, taxAmount, total);
+    await kdb('invoices').insert({
+      id, invoice_number: invNum, contact_id: contactId, status,
+      issue_date: kdb.raw(`DATE_SUB(CURDATE(), INTERVAL ${30 + i * 5} DAY)`),
+      due_date: kdb.raw(`DATE_ADD(CURDATE(), INTERVAL 15 DAY)`),
+      subtotal, tax_rate: taxRate, tax_amount: taxAmount, total,
+    });
 
-    const itemId = uuidv4();
-    db.prepare(`INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, total)
-      VALUES (?, ?, ?, ?, ?, ?)`).run(itemId, id, `Service ${i + 1}`, Math.floor(Math.random() * 5) + 1, Math.round(subtotal / (Math.floor(Math.random() * 5) + 1)), subtotal);
+    await kdb('invoice_items').insert({
+      id: uuidv4(), invoice_id: id, description: `Service ${i + 1}`,
+      quantity: Math.floor(Math.random() * 5) + 1,
+      unit_price: Math.round(subtotal / (Math.floor(Math.random() * 5) + 1)),
+      total: subtotal,
+    });
   }
 
   for (let i = 0; i < 5; i++) {
     const subject = ['Product inquiry', 'Support request', 'Billing question', 'Feature feedback', 'Partnership opportunity'][i];
     const contactId = contactList[i % contactList.length];
     const convId = uuidv4();
-    db.prepare(`INSERT INTO conversations (id, contact_id, subject, channel, status, last_message, last_message_at)
-      VALUES (?, ?, ?, 'email', 'open', ?, datetime('now'))`).run(convId, contactId, subject, 'Initial message from customer');
-    db.prepare(`INSERT INTO messages (id, conversation_id, sender_type, content, created_at)
-      VALUES (?, ?, 'contact', ?, datetime('now'))`).run(uuidv4(), convId, 'Hello, I have a question about your CRM platform.');
+    await kdb('conversations').insert({
+      id: convId, contact_id: contactId, subject, channel: 'email',
+      status: 'open', last_message: 'Initial message from customer',
+    });
+    await kdb('messages').insert({
+      id: uuidv4(), conversation_id: convId, sender_type: 'contact',
+      content: 'Hello, I have a question about your CRM platform.',
+    });
   }
 
   const ticketSubjects = [
     'Login issue after update', 'Integration sync failing', 'Feature request: Bulk import',
-    'Billing discrepancy on invoice', 'Account access for new team member', 'API rate limit reached'
+    'Billing discrepancy on invoice', 'Account access for new team member', 'API rate limit reached',
   ];
   const ticketPriorities = ['medium', 'high', 'low', 'medium', 'low', 'urgent'];
   const ticketStatuses = ['open', 'in_progress', 'open', 'open', 'open', 'open'];
@@ -540,12 +595,18 @@ function seedDemoData() {
     const id = uuidv4();
     const num = `TKT-${1000 + i}`;
     const contactId = contactList[(i + 3) % contactList.length];
-    db.prepare(`INSERT INTO tickets (id, ticket_number, subject, description, status, priority, contact_id, category, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'support', 'web')`).run(id, num, ticketSubjects[i], `Description for ${ticketSubjects[i]}`, ticketStatuses[i], ticketPriorities[i], contactId);
+    await kdb('tickets').insert({
+      id, ticket_number: num, subject: ticketSubjects[i],
+      description: `Description for ${ticketSubjects[i]}`,
+      status: ticketStatuses[i], priority: ticketPriorities[i],
+      contact_id: contactId, category: 'support', source: 'web',
+    });
 
     if (i < 3) {
-      db.prepare(`INSERT INTO ticket_comments (id, ticket_id, content, author_type, is_internal)
-        VALUES (?, ?, ?, 'agent', ?)`).run(uuidv4(), id, 'We are looking into this issue.', i === 2 ? 1 : 0);
+      await kdb('ticket_comments').insert({
+        id: uuidv4(), ticket_id: id, content: 'We are looking into this issue.',
+        author_type: 'agent', is_internal: i === 2,
+      });
     }
   }
 }
@@ -557,5 +618,5 @@ export function getDb() {
 
 export default {
   prepare(sql) { return getDb().prepare(sql); },
-  exec(sql) { return getDb().exec(sql); }
+  exec(sql) { return getDb().exec(sql); },
 };

@@ -21,8 +21,6 @@ import integrationRoutes from './routes/integrations.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-initializeDatabase();
-
 app.use(cors());
 app.use(express.json());
 
@@ -54,6 +52,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Smart CRM server running on http://localhost:${PORT}`);
-});
+async function start() {
+  try {
+    await initializeDatabase();
+    app.listen(PORT, () => {
+      console.log(`Smart CRM server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  }
+}
+
+start();

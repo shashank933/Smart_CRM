@@ -7,24 +7,28 @@ import { authenticateToken } from '../middleware/auth.js';
 const router = Router();
 
 // Webhook receiver - no auth required (validates via secret in URL)
-router.post('/webhook/:provider/:secret', (req, res) => {
-  const { provider, secret } = req.params;
-  const integration = db.prepare('SELECT * FROM integrations WHERE provider = ? AND webhook_secret = ? AND status = ?')
-    .get(provider, secret, 'connected') as any;
+router.post('/webhook/:provider/:secret', async (req, res) => {
+  try {
+    const { provider, secret } = req.params;
+    const integration = await db.prepare('SELECT * FROM integrations WHERE provider = ? AND webhook_secret = ? AND status = ?')
+      .get(provider, secret, 'connected') as any;
 
-  if (!integration) return res.status(404).json({ error: 'Invalid webhook' });
+    if (!integration) return res.status(404).json({ error: 'Invalid webhook' });
 
-  const payload = req.body;
+    const payload = req.body;
 
-  if (provider === 'whatsapp' && payload.entry) {
-    console.log('WhatsApp webhook received');
-  } else if (provider === 'hubspot' && payload.eventType) {
-    console.log('HubSpot webhook received:', payload.eventType);
+    if (provider === 'whatsapp' && payload.entry) {
+      console.log('WhatsApp webhook received');
+    } else if (provider === 'hubspot' && payload.eventType) {
+      console.log('HubSpot webhook received:', payload.eventType);
+    }
+
+    await db.prepare("UPDATE integrations SET last_sync = datetime('now') WHERE id = ?").run(integration.id);
+
+    res.json({ received: true, provider, timestamp: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  db.prepare("UPDATE integrations SET last_sync = datetime('now') WHERE id = ?").run(integration.id);
-
-  res.json({ received: true, provider, timestamp: new Date().toISOString() });
 });
 
 router.use(authenticateToken);
@@ -76,112 +80,136 @@ const PROVIDERS = [
 ];
 
 // Get all providers with connection status
-router.get('/', (req, res) => {
-  const connections = db.prepare('SELECT * FROM integrations').all();
+router.get('/', async (req, res) => {
+  try {
+    const connections = await db.prepare('SELECT * FROM integrations').all();
 
-  const result = PROVIDERS.map(p => {
-    const existing = connections.find((c) => c.provider === p.id);
-    return {
-      ...p,
-      connection: existing ? {
-        id: existing.id,
-        status: existing.status,
-        name: existing.name,
-        last_sync: existing.last_sync,
-        webhook_secret: existing.webhook_secret,
-        webhook_url: existing.webhook_secret
-          ? `${req.protocol}://${req.get('host')}/api/integrations/webhook/${p.id}/${existing.webhook_secret}`
-          : null,
-        created_at: existing.created_at
-      } : null
-    };
-  });
+    const result = PROVIDERS.map(p => {
+      const existing = connections.find((c: any) => c.provider === p.id);
+      return {
+        ...p,
+        connection: existing ? {
+          id: existing.id,
+          status: existing.status,
+          name: existing.name,
+          last_sync: existing.last_sync,
+          webhook_secret: existing.webhook_secret,
+          webhook_url: existing.webhook_secret
+            ? `${req.protocol}://${req.get('host')}/api/integrations/webhook/${p.id}/${existing.webhook_secret}`
+            : null,
+          created_at: existing.created_at
+        } : null
+      };
+    });
 
-  res.json(result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Connect / configure an integration
-router.post('/:provider/connect', (req, res) => {
-  const { provider } = req.params;
-  const providerDef = PROVIDERS.find(p => p.id === provider);
-  if (!providerDef) return res.status(404).json({ error: 'Unknown provider' });
+router.post('/:provider/connect', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const providerDef = PROVIDERS.find(p => p.id === provider);
+    if (!providerDef) return res.status(404).json({ error: 'Unknown provider' });
 
-  const existing = db.prepare('SELECT * FROM integrations WHERE provider = ?').get(provider) as any;
-  const { name, ...credentials } = req.body;
+    const existing = await db.prepare('SELECT * FROM integrations WHERE provider = ?').get(provider) as any;
+    const { name, ...credentials } = req.body;
 
-  if (existing) {
-    db.prepare(`UPDATE integrations SET name = ?, credentials = ?, config = ?, status = 'connected', updated_at = datetime('now') WHERE id = ?`)
-      .run(name || existing.name, JSON.stringify(credentials), JSON.stringify(req.body.config || {}), existing.id);
+    if (existing) {
+      await db.prepare(`UPDATE integrations SET name = ?, credentials = ?, config = ?, status = 'connected', updated_at = datetime('now') WHERE id = ?`)
+        .run(name || existing.name, JSON.stringify(credentials), JSON.stringify(req.body.config || {}), existing.id);
 
-    const updated = db.prepare('SELECT * FROM integrations WHERE id = ?').get(existing.id);
-    return res.json(formatIntegration(updated));
+      const updated = await db.prepare('SELECT * FROM integrations WHERE id = ?').get(existing.id);
+      return res.json(formatIntegration(updated));
+    }
+
+    const id = uuidv4();
+    const webhook_secret = crypto.randomBytes(24).toString('hex');
+
+    await db.prepare(`INSERT INTO integrations (id, provider, name, credentials, config, status, webhook_secret)
+      VALUES (?, ?, ?, ?, ?, 'connected', ?)`)
+      .run(id, provider, name || `${providerDef.name} Connection`, JSON.stringify(credentials), JSON.stringify(req.body.config || {}), webhook_secret);
+
+    const created = await db.prepare('SELECT * FROM integrations WHERE id = ?').get(id);
+    res.status(201).json(formatIntegration(created));
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  const id = uuidv4();
-  const webhook_secret = crypto.randomBytes(24).toString('hex');
-
-  db.prepare(`INSERT INTO integrations (id, provider, name, credentials, config, status, webhook_secret)
-    VALUES (?, ?, ?, ?, ?, 'connected', ?)`)
-    .run(id, provider, name || `${providerDef.name} Connection`, JSON.stringify(credentials), JSON.stringify(req.body.config || {}), webhook_secret);
-
-  const created = db.prepare('SELECT * FROM integrations WHERE id = ?').get(id);
-  res.status(201).json(formatIntegration(created));
 });
 
 // Disconnect
-router.post('/:provider/disconnect', (req, res) => {
-  const result = db.prepare("UPDATE integrations SET status = 'disconnected', credentials = '{}', updated_at = datetime('now') WHERE provider = ?")
-    .run(req.params.provider);
-  if (result.changes === 0) return res.status(404).json({ error: 'No connection found' });
-  res.json({ message: 'Disconnected' });
+router.post('/:provider/disconnect', async (req, res) => {
+  try {
+    const result = await db.prepare("UPDATE integrations SET status = 'disconnected', credentials = '{}', updated_at = datetime('now') WHERE provider = ?")
+      .run(req.params.provider);
+    if (result.changes === 0) return res.status(404).json({ error: 'No connection found' });
+    res.json({ message: 'Disconnected' });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Test connection
 router.post('/:provider/test', async (req, res) => {
-  const existing = db.prepare('SELECT * FROM integrations WHERE provider = ? AND status = ?').get(req.params.provider, 'connected') as any;
-  if (!existing) return res.status(400).json({ error: 'Integration not connected' });
+  try {
+    const existing = await db.prepare('SELECT * FROM integrations WHERE provider = ? AND status = ?').get(req.params.provider, 'connected') as any;
+    if (!existing) return res.status(400).json({ error: 'Integration not connected' });
 
-  const credentials = JSON.parse(existing.credentials || '{}');
-  const hasCreds = Object.values(credentials).some((v: any) => v && v.length > 3);
+    const credentials = JSON.parse(existing.credentials || '{}');
+    const hasCreds = Object.values(credentials).some((v: any) => v && v.length > 3);
 
-  // Simulated test for demo
-  res.json({
-    success: hasCreds,
-    message: hasCreds
-      ? `Successfully authenticated with ${req.params.provider}`
-      : 'Credentials stored but not yet verified. Add valid credentials and retry.',
-    timestamp: new Date().toISOString()
-  });
+    // Simulated test for demo
+    res.json({
+      success: hasCreds,
+      message: hasCreds
+        ? `Successfully authenticated with ${req.params.provider}`
+        : 'Credentials stored but not yet verified. Add valid credentials and retry.',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Sync (trigger manual sync)
 router.post('/:provider/sync', async (req, res) => {
-  const existing = db.prepare('SELECT * FROM integrations WHERE provider = ? AND status = ?').get(req.params.provider, 'connected') as any;
-  if (!existing) return res.status(400).json({ error: 'Integration not connected' });
+  try {
+    const existing = await db.prepare('SELECT * FROM integrations WHERE provider = ? AND status = ?').get(req.params.provider, 'connected') as any;
+    if (!existing) return res.status(400).json({ error: 'Integration not connected' });
 
-  db.prepare("UPDATE integrations SET last_sync = datetime('now'), updated_at = datetime('now') WHERE id = ?").run(existing.id);
+    await db.prepare("UPDATE integrations SET last_sync = datetime('now'), updated_at = datetime('now') WHERE id = ?").run(existing.id);
 
-  const synced = runSync(req.params.provider);
-  const prompts = getSyncPrompts(req.params.provider, synced);
+    const synced = runSync(req.params.provider);
+    const prompts = getSyncPrompts(req.params.provider, synced);
 
-  res.json({
-    message: `Sync completed for ${req.params.provider}`,
-    last_sync: new Date().toISOString(),
-    synced,
-    prompts: prompts || undefined
-  });
+    res.json({
+      message: `Sync completed for ${req.params.provider}`,
+      last_sync: new Date().toISOString(),
+      synced,
+      prompts: prompts || undefined
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Get webhook URL for a connection
-router.get('/:provider/webhook-url', (req, res) => {
-  const existing = db.prepare('SELECT * FROM integrations WHERE provider = ?').get(req.params.provider) as any;
-  if (!existing || !existing.webhook_secret) {
-    return res.status(404).json({ error: 'No webhook configured' });
-  }
+router.get('/:provider/webhook-url', async (req, res) => {
+  try {
+    const existing = await db.prepare('SELECT * FROM integrations WHERE provider = ?').get(req.params.provider) as any;
+    if (!existing || !existing.webhook_secret) {
+      return res.status(404).json({ error: 'No webhook configured' });
+    }
 
-  res.json({
-    webhook_url: `${req.protocol}://${req.get('host')}/api/integrations/webhook/${req.params.provider}/${existing.webhook_secret}`
-  });
+    res.json({
+      webhook_url: `${req.protocol}://${req.get('host')}/api/integrations/webhook/${req.params.provider}/${existing.webhook_secret}`
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 function formatIntegration(row: any) {
