@@ -41,16 +41,10 @@ export default function Home() {
   const stats = useStore(s => s.stats);
   const fetchStats = useStore(s => s.fetchStats);
 
-  const [time, setTime] = useState(new Date());
   const [meetings, setMeetings] = useState<Activity[]>([]);
   const [tasks, setTasks] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     fetchStats().finally(() => setStatsLoading(false));
@@ -85,18 +79,16 @@ export default function Home() {
   }, [stats]);
 
   const getGreeting = () => {
-    const h = time.getHours();
+    const h = new Date().getHours();
     if (h < 12) return 'Good morning';
     if (h < 17) return 'Good afternoon';
     return 'Good evening';
   };
 
   const firstName = user?.name?.split(' ')[0] || 'User';
-  const formattedDate = time.toLocaleDateString('en-US', {
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
-  const formattedTime = time.toLocaleTimeString('en-US', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
   });
 
   const formatCurrency = (v: number | undefined) => {
@@ -170,15 +162,6 @@ export default function Home() {
     flexShrink: 0, transition: 'background 0.2s ease'
   });
 
-  const timeBadge: React.CSSProperties = {
-    background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(2px)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    padding: '6px 14px', borderRadius: 'var(--radius)',
-    display: 'inline-flex', alignItems: 'center', gap: '8px',
-    fontSize: '13px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace',
-    color: '#cccccc'
-  };
-
   /* ==================== RENDER ==================== */
 
   return (
@@ -198,14 +181,14 @@ export default function Home() {
             Your revenue, customer conversations, support work, and next actions are synced into one live workspace.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <div style={timeBadge}>
-              <Clock size={15} color="#aaaaaa" /> {formattedTime}
-            </div>
             <div style={{
-              ...timeBadge,
+              background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(2px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: '6px 14px', borderRadius: 'var(--radius)',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
               fontFamily: 'var(--font-family)',
-              fontSize: '12px',
-              fontWeight: 500
+              fontSize: '12px', fontWeight: 500,
+              color: '#cccccc'
             }}>
               <Calendar size={13} color="#aaaaaa" /> {formattedDate}
             </div>
