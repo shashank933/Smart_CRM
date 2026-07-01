@@ -194,16 +194,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="clay-hero-decor" style={{ position: 'absolute', right: '34px', top: '28px', width: '260px', padding: '18px', borderRadius: '24px', background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(2px)', transform: 'rotate(4deg)' }}>
-          <div style={{ fontSize: '12px', color: '#cccccc', fontWeight: 800, marginBottom: '10px' }}>Pipeline momentum</div>
-          <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.18)', overflow: 'hidden', marginBottom: '12px' }}>
-            <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, #6366f1, #818cf8)', borderRadius: '999px' }} />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontWeight: 900 }}>
-            <span>{formatCurrency(stats?.pipelineValue || 0)}</span>
-            <span>72%</span>
-          </div>
-        </div>
         <div className="clay-hero-decor" style={{
           position: 'absolute', right: '140px', bottom: '-50px',
           width: '160px', height: '160px', borderRadius: '50%',
