@@ -9,6 +9,7 @@ npm-debug.log*
 .DS_Store
 .kilo
 Thumbs.db
+docker-compose.yml
 
 # Database files
 *.db
