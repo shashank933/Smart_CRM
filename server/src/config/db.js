@@ -120,7 +120,7 @@ export async function initializeDatabase() {
   const host = process.env.DB_HOST || '72.62.188.79';
   const port = process.env.DB_PORT || '32778';
   const user = process.env.DB_USER || 'agentic_db';
-  const password = process.env.DB_PASSWORD || 'NDbWWeYaQTjlKFRGprj5SFsrau8Wjspd';
+  const password = process.env.DB_PASSWORD ?? 'NDbWWeYaQTjlKFRGprj5SFsrau8Wjspd';
   const database = process.env.DB_NAME || 'smart_crm';
 
   kdb = knex({
@@ -365,7 +365,7 @@ async function createTables() {
     table.string('assigned_to', 36);
     table.string('category', 100);
     table.string('source', 50).defaultTo('web');
-    table.json('tags');
+    table.string('tags', 500);
     table.text('resolution');
     table.timestamp('resolved_at');
     table.timestamp('created_at').defaultTo(kdb.fn.now());

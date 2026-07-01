@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api';
 import { useStore } from '../../store/store';
@@ -117,6 +117,13 @@ export default function Deals() {
 
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [actionOpen, setActionOpen] = useState(null);
+
+  const pipelineRef = useRef(null);
+  const topScrollRef = useRef(null);
+
+  const syncScroll = (source, target) => {
+    target.scrollLeft = source.scrollLeft;
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -373,7 +380,32 @@ export default function Deals() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '24px', minHeight: '400px' }}>
+        <div style={{ position: 'relative' }}>
+          <div
+            ref={topScrollRef}
+            style={{
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              height: '8px',
+              marginBottom: '4px',
+            }}
+            onScroll={() => {
+              if (pipelineRef.current) {
+                pipelineRef.current.scrollLeft = topScrollRef.current.scrollLeft;
+              }
+            }}
+          >
+            <div style={{ height: '1px', width: `${STAGE_ORDER.length * 306}px` }} />
+          </div>
+          <div
+            ref={pipelineRef}
+            style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '24px', minHeight: '400px' }}
+            onScroll={() => {
+              if (topScrollRef.current) {
+                topScrollRef.current.scrollLeft = pipelineRef.current.scrollLeft;
+              }
+            }}
+          >
           {STAGE_ORDER.map(stageKey => {
             const stage = stages.find(s => s.key === stageKey) || { key: stageKey, label: STAGE_LABELS[stageKey] || stageKey, deals: [] };
             const deals = stage.deals || [];
@@ -521,6 +553,7 @@ export default function Deals() {
               </div>
             );
           })}
+        </div>
         </div>
       )}
 
