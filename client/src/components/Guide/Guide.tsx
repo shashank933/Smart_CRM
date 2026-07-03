@@ -333,7 +333,7 @@ export default function Guide() {
       {showConfetti && (
         <div style={s.confettiBanner}>
           <div style={s.confettiIcon}>
-            <PartyPopper size={22} color="#818cf8" />
+            <PartyPopper size={22} color="var(--accent-light)" />
           </div>
           <div style={s.confettiText}>
             <p style={s.confettiTitle}>You&apos;re all set!</p>

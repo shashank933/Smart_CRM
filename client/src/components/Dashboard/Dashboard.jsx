@@ -5,7 +5,7 @@ import { Users, Building2, Handshake, DollarSign, TrendingUp, FileText, MessageS
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
-const STAGE_COLORS = { lead: '#71717a', qualified: '#a1a1aa', proposal: '#d4d4d8', negotiation: '#52525b', closed_won: '#6366f1', closed_lost: '#3f3f46' };
+const STAGE_COLORS = { lead: 'var(--text-secondary)', qualified: 'var(--text-muted)', proposal: '#d4d4d8', negotiation: '#52525b', closed_won: 'var(--accent)', closed_lost: '#3f3f46' };
 
 function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n || 0);
@@ -94,11 +94,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalContacts}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Users size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><Users size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Total Contacts</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 12% vs last month
             </span>
           </div>
@@ -107,11 +107,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.totalCompanies}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Building2 size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><Building2 size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Companies</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 8% vs last month
             </span>
           </div>
@@ -120,11 +120,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.openDeals}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><Handshake size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><Handshake size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Open Deals</p>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
               <ArrowUpRight size={12} /> 5% vs last month
             </span>
           </div>
@@ -132,8 +132,8 @@ export default function Dashboard() {
 
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: '#6366f1', lineHeight: 1 }}>{formatCurrency(stats.pipelineValue)}</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><DollarSign size={16} /></div>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{formatCurrency(stats.pipelineValue)}</span>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><DollarSign size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Pipeline Value</p>
@@ -144,11 +144,11 @@ export default function Dashboard() {
         <div className="clay-card" style={{ ...cardStyle, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{stats.winRate}%</span>
-            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><TrendingUp size={16} /></div>
+            <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><TrendingUp size={16} /></div>
           </div>
           <div style={{ marginTop: '16px' }}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Win Rate</p>
-            <span style={{ fontSize: '11px', color: '#6366f1', marginTop: '4px', display: 'block' }}>Steady performance</span>
+            <span style={{ fontSize: '11px', color: 'var(--accent)', marginTop: '4px', display: 'block' }}>Steady performance</span>
           </div>
         </div>
       </div>
@@ -159,28 +159,28 @@ export default function Dashboard() {
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Revenue Won</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{formatCurrency(stats.totalRevenue)}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><CheckCircle2 size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><CheckCircle2 size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Outstanding</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{formatCurrency(stats.outstandingAmount)}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: '#a1a1aa' }}><Clock size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: 'var(--text-muted)' }}><Clock size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Open Conversations</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{stats.openConversations}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: '#6366f1' }}><MessageSquare size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(99,102,241,0.12)', borderRadius: '8px', color: 'var(--accent)' }}><MessageSquare size={16} /></div>
         </div>
         <div style={{ ...cardStyle, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>Open Tickets</p>
             <h4 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{stats.openTickets || 0}</h4>
           </div>
-          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: '#a1a1aa' }}><Ticket size={16} /></div>
+          <div style={{ padding: '8px', background: 'rgba(161,161,170,0.12)', borderRadius: '8px', color: 'var(--text-muted)' }}><Ticket size={16} /></div>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export default function Dashboard() {
                   labelStyle={{ color: '#999999' }}
                   formatter={v => [formatCurrency(v), 'Revenue']}
                 />
-                <Line type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={3} dot={{ fill: '#6366f1', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="revenue" stroke="var(--accent)" strokeWidth={3} dot={{ fill: 'var(--accent)', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
@@ -240,7 +240,7 @@ export default function Dashboard() {
         <div style={{ ...cardStyle, padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Recent Deals</h3>
-            <button onClick={() => navigate('/deals')} style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '12px', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit' }}>View All</button>
+            <button onClick={() => navigate('/deals')} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '12px', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit' }}>View All</button>
           </div>
           {(stats.recentDeals || []).length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -266,7 +266,7 @@ export default function Dashboard() {
                       display: 'inline-block', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px',
                       padding: '2px 8px', borderRadius: '4px', marginTop: '4px',
                       background: deal.stage === 'closed_won' ? 'rgba(99,102,241,0.12)' : deal.stage === 'closed_lost' ? 'rgba(113,113,122,0.12)' : 'rgba(99,102,241,0.08)',
-                      color: deal.stage === 'closed_won' ? '#6366f1' : deal.stage === 'closed_lost' ? '#71717a' : '#6366f1',
+                      color: deal.stage === 'closed_won' ? 'var(--accent)' : deal.stage === 'closed_lost' ? 'var(--text-secondary)' : 'var(--accent)',
                     }}>
                       {deal.stage.replace(/_/g, ' ')}
                     </span>
@@ -291,7 +291,7 @@ export default function Dashboard() {
                   padding: '10px 0', borderBottom: i < Math.min(activities.length, 6) - 1 ? '1px solid var(--divider-color)' : 'none',
                 }}>
                   <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Activity size={14} color="#6366f1" />
+                    <Activity size={14} color="var(--accent)" />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{act.subject}</div>

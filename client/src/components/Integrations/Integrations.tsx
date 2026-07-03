@@ -268,7 +268,7 @@ export default function Integrations() {
               <div style={{ fontSize: '11px', fontWeight: 800, color: '#a5b4fc' }}>Connected</div>
             </div>
             <div style={s.heroStat}>
-              <Radio size={18} color="#a1a1aa" />
+              <Radio size={18} color="var(--text-muted)" />
               <div style={{ fontSize: '28px', fontWeight: 900, marginTop: '10px' }}>{webhookCount}</div>
               <div style={{ fontSize: '11px', fontWeight: 800, color: '#a5b4fc' }}>Webhook-ready</div>
             </div>

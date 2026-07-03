@@ -150,7 +150,7 @@ export default function CalendarView() {
       marginBottom: '1px', whiteSpace: 'nowrap' as const, overflow: 'hidden' as const,
       textOverflow: 'ellipsis' as const,
       background: type === 'meeting' ? '#d1fae5' : type === 'call' ? '#e4e4e7' : '#a7f3d0',
-      color: type === 'meeting' ? '#6366f1' : type === 'call' ? '#71717a' : '#4f46e5'
+      color: type === 'meeting' ? 'var(--accent)' : type === 'call' ? 'var(--text-secondary)' : 'var(--accent-dark)'
     }),
     sideCard: {
       background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: 'var(--card-border)',
@@ -245,7 +245,7 @@ export default function CalendarView() {
             meetings.map(ev => (
               <div key={ev.id} style={s.sideEvent}>
                 <div style={s.sideEventIcon(ev.type)}>
-                  <Phone size={14} color="#6366f1" />
+                  <Phone size={14} color="var(--accent)" />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.subject}</div>
@@ -277,7 +277,7 @@ export default function CalendarView() {
             pendingTasks.map(ev => (
               <div key={ev.id} style={s.sideEvent}>
                 <div style={s.sideEventIcon(ev.type)}>
-                  <CheckSquare size={14} color="#4f46e5" />
+                  <CheckSquare size={14} color="var(--accent-dark)" />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.subject}</div>

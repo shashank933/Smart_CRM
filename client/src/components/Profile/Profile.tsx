@@ -91,7 +91,7 @@ export default function Profile() {
       padding: '12px 16px', borderRadius: 'var(--radius-sm)', marginBottom: '16px',
       fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px',
       background: type === 'success' ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)' : 'linear-gradient(135deg, #e4e4e7, #d4d4d8)',
-      color: type === 'success' ? '#4f46e5' : '#3f3f46'
+      color: type === 'success' ? 'var(--accent-dark)' : '#3f3f46'
     }),
     infoRow: {
       display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0',

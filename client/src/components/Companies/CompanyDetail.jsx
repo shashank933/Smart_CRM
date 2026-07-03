@@ -131,7 +131,7 @@ export default function CompanyDetail() {
 
         <div className="clay-stat-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), var(--accent-light))' }}>
                 <Handshake size={20} color="var(--success)" />
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function CompanyDetail() {
                     onClick={() => navigate(`/deals/${deal.id}`)}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
+                      <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), var(--accent-light))', width: '40px', height: '40px', borderRadius: 'var(--radius-sm)' }}>
                         <Handshake size={18} />
                       </div>
                       <div>

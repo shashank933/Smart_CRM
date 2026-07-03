@@ -30,10 +30,11 @@ interface StatCard {
   trend?: { value: number; up: boolean };
 }
 
-const emerald = '#6366f1';
-const indigo = '#6366f1';
-const cyan = '#818cf8';
-const amber = '#a1a1aa';
+const accent = '#6366f1';
+const accentLight = '#818cf8';
+const accentDark = '#4f46e5';
+const neutral = '#a1a1aa';
+const neutralStrong = '#71717a';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ export default function Home() {
       value: formatCurrency(stats?.totalRevenue),
       rawValue: stats?.totalRevenue || 0,
       icon: DollarSign,
-      color: emerald,
+      color: accent,
       trend: { value: revenueTrend, up: revenueUp }
     },
     {
@@ -116,7 +117,7 @@ export default function Home() {
       value: String(stats?.openDeals ?? 0),
       rawValue: stats?.openDeals || 0,
       icon: Handshake,
-      color: indigo,
+      color: accent,
       trend: stats?.winRate != null ? { value: stats.winRate, up: stats.winRate >= 50 } : undefined
     },
     {
@@ -124,14 +125,14 @@ export default function Home() {
       value: String(stats?.totalContacts ?? 0),
       rawValue: stats?.totalContacts || 0,
       icon: Users,
-      color: cyan
+      color: accentLight,
     },
     {
       label: 'Open Tickets',
       value: String(stats?.openTickets ?? 0),
       rawValue: stats?.openTickets || 0,
       icon: Ticket,
-      color: amber,
+      color: neutral,
       trend: stats?.urgentTickets != null ? { value: stats.urgentTickets, up: false } : undefined
     }
   ];
@@ -140,12 +141,12 @@ export default function Home() {
     up ? <TrendingUp size={12} /> : <TrendingDown size={12} />;
 
   const shortcuts = [
-    { icon: UserPlus, label: 'New Contact', path: '/contacts', color: indigo },
-    { icon: Handshake, label: 'New Deal', path: '/deals', color: emerald },
-    { icon: Ticket, label: 'New Ticket', path: '/tickets', color: '#71717a' },
-    { icon: GitBranch, label: 'Workflows', path: '/workflows', color: '#6366f1' },
-    { icon: Sparkles, label: 'AI Assistant', path: '/ai-assistant', color: '#818cf8' },
-    { icon: FilePlus, label: 'New Invoice', path: '/invoices', color: '#4f46e5' }
+    { icon: UserPlus, label: 'New Contact', path: '/contacts', color: accent },
+    { icon: Handshake, label: 'New Deal', path: '/deals', color: accent },
+    { icon: Ticket, label: 'New Ticket', path: '/tickets', color: neutralStrong },
+    { icon: GitBranch, label: 'Workflows', path: '/workflows', color: accent },
+    { icon: Sparkles, label: 'AI Assistant', path: '/ai-assistant', color: accentLight },
+    { icon: FilePlus, label: 'New Invoice', path: '/invoices', color: accentDark }
   ];
 
   /* ---------- reusable style fragments ---------- */
@@ -168,7 +169,7 @@ export default function Home() {
     <div className="page-surface" style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
       {/* ── Hero Banner ── */}
       <div style={{
-        background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%)',
+        background: 'var(--accent-gradient)',
         border: '1px solid rgba(255,255,255,0.18)',
         borderRadius: '32px', padding: 'clamp(20px, 4vw, 38px)',
         position: 'relative', overflow: 'hidden'
@@ -356,8 +357,8 @@ export default function Home() {
                 display: 'flex', alignItems: 'center', gap: '12px',
                 padding: '10px 0', borderBottom: '1px solid var(--divider-color)'
               }}>
-                <div style={iconBoxSm('#6366f11a')}>
-                  <Phone size={14} color={indigo} />
+                <div style={iconBoxSm(`${accent}1a`)}>
+                  <Phone size={14} color={accent} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -420,8 +421,8 @@ export default function Home() {
                 display: 'flex', alignItems: 'center', gap: '12px',
                 padding: '10px 0', borderBottom: '1px solid var(--divider-color)'
               }}>
-                <div style={iconBoxSm('#a1a1aa1a')}>
-                  <CheckSquare size={14} color={amber} />
+                <div style={iconBoxSm(`${neutral}1a`)}>
+                  <CheckSquare size={14} color={neutral} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>

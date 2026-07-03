@@ -17,11 +17,11 @@ const STAGE_ORDER = ['lead', 'qualified', 'proposal', 'negotiation', 'closed_won
 
 const STAGE_COLORS = {
   lead: '#dfe6e9',
-  qualified: '#818cf8',
-  proposal: '#a1a1aa',
+  qualified: 'var(--accent-light)',
+  proposal: 'var(--text-muted)',
   negotiation: '#a5b4fc',
-  closed_won: '#6366f1',
-  closed_lost: '#71717a',
+  closed_won: 'var(--accent)',
+  closed_lost: 'var(--text-secondary)',
 };
 
 const STAGE_BADGE_MAP = {
@@ -331,7 +331,7 @@ export default function Deals() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), var(--accent-light))' }}>
                 <DollarSign size={20} color="var(--accent)" />
             </div>
             <div>

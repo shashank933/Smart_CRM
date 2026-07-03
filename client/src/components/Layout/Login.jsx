@@ -288,7 +288,7 @@ export default function Login() {
       borderRadius: '6px',
       border: '1px solid rgba(255, 255, 255, 0.12)',
       background: 'rgba(255, 255, 255, 0.06)',
-      color: '#a1a1aa',
+      color: 'var(--text-muted)',
       fontSize: '12px',
       fontWeight: 600,
       marginBottom: '20px',
@@ -305,7 +305,7 @@ export default function Login() {
     paragraph: {
       maxWidth: '560px',
       margin: '20px 0 30px',
-      color: '#a1a1aa',
+      color: 'var(--text-muted)',
       fontSize: '16px',
       lineHeight: 1.6,
     },
@@ -341,7 +341,7 @@ export default function Login() {
     },
     subtitle: {
       fontSize: '14px',
-      color: '#71717a',
+      color: 'var(--text-secondary)',
       margin: 0,
       lineHeight: 1.5,
     },
@@ -350,7 +350,7 @@ export default function Login() {
       borderRadius: '8px',
       padding: '6px 10px',
       background: 'rgba(99, 102, 241, 0.1)',
-      color: '#6366f1',
+      color: 'var(--accent)',
       fontWeight: 600,
       fontSize: '12px',
       border: '1px solid rgba(99, 102, 241, 0.15)',
@@ -371,7 +371,7 @@ export default function Login() {
       left: '14px',
       top: '38px',
       transform: 'translateY(-50%)',
-      color: '#a1a1aa',
+      color: 'var(--text-muted)',
       pointerEvents: 'none'
     },
     input: {
@@ -391,7 +391,7 @@ export default function Login() {
       padding: '13px',
       borderRadius: '8px',
       border: 'none',
-      background: '#6366f1',
+      background: 'var(--accent)',
       color: '#ffffff',
       fontSize: '14px',
       fontWeight: 600,
@@ -423,7 +423,7 @@ export default function Login() {
     error: {
       background: 'rgba(113, 113, 122, 0.12)',
       border: '1px solid rgba(113, 113, 122, 0.2)',
-      color: '#a1a1aa',
+      color: 'var(--text-muted)',
       padding: '12px 14px',
       borderRadius: '12px',
       marginBottom: '18px',
@@ -434,7 +434,7 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       textAlign: 'center',
-      color: '#a1a1aa',
+      color: 'var(--text-muted)',
       fontSize: '12px',
       fontWeight: 600,
       marginBottom: '20px',
@@ -532,7 +532,7 @@ export default function Login() {
           margin-top: 6px;
           font-size: 12px;
           line-height: 1.4;
-          color: #71717a;
+          color: var(--text-secondary);
           font-weight: 500;
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -573,12 +573,12 @@ export default function Login() {
           height: 28px;
           border-radius: 6px;
           background: rgba(99, 102, 241, 0.12);
-          color: #818cf8;
+          color: var(--accent-light);
           flex-shrink: 0;
         }
 
         .form-input:focus {
-          border-color: #6366f1 !important;
+          border-color: var(--accent) !important;
           background: #ffffff !important;
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
         }
@@ -795,7 +795,7 @@ export default function Login() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '7px' }}>
                 <label style={{ ...styles.inputLabel, marginBottom: 0 }}>Password</label>
                 {!isRegister && (
-                  <button type="button" style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>
+                  <button type="button" style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>
                     Forgot password?
                   </button>
                 )}
@@ -823,12 +823,12 @@ export default function Login() {
             </button>
           </form>
 
-          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: '#71717a', fontWeight: 500 }}>
+          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500 }}>
             {isRegister ? 'Already have an account? ' : "Don't have an account? "}
             <button
               onClick={() => { setIsRegister(!isRegister); setError(''); }}
               style={{
-                color: '#6366f1', border: 'none', background: 'none',
+                color: 'var(--accent)', border: 'none', background: 'none',
                 fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px'
               }}
             >

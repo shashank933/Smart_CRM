@@ -759,7 +759,7 @@ export default function Conversations() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     <Bot size={16} />
-                    <span style={{ fontWeight: 700, fontSize: '13px', color: '#4f46e5' }}>AI Suggested Reply</span>
+                    <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--accent-dark)' }}>AI Suggested Reply</span>
                     <button
                       onClick={() => setAiReply(null)}
                       style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}

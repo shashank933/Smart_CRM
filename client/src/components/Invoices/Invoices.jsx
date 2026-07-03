@@ -301,7 +301,7 @@ export default function Invoices() {
         </div>
         <div className="clay-stat-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), #818cf8)' }}>
+              <div className="clay-stat-icon" style={{ background: 'linear-gradient(135deg, var(--success-light), var(--accent-light))' }}>
                 <DollarSign size={20} />
             </div>
             <div>
