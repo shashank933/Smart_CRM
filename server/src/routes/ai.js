@@ -2,38 +2,12 @@ import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../config/db.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { callLLM } from '../services/llmService.js';
 
 const router = Router();
 router.use(authenticateToken);
 
-function getDeepSeekClient() {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey || apiKey === 'sk-your-deepseek-api-key-here') {
-    return null;
-  }
-  return {
-    apiKey,
-    model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
-    baseURL: 'https://api.deepseek.com'
-  };
-}
-
-async function callAI(prompt, systemPrompt = 'You are a helpful CRM assistant.') {
-  const client = getDeepSeekClient();
-  if (!client) {
-    return 'AI is not configured. Please set your DEEPSEEK_API_KEY in server/.env';
-  }
-
-  try {
-    const { default: OpenAI } = await import('openai');
-    const openai = new OpenAI({
-      apiKey: client.apiKey,
-      baseURL: client.baseURL
-    });
-    const response = await openai.chat.completions.create({
-      model: client.model,
-      messages: [
-        { role: 'system', content: `You are an AI assistant embedded inside SmartCRM, a customer relationship management platform. Your purpose is strictly limited to CRM-related topics: sales pipelines, deal strategies, contact management, follow-ups, revenue insights, customer support tickets, invoices, workflows, email generation, meeting scheduling, and CRM best practices. You operate within the SmartCRM workspace and only have knowledge of the CRM data provided to you in the current conversation.
+const CRM_GUARDRAIL = `You are an AI assistant embedded inside SmartCRM, a customer relationship management platform. Your purpose is strictly limited to CRM-related topics: sales pipelines, deal strategies, contact management, follow-ups, revenue insights, customer support tickets, invoices, workflows, email generation, meeting scheduling, and CRM best practices. You operate within the SmartCRM workspace and only have knowledge of the CRM data provided to you in the current conversation.
 
 CRITICAL RULES:
 1. NEVER discuss topics unrelated to CRM (no coding, no general knowledge, no jokes, no personal advice, no politics, no entertainment).
@@ -41,16 +15,14 @@ CRITICAL RULES:
 3. Always be concise, professional, and actionable.
 4. Do not mention your underlying model or training data.
 5. Keep responses under 200 words unless the user explicitly asks for detail.
-6. Base your answers on the CRM context provided. If no context is available, guide the user to provide relevant CRM data (deals, contacts, etc.).\n\n${systemPrompt}` },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000
-    });
-    return response.choices[0].message.content;
-  } catch (err) {
-    return `AI Error: ${err.message}`;
-  }
+6. Base your answers on the CRM context provided. If no context is available, guide the user to provide relevant CRM data (deals, contacts, etc.).`;
+
+function buildSystemPrompt(basePrompt) {
+  return `${CRM_GUARDRAIL}\n\n${basePrompt}`;
+}
+
+function getIp(req) {
+  return req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 }
 
 router.post('/chat', async (req, res) => {
@@ -75,9 +47,10 @@ router.post('/chat', async (req, res) => {
       }
     }
 
-    const response = await callAI(
+    const response = await callLLM(
       `Context from CRM:${contextStr}\n\nUser message: ${message}`,
-      'You are a CRM assistant for SmartCRM. Provide concise, actionable insights about sales, deals, contacts, and CRM workflows. Decline non-CRM questions.'
+      buildSystemPrompt('You are a CRM assistant for SmartCRM. Provide concise, actionable insights about sales, deals, contacts, and CRM workflows. Decline non-CRM questions.'),
+      { endpoint: 'ai/chat', ip: getIp(req) }
     );
 
     res.json({ response, context: contextStr });
@@ -105,7 +78,9 @@ router.post('/insights/deal', async (req, res) => {
 
       Provide: 1) Win probability assessment 2) Next best actions 3) Risk factors 4) Recommended follow-up strategy. Keep it under 300 words.`;
 
-    const insight = await callAI(prompt, 'You are a sales strategist for SmartCRM. Analyze deals and provide actionable next steps.');
+    const insight = await callLLM(prompt,
+      buildSystemPrompt('You are a sales strategist for SmartCRM. Analyze deals and provide actionable next steps.'),
+      { endpoint: 'ai/insights/deal', ip: getIp(req) });
 
     await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
       .run(uuidv4(), 'deal', deal_id, 'deal_analysis', insight);
@@ -137,7 +112,9 @@ router.post('/insights/contact', async (req, res) => {
 
       Provide: 1) Engagement score assessment 2) Recommended next outreach 3) Relationship health 4) Upsell/cross-sell opportunities. Keep under 300 words.`;
 
-    const insight = await callAI(prompt, 'You are a CRM relationship expert for SmartCRM. Analyze contacts and suggest engagement strategies.');
+    const insight = await callLLM(prompt,
+      buildSystemPrompt('You are a CRM relationship expert for SmartCRM. Analyze contacts and suggest engagement strategies.'),
+      { endpoint: 'ai/insights/contact', ip: getIp(req) });
 
     await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
       .run(uuidv4(), 'contact', contact_id, 'contact_analysis', insight);
@@ -164,7 +141,9 @@ router.post('/generate-email', async (req, res) => {
 
     const prompt = `Generate a professional email for:${context}\n\nPurpose: ${purpose || 'general follow-up'}\n\nWrite a concise, personalized email. Include subject line.`;
 
-    const email = await callAI(prompt, 'You are a business email writer for SmartCRM. Write concise, professional emails within CRM context only.');
+    const email = await callLLM(prompt,
+      buildSystemPrompt('You are a business email writer for SmartCRM. Write concise, professional emails within CRM context only.'),
+      { endpoint: 'ai/generate-email', ip: getIp(req) });
 
     res.json({ email });
   } catch (err) {
@@ -181,7 +160,9 @@ router.post('/summarize-conversation', async (req, res) => {
     if (messages.length === 0) return res.status(404).json({ error: 'No messages found' });
 
     const transcript = messages.map(m => `${m.sender_type}: ${m.content}`).join('\n');
-    const summary = await callAI(`Summarize this conversation:\n\n${transcript}\n\nProvide: Key points, action items, sentiment, and next steps.`);
+    const summary = await callLLM(`Summarize this conversation:\n\n${transcript}\n\nProvide: Key points, action items, sentiment, and next steps.`,
+      buildSystemPrompt('You are a CRM assistant for SmartCRM. Summarize conversations concisely.'),
+      { endpoint: 'ai/summarize-conversation', ip: getIp(req) });
 
     await db.prepare('INSERT INTO ai_insights (id, entity_type, entity_id, insight_type, content) VALUES (?, ?, ?, ?, ?)')
       .run(uuidv4(), 'conversation', conversation_id, 'summary', summary);
@@ -210,7 +191,9 @@ router.post('/predictive/scoring', async (req, res) => {
     const dealList = deals.map(d => `- ${d.name}: $${d.value}, stage ${d.stage}, probability ${d.probability}%`).join('\n');
     const prompt = `Rank these open deals by likelihood to close, considering value, stage, and probability. Return as JSON array with fields: deal_name, score (1-100), reasoning:\n\n${dealList}`;
 
-    const response = await callAI(prompt, 'You are a sales analytics expert for SmartCRM. Score deals based on CRM data. Return valid JSON only.');
+    const response = await callLLM(prompt,
+      buildSystemPrompt('You are a sales analytics expert for SmartCRM. Score deals based on CRM data. Return valid JSON only.'),
+      { endpoint: 'ai/predictive/scoring', ip: getIp(req) });
     res.json({ scored: response });
   } catch (err) {
     res.status(500).json({ error: err.message });

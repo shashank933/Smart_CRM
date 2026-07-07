@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../config/db.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { callLLM } from '../services/llmService.js';
 
 const router = Router();
 router.use(authenticateToken);
@@ -46,32 +47,7 @@ function parseTicket(row: TicketRow & Record<string, unknown>): Ticket {
   };
 }
 
-function getAIClient() {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey || apiKey === 'sk-your-deepseek-api-key-here') return null;
-  return { apiKey, model: process.env.DEEPSEEK_MODEL || 'deepseek-chat', baseURL: 'https://api.deepseek.com' };
-}
 
-async function callAI(prompt: string, systemPrompt: string): Promise<string | null> {
-  const client = getAIClient();
-  if (!client) return null;
-  try {
-    const { default: OpenAI } = await import('openai');
-    const openai = new OpenAI({ apiKey: client.apiKey, baseURL: client.baseURL });
-    const response = await openai.chat.completions.create({
-      model: client.model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
-    });
-    return response.choices[0].message.content;
-  } catch {
-    return null;
-  }
-}
 
 // List tickets with filters
 router.get('/', async (req: Request, res: Response) => {
@@ -301,7 +277,8 @@ router.post('/:id/summarize', async (req: Request, res: Response) => {
 
   Provide: 1) Brief summary 2) Current status 3) Recommended next action. Keep under 200 words.`;
 
-    const summary = await callAI(prompt, 'You are a support team lead. Summarize tickets concisely.');
+    const summary = await callLLM(prompt, 'You are a support team lead. Summarize tickets concisely.',
+      { endpoint: 'tickets/summarize', maxTokens: 1000, ip: req.ip });
     res.json({ summary: summary || 'AI not configured. Set DEEPSEEK_API_KEY in server/.env' });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -329,7 +306,8 @@ router.post('/:id/suggest-reply', async (req: Request, res: Response) => {
 
   Write a helpful, empathetic reply that addresses the issue. Keep it concise and professional.`;
 
-    const reply = await callAI(prompt, 'You are a professional customer support agent. Write helpful replies.');
+    const reply = await callLLM(prompt, 'You are a professional customer support agent. Write helpful replies.',
+      { endpoint: 'tickets/suggest-reply', maxTokens: 1000, ip: req.ip });
     res.json({ reply: reply || 'AI not configured. Set DEEPSEEK_API_KEY in server/.env' });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

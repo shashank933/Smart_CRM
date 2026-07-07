@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../config/db.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { callLLM } from '../services/llmService.js';
 
 const router = Router();
 router.use(authenticateToken);
@@ -89,39 +90,6 @@ const ACTION_TYPES: ActionType[] = [
   { value: 'update_contact', label: 'Update Contact', description: 'Change contact status or fields', fields: ['target_status'] },
   { value: 'webhook', label: 'Webhook / API Call', description: 'Send data to an external URL', fields: ['url', 'method', 'headers'] }
 ];
-
-interface AIClient {
-  apiKey: string;
-  model: string;
-  baseURL: string;
-}
-
-function getAIClient(): AIClient | null {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey || apiKey === 'sk-your-deepseek-api-key-here') return null;
-  return { apiKey, model: process.env.DEEPSEEK_MODEL || 'deepseek-chat', baseURL: 'https://api.deepseek.com' };
-}
-
-async function callAI(prompt: string, systemPrompt: string): Promise<string | null> {
-  const client = getAIClient();
-  if (!client) return null;
-  try {
-    const { default: OpenAI } = await import('openai');
-    const openai = new OpenAI({ apiKey: client.apiKey, baseURL: client.baseURL });
-    const response = await openai.chat.completions.create({
-      model: client.model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.3,
-      max_tokens: 2000
-    });
-    return response.choices[0].message.content;
-  } catch {
-    return null;
-  }
-}
 
 function parseWorkflow(row: WorkflowRow): Workflow {
   return {
@@ -338,7 +306,8 @@ Rules:
       .map(m => `${m.role}: ${m.content}`).join('\n');
     const prompt = `Previous conversation:\n${history}\n\nUser: ${message}`;
 
-    const response = await callAI(prompt, systemPrompt);
+    const response = await callLLM(prompt, systemPrompt,
+      { endpoint: 'workflows/ai/generate', temperature: 0.3, ip: req.ip });
     if (!response) {
       return res.json({
         type: 'message',

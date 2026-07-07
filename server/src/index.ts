@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeDatabase } from './config/db.js';
+import { requestLogger } from './middleware/requestLogger.js';
 import authRoutes from './routes/auth.js';
 import contactRoutes from './routes/contacts.js';
 import companyRoutes from './routes/companies.js';
@@ -23,6 +24,8 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+app.use(requestLogger);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);

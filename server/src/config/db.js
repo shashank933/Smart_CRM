@@ -142,6 +142,29 @@ export async function initializeDatabase() {
 
   await createTables();
 
+  if (!(await kdb.schema.hasTable('request_logs'))) {
+    await kdb.schema.createTable('request_logs', (table) => {
+      table.string('ip', 45).primary();
+      table.integer('count').defaultTo(1);
+      table.timestamp('last_activity').defaultTo(kdb.fn.now());
+    });
+  }
+
+  if (!(await kdb.schema.hasTable('llm_logs'))) {
+    await kdb.schema.createTable('llm_logs', (table) => {
+      table.string('id', 36).primary();
+      table.string('endpoint', 100).notNullable();
+      table.string('model', 50).notNullable();
+      table.text('system_prompt');
+      table.text('user_prompt');
+      table.decimal('temperature', 3, 2);
+      table.integer('max_tokens');
+      table.text('response');
+      table.string('ip', 45);
+      table.timestamp('created_at').defaultTo(kdb.fn.now());
+    });
+  }
+
   db = new DBWrapper(kdb);
 
   await ensureDemoData();
